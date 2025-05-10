@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tools</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 56px;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand {
+            color: white;
+        }
+        .navbar-nav .nav-link {
+            color: white;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #f0f0f0;
+        }
+        .container {
+            margin-top: 20px;
+        }
+         .card {
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <a class="navbar-brand" href="#">Bandwidth Controller</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"> {# Not active on this page #}
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                </li>
+                {% if session.get('role') == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('status') }}">Status</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('log_view') }}">Logs</a>
+                    </li>
+                    <li class="nav-item active"> {# Active on Test Tools page #}
+                        <a class="nav-link" href="{{ url_for('test_page') }}">Test Tools <span class="sr-only">(current)</span></a>
+                    </li>
+                {% endif %}
+                 {% if session.get('logged_in') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+                {% endif %}
+            </ul>
+             {# Interface selection dropdown - included for consistency but less relevant here #}
+              {% if interfaces %}
+            <form method="POST" action="{{ url_for('dashboard') }}" class="form-inline my-2 my-lg-0">
+                <select name="interface_dropdown" class="form-control mr-sm-2">
+                    {% for iface in interfaces %}
+                    <option value="{{ iface }}" {% if iface == active_if %} selected {% endif %}>{{ iface }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Set Interface</button>
+            </form>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if session.get('role') == 'admin' %} {# Only show content for admin #}
+            <div class="card">
+                <div class="card-header">
+                    <h4>Network Test Tools</h4>
+                </div>
+                <div class="card-body">
+                    <p>This page is intended for network testing tools such as Ping, Traceroute, Speed Test, etc.</p>
+                    <p><strong>Note:</strong> The functionality for these tools is not yet implemented in this example application.</p>
+
+                    {# You can add forms and buttons here for future tools #}
+                    {#
+                    <h5>Ping Tool</h5>
+                    <form action="#" method="POST">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ping_target">Target Hostname or IP</label>
+                                <input type="text" class="form-control" id="ping_target" name="ping_target" required>
+                            </div>
+                             <div class="col-md-3 mb-3">
+                                <label for="ping_count">Count</label>
+                                <input type="number" class="form-control" id="ping_count" name="ping_count" value="4" min="1">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Run Ping</button>
+                    </form>
+                    <div id="ping_output" class="mt-3"></div>
+                    #}
+
+                    {# Add sections for other tools as needed #}
+
+                </div>
+            </div>
+        {% else %}
+             <div class="alert alert-danger" role="alert">
+                Unauthorized access. Please login as an admin to view this page.
+            </div>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
