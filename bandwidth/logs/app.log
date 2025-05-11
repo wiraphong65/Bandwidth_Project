@@ -1,0 +1,1013 @@
+2025-05-10 11:46:19,141 - app copy - INFO - app copy:106 - Logging configured successfully.
+2025-05-10 11:46:19,150 - app copy - INFO - app copy:1174 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-10 11:46:19,165 - app copy - INFO - app copy:1178 - Database tables created/checked successfully.
+2025-05-10 11:46:19,168 - app copy - INFO - app copy:1186 - APScheduler started successfully.
+2025-05-10 11:46:19,168 - app copy - INFO - app copy:1192 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-10 11:46:25,177 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:46:26,940 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:46:26,954 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:46:27,021 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:46:28,452 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:46:28,462 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:46:29,004 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:46:29,013 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 11:47:19,147 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:47:19,154 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:48:19,159 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:48:19,161 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:49:19,148 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:49:19,150 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:50:19,153 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:50:19,154 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:51:19,158 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:51:19,160 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:52:19,149 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:52:19,151 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:53:19,161 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:53:19,163 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:54:19,150 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:54:19,151 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:55:19,151 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:55:19,153 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:56:19,153 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:56:19,154 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:57:19,161 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:57:19,163 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:58:19,150 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:58:19,151 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 11:59:19,147 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 11:59:19,148 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:00:19,158 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:00:19,160 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:01:19,147 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:01:19,149 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:02:19,150 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:02:19,151 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:03:19,154 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:03:19,156 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:04:19,156 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:04:19,158 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:05:19,159 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:05:19,160 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:06:19,155 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:06:19,156 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:07:19,158 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:07:19,160 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:08:19,147 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:08:19,148 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:09:19,161 - app copy - INFO - app copy:902 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:09:19,163 - app copy - INFO - app copy:951 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:10:13,542 - app copy - INFO - app copy:1205 - Application attempting to shut down.
+2025-05-10 12:10:13,543 - app copy - INFO - app copy:1209 - APScheduler shut down successfully.
+2025-05-10 12:10:13,543 - app copy - INFO - app copy:1212 - Application shutdown process complete.
+2025-05-10 12:10:20,894 - app copy - INFO - app copy:106 - Logging configured successfully.
+2025-05-10 12:16:38,729 - app copy - INFO - app copy:106 - Logging configured successfully.
+2025-05-10 12:16:38,738 - app copy - INFO - app copy:1574 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-10 12:16:38,741 - app copy - INFO - app copy:1578 - Database tables created/checked successfully.
+2025-05-10 12:16:38,743 - app copy - INFO - app copy:1586 - APScheduler started successfully.
+2025-05-10 12:16:38,743 - app copy - INFO - app copy:1592 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-10 12:16:40,487 - app copy - WARNING - app copy:1206 - User not logged in, redirecting to login
+2025-05-10 12:16:40,514 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:40,527 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:46,194 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:46,209 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:46,209 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:16:46,248 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:46,261 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:47,957 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:47,957 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:16:47,972 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:16:47,988 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:17:38,740 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:17:38,747 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:18:18,369 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:18:18,369 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:18:18,378 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:18:18,391 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:18:38,738 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:18:38,740 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:19:38,744 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:19:38,746 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:20:38,750 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:20:38,752 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:20:47,552 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:47,552 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:47,563 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:47,577 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,134 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,134 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:48,144 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,154 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,317 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,318 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:48,327 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,383 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,485 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,485 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:48,495 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,506 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,637 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,638 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:48,647 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,657 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,794 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,794 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:48,804 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,814 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,949 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,949 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:48,960 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:48,970 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:49,085 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:49,085 - app copy - INFO - app copy:1252 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 12:20:49,095 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:20:49,105 - app copy - ERROR - app copy:176 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 12:21:38,748 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:21:38,749 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:22:38,736 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:22:38,738 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:23:38,742 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:23:38,744 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:24:38,736 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:24:38,737 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:25:38,750 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:25:38,752 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:26:38,749 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:26:38,751 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:27:38,750 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:27:38,751 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:28:38,742 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:28:38,744 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:29:38,740 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:29:38,742 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:30:38,745 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:30:38,747 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:31:38,742 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:31:38,745 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:32:38,744 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:32:38,745 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:33:38,742 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:33:38,744 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:34:38,738 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:34:38,739 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:35:38,737 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:35:38,739 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:36:38,742 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:36:38,744 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:37:38,736 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:37:38,739 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:38:38,738 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:38:38,739 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:39:38,748 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:39:38,750 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:40:38,742 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:40:38,743 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:41:38,741 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:41:38,742 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:42:38,739 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:42:38,740 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:43:38,747 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:43:38,749 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:44:38,746 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:44:38,748 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:45:38,740 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:45:38,742 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:46:38,740 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:46:38,742 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:47:38,742 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:47:38,744 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:48:38,750 - app copy - INFO - app copy:1110 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 12:48:38,752 - app copy - INFO - app copy:1159 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 12:49:02,621 - app copy - INFO - app copy:1605 - Application attempting to shut down.
+2025-05-10 12:49:02,622 - app copy - INFO - app copy:1609 - APScheduler shut down successfully.
+2025-05-10 12:49:02,622 - app copy - INFO - app copy:1612 - Application shutdown process complete.
+2025-05-10 13:36:58,513 - app copy - INFO - app copy:107 - Logging configured successfully.
+2025-05-10 13:36:58,524 - app copy - INFO - app copy:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-10 13:36:58,527 - app copy - INFO - app copy:1893 - Database tables created/checked successfully.
+2025-05-10 13:36:58,529 - app copy - INFO - app copy:1901 - APScheduler started successfully.
+2025-05-10 13:36:58,529 - app copy - INFO - app copy:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-10 13:37:00,544 - app copy - WARNING - app copy:1207 - User not logged in, redirecting to login
+2025-05-10 13:37:00,578 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:00,592 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:02,937 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:02,954 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:02,955 - app copy - INFO - app copy:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 13:37:03,053 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:03,062 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:04,314 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:04,315 - app copy - INFO - app copy:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 13:37:04,325 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:04,336 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:04,873 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:04,873 - app copy - INFO - app copy:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-10 13:37:04,885 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:04,895 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:31,881 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:31,881 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:37:31,892 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:31,904 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:35,669 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:35,669 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:37:35,678 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:35,690 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:37:58,523 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:37:58,530 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:38:58,527 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:38:58,529 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:39:58,532 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:39:58,533 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:40:22,170 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,170 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:40:22,180 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,191 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,722 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,722 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:40:22,734 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,745 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,909 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,909 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:40:22,918 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:22,930 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:40:58,524 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:40:58,526 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:41:29,805 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:41:29,805 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:41:29,815 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:41:29,828 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:41:58,523 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:41:58,526 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:42:58,519 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:42:58,520 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:43:58,519 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:43:58,521 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:44:58,519 - app copy - INFO - app copy:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-10 13:44:58,520 - app copy - INFO - app copy:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-10 13:45:38,442 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:45:38,442 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:45:38,452 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:45:38,462 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:45:40,582 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:45:40,582 - app copy - INFO - app copy:1377 - Serving bandwidth_control_view.html with active_if: None
+2025-05-10 13:45:40,592 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:45:40,602 - app copy - ERROR - app copy:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-10 13:45:44,073 - app copy - INFO - app copy:1920 - Application attempting to shut down.
+2025-05-10 13:45:44,074 - app copy - INFO - app copy:1924 - APScheduler shut down successfully.
+2025-05-10 13:45:44,074 - app copy - INFO - app copy:1927 - Application shutdown process complete.
+2025-05-11 12:11:40,589 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 12:11:40,600 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 12:11:40,607 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 12:11:40,610 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 12:11:40,610 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 12:11:43,924 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 12:11:43,968 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:11:43,979 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:11:43,979 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(datetime.UTC).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:11:46,312 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:11:46,322 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:11:46,322 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(datetime.UTC).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:12:40,599 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:12:40,611 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:13:40,608 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:13:40,612 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:13:53,395 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:53,404 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:53,404 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:13:53,972 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:53,982 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:53,982 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:13:54,178 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:54,188 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:54,189 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:13:54,386 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:54,397 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:13:54,397 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:14:40,610 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:14:40,614 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:15:40,602 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:15:40,604 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:16:40,598 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:16:40,602 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:17:40,602 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:17:40,604 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:18:40,601 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:18:40,605 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:19:40,608 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:19:40,610 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:20:40,601 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:20:40,603 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:21:40,608 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:21:40,610 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:22:40,612 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:22:40,613 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:23:40,611 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:23:40,613 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:24:40,596 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:24:40,600 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:25:40,605 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:25:40,609 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:26:40,608 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:26:40,610 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:27:40,611 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:27:40,615 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:28:40,605 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:28:40,609 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:29:40,608 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:29:40,612 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:30:40,605 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:30:40,609 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:30:48,693 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:48,704 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:48,704 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:30:49,355 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:49,365 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:49,366 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:30:49,522 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:49,532 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:49,533 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:30:49,680 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:49,690 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:30:49,690 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:31:40,603 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:31:40,607 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:32:40,603 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:32:40,605 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:33:30,279 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:30,289 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:30,289 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:33:30,695 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:30,704 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:30,705 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:33:30,862 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:30,871 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:30,872 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:33:31,025 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:31,035 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:33:31,035 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:33:40,602 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:33:40,604 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:34:36,062 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:36,071 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:36,071 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:34:36,403 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:36,412 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:36,413 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:34:36,962 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:36,972 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:36,972 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:34:37,446 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:37,456 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:37,456 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:34:40,604 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:34:40,609 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:34:45,136 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:45,152 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:45,153 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:34:45,810 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:45,821 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:34:45,821 - app - ERROR - app:875 - Exception on /login [GET]
+Traceback (most recent call last):
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1299, in login
+    return render_template("login.html")
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 127, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\wirap\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 530, in update_template_context
+    context.update(self.ensure_sync(func)())
+                   ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\wirap\Workspaces\ProjectFinal\Bandwidth_Project\bandwidth\app.py", line 1191, in inject_global_vars_for_templates
+    current_year=datetime.now(timezone.utc).year,
+                              ^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+2025-05-11 12:34:48,343 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 12:34:48,345 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 12:34:48,345 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 12:35:03,592 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 12:35:03,602 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 12:35:03,604 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 12:35:03,606 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 12:35:03,606 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 12:35:06,031 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 12:35:06,073 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:06,085 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:10,278 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:10,293 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:10,293 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:35:10,308 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:10,320 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:12,259 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:12,259 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:35:12,269 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:35:12,280 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:36:03,603 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:36:03,626 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:37:03,611 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:37:03,615 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:38:03,610 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:38:03,612 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:39:03,607 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:39:03,609 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:40:03,609 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:40:03,610 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:41:03,600 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:41:03,602 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:42:03,611 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:42:03,613 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:42:57,081 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 12:42:57,081 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 12:42:57,082 - app - INFO - app:1927 - Application shutdown process complete.

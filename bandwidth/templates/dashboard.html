@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bandwidth Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bandwidth-control.css') }}">
+</head>
+<body>
+  <div class="app-container">
+    <nav class="sidebar">
+      <header class="sidebar-header">
+        <h1 class="sidebar-title">Bandwidth Control</h1>
+        <p class="sidebar-subtitle">Traffic Management</p>
+      </header>
+
+      <div class="sidebar-content">
+              </div>
+
+      <footer class="sidebar-footer">
+        <div class="interface-selector">
+          <label for="interface" class="interface-label">Interface</label>
+          <select id="interface" class="interface-select">
+            {% if interfaces_list %}
+              {% for iface in interfaces_list %}
+              <option value="{{ iface }}" {% if iface == current_active_if %}selected{% endif %}>{{ iface }}</option>
+              {% endfor %}
+            {% else %}
+              <option value="">No interfaces found</option>
+            {% endif %}
+          </select>
+        </div>
+      </footer>
+    </nav>
+
+    <main class="main-content">
+          </main>
+  </div>
+
+    <script src="{{ url_for('static', filename='js/bandwidth-control.js') }}"></script>
+</body>
+</html>
