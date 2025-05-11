@@ -1,155 +1,101 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bandwidth Control Dashboard - จัดการแบนด์วิดท์</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    </head>
-<body style="font-family: 'Prompt', sans-serif;"> <div class="app-layout">
-        <nav class="sidebar">
-            <div class="sidebar-sticky-content">
-                <header class="sidebar-header">
-                    <h1 class="sidebar-title">Bandwidth Control</h1>
-                    <p class="sidebar-subtitle">ระบบจัดการทราฟฟิกเครือข่าย</p>
-                </header>
+{% extends "base.html" %}
 
-                <ul class="navigation-menu" aria-label="เมนูหลัก">
-                    <li class="menu-item menu-item-active" data-view="simple-queues" title="จัดการ Rules การจำกัดแบนด์วิดท์พื้นฐาน">
-                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/0fb439213d2cb4644eb3f800c818f25049cb8d6b?placeholderIfAbsent=true" alt="ไอคอน Simple Queues" class="menu-icon">
-                        <span class="menu-text">Simple Queues</span>
-                    </li>
-                    <li class="menu-item" data-view="queue-tree" title="จัดการโครงสร้าง Queue ขั้นสูง (ถ้ามี)">
-                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/281e70674536454a0bcc371fde243369bc7c0b6d?placeholderIfAbsent=true" alt="ไอคอน Queue Tree" class="menu-icon">
-                        <span class="menu-text">Queue Tree</span>
-                    </li>
-                    <li class="menu-item" data-view="filter-rules" title="จัดการกฎการกรองทราฟฟิก (ถ้ามี)">
-                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/90eaf96a82f05cb778f98c767347e6e9c912f84d?placeholderIfAbsent=true" alt="ไอคอน Filter Rules" class="menu-icon">
-                        <span class="menu-text">Filter Rules</span>
-                    </li>
-                    <li class="menu-item" data-view="status-page" title="ดูสถานะโดยรวมของระบบ">
-                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-status-placeholder.png?placeholder=true" alt="ไอคอนสถานะระบบ" class="menu-icon placeholder-icon"> <a href="{{ url_for('status') }}" class="menu-link-style"><span class="menu-text">สถานะระบบ</span></a>
-                    </li>
-                    <li class="menu-item" data-view="logs-page" title="ดูประวัติการทำงานและ Log ของระบบ">
-                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-logs-placeholder.png?placeholder=true" alt="ไอคอน Logs" class="menu-icon placeholder-icon"> <a href="{{ url_for('log_view') }}" class="menu-link-style"><span class="menu-text">Logs</span></a>
-                    </li>
-                </ul>
+{% block title %}Dashboard - Bandwidth Control{% endblock %}
 
-                <div class="interface-selector-container">
-                    <label for="interface" class="interface-label">เลือก Network Interface:</label>
-                    <select id="interface" class="interface-select-element" name="interface_dropdown" title="เลือก Interface เพื่อดูและจัดการ Rules">
-                        {% if interfaces %}
-                            {% for iface in interfaces %}
-                                <option value="{{ iface }}" {% if iface == active_if %}selected{% endif %}>{{ iface }}</option>
-                            {% endfor %}
-                        {% else %}
-                            <option value="">กำลังโหลด Interfaces...</option>
-                        {% endif %}
-                    </select>
-                </div>
-            </div>
+{% block head_extra %}
+    {% endblock %}
 
-            <footer class="sidebar-footer">
-                {% if session.get('logged_in') %}
-                    <div class="user-info" title="ข้อมูลผู้ใช้ที่กำลังเข้าสู่ระบบ">
-                       <span class="user-avatar-placeholder" aria-hidden="true">👤</span>
-                       <span class="user-details">
-                           <strong>{{ session.get('username', 'ผู้ใช้งาน') }}</strong><br>
-                           <small>(สิทธิ์: {{ session.get('role', 'N/A') }})</small>
-                       </span>
-                    </div>
-                    <a href="{{ url_for('logout') }}" class="logout-button" title="ออกจากระบบปัจจุบัน">
-                        <span class="button-icon-placeholder" aria-hidden="true">🚪</span>
-                        ออกจากระบบ
-                    </a>
-                {% endif %}
-                <p class="app-version">เวอร์ชัน: 1.0.3</p>
-                <p class="copyright-text">&copy; {{ current_year }} BandwidthController Project</p>
-            </footer>
-        </nav>
-
-        <main class="main-content" aria-labelledby="current-view-title">
-            <div class="content-wrapper">
-                <header class="page-header">
-                    <h2 id="current-view-title">การจัดการ Simple Queues</h2>
-                    <div class="action-bar" role="toolbar" aria-label="แถบเครื่องมือจัดการ Rules">
-                        <button id="add-rule-btn" class="button button-primary" title="เพิ่ม Rule ใหม่ (คีย์ลัด: A)">
-                            <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/85ef0503fd981a23e4d6b79dc4e35babdcf32fbc?placeholderIfAbsent=true" alt="" class="button-icon">
-                            เพิ่ม Rule
-                        </button>
-                        <button id="remove-rules-btn" class="button button-danger" title="ลบ Rules ที่เลือก (คีย์ลัด: Delete)" disabled>
-                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-remove-placeholder.png?placeholder=true" alt="" class="button-icon placeholder-icon"> ลบที่เลือก
-                        </button>
-                        <button id="enable-rules-btn" class="button button-secondary" title="สลับสถานะ (เปิด/ปิด) Rules ที่เลือก (คีย์ลัด: E)" disabled>
-                             <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-toggle-placeholder.png?placeholder=true" alt="" class="button-icon placeholder-icon"> เปิด/ปิด
-                        </button>
-                        <div class="search-container">
-                            <label for="search-input" class="visually-hidden">ค้นหา Rules</label>
-                            <input type="search" id="search-input" class="search-input-field" placeholder="ค้นหา (เช่น IP, ชื่อ Rule)..." aria-label="กล่องค้นหา Rules">
-                        </div>
-                    </div>
-                </header>
-
-                <div class="data-table-container">
-                    <div class="table-responsive-wrapper">
-                        <table class="rules-table" aria-label="รายการ Bandwidth Control Rules">
-                            <thead>
-                                <tr>
-                                    <th class="checkbox-column" scope="col"><label for="select-all" class="visually-hidden">เลือกทั้งหมด</label><input type="checkbox" id="select-all" title="เลือก/ยกเลิกการเลือก Rules ทั้งหมดในหน้านี้"></th>
-                                    <th scope="col">ชื่อ Rule/คำอธิบาย</th>
-                                    <th scope="col">Target IP</th>
-                                    <th scope="col">ทิศทาง</th>
-                                    <th scope="col">Rate</th>
-                                    <th scope="col">Max Limit</th>
-                                    <th scope="col">กลุ่ม</th>
-                                    <th scope="col">สถานะ</th>
-                                    <th scope="col">กำหนดเวลา</th>
-                                    <th scope="col" class="actions-column">จัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="rules-body">
-                                </tbody>
-                        </table>
-                    </div>
-                    <div id="loading-rules-message" class="loading-state" style="display:none;" aria-live="polite">
-                        <p>กำลังโหลดข้อมูล Rules, กรุณารอสักครู่...</p>
-                    </div>
-                    <div id="no-rules-message" class="empty-state" style="display:none;">
-                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/empty-box-placeholder.png?placeholder=true" alt="ไอคอนกล่องว่าง" class="empty-state-icon">
-                        <p class="empty-state-text">ยังไม่มี Rules สำหรับ Interface นี้ หรือไม่พบข้อมูลที่ตรงกับการค้นหาของคุณ</p>
-                        <button id="add-first-rule-btn" class="button button-primary">เริ่มสร้าง Rule แรก!</button>
-                    </div>
-                </div>
-
-                <section class="monitoring-section" aria-labelledby="monitoring-heading">
-                    <h3 id="monitoring-heading" class="section-title">ภาพรวมการใช้งาน Bandwidth</h3>
-                    <div class="monitoring-layout">
-                        <div class="monitoring-panel download-panel" role="region" aria-labelledby="download-title">
-                            <h4 id="download-title" class="monitoring-title">Download</h4>
-                            <p class="monitoring-value" id="download-value" title="ปริมาณ Download ปัจจุบันของ Interface ที่เลือก">N/A</p>
-                            <p class="monitoring-subtitle">Throughput ปัจจุบัน</p>
-                        </div>
-                        <div class="monitoring-panel upload-panel" role="region" aria-labelledby="upload-title">
-                            <h4 id="upload-title" class="monitoring-title">Upload</h4>
-                            <p class="monitoring-value" id="upload-value" title="ปริมาณ Upload ปัจจุบันของ Interface ที่เลือก">N/A</p>
-                            <p class="monitoring-subtitle">Throughput ปัจจุบัน</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="group-limits-section" aria-labelledby="group-limits-heading">
-                    <h3 id="group-limits-heading" class="section-title">การจัดการ Group Limits</h3>
-                    <div id="group-limits-container">
-                        <p class="empty-state-message">ส่วนการจัดการ Group Limits จะแสดงที่นี่ (ยังไม่เปิดใช้งาน)</p>
-                    </div>
-                </section>
-            </div>
-        </main>
+{% block interface_selector_block %}
+    <div class="interface-selector-container">
+        <label for="interface" class="interface-label">เลือก Network Interface:</label>
+        <select id="interface" class="interface-select-element" name="interface_dropdown" title="เลือก Interface เพื่อดูและจัดการ Rules">
+            {% if interfaces %}
+                {% for iface in interfaces %}
+                    <option value="{{ iface }}" {% if iface == active_if %}selected{% endif %}>{{ iface }}</option>
+                {% endfor %}
+            {% else %}
+                <option value="">กำลังโหลด Interfaces...</option>
+            {% endif %}
+        </select>
     </div>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <header class="page-header">
+        <h2 id="current-view-title">การจัดการ Simple Queues</h2> <div class="action-bar" role="toolbar" aria-label="แถบเครื่องมือจัดการ Rules">
+            <button id="add-rule-btn" class="button button-primary" title="เพิ่ม Rule ใหม่ (คีย์ลัด: A)">
+                <span class="button-icon" aria-hidden="true">➕</span>
+                เพิ่ม Rule
+            </button>
+            <button id="remove-rules-btn" class="button button-danger" title="ลบ Rules ที่เลือก (คีย์ลัด: Delete)" disabled>
+                <span class="button-icon" aria-hidden="true">🗑️</span>
+                ลบที่เลือก
+            </button>
+            <button id="enable-rules-btn" class="button button-secondary" title="สลับสถานะ (เปิด/ปิด) Rules ที่เลือก (คีย์ลัด: E)" disabled>
+                <span class="button-icon" aria-hidden="true">🔄</span>
+                เปิด/ปิด
+            </button>
+            <div class="search-container">
+                <label for="search-input" class="visually-hidden">ค้นหา Rules</label>
+                <input type="search" id="search-input" class="search-input-field" placeholder="ค้นหา (เช่น IP, ชื่อ Rule)..." aria-label="กล่องค้นหา Rules">
+            </div>
+        </div>
+    </header>
+
+    <div class="data-table-container">
+        <div class="table-responsive-wrapper">
+            <table class="rules-table" aria-label="รายการ Bandwidth Control Rules">
+                <thead>
+                    <tr>
+                        <th class="checkbox-column" scope="col"><label for="select-all" class="visually-hidden">เลือกทั้งหมด</label><input type="checkbox" id="select-all" title="เลือก/ยกเลิกการเลือก Rules ทั้งหมดในหน้านี้"></th>
+                        <th scope="col">ชื่อ Rule/คำอธิบาย</th>
+                        <th scope="col">Target IP</th>
+                        <th scope="col">ทิศทาง</th>
+                        <th scope="col">Rate</th>
+                        <th scope="col">Max Limit</th>
+                        <th scope="col">กลุ่ม</th>
+                        <th scope="col">สถานะ</th>
+                        <th scope="col">กำหนดเวลา</th>
+                        <th scope="col" class="actions-column">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="rules-body">
+                    </tbody>
+            </table>
+        </div>
+        <div id="loading-rules-message" class="loading-state" style="display:none;" aria-live="polite">
+            <p>กำลังโหลดข้อมูล Rules, กรุณารอสักครู่...</p>
+        </div>
+        <div id="no-rules-message" class="empty-state" style="display:none;">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/empty-box-placeholder.png?placeholder=true" alt="ไอคอนกล่องว่าง" class="empty-state-icon">
+            <p class="empty-state-text">ยังไม่มี Rules สำหรับ Interface นี้ หรือไม่พบข้อมูลที่ตรงกับการค้นหาของคุณ</p>
+            <button id="add-first-rule-btn" class="button button-primary">เริ่มสร้าง Rule แรก!</button>
+        </div>
+    </div>
+
+    <section class="monitoring-section" aria-labelledby="monitoring-heading">
+        <h3 id="monitoring-heading" class="section-title">ภาพรวมการใช้งาน Bandwidth</h3>
+        <div class="monitoring-layout">
+            <div class="monitoring-panel download-panel" role="region" aria-labelledby="download-title">
+                <h4 id="download-title" class="monitoring-title">Download</h4>
+                <p class="monitoring-value" id="download-value" title="ปริมาณ Download ปัจจุบันของ Interface ที่เลือก">N/A</p>
+                <p class="monitoring-subtitle">Throughput ปัจจุบัน</p>
+            </div>
+            <div class="monitoring-panel upload-panel" role="region" aria-labelledby="upload-title">
+                <h4 id="upload-title" class="monitoring-title">Upload</h4>
+                <p class="monitoring-value" id="upload-value" title="ปริมาณ Upload ปัจจุบันของ Interface ที่เลือก">N/A</p>
+                <p class="monitoring-subtitle">Throughput ปัจจุบัน</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="group-limits-section" aria-labelledby="group-limits-heading">
+        <h3 id="group-limits-heading" class="section-title">การจัดการ Group Limits</h3>
+        <div id="group-limits-container">
+            <p class="empty-state-message">ส่วนการจัดการ Group Limits จะแสดงที่นี่ (ยังไม่เปิดใช้งาน)</p>
+        </div>
+    </section>
 
     <div id="rule-modal" class="modal" style="display:none;" role="dialog" aria-labelledby="modal-title-text" aria-modal="true">
         <div class="modal-content">
@@ -326,7 +272,9 @@
             </form>
         </div>
     </div>
+</div>
+{% endblock %}
 
+{% block scripts %}
     <script src="{{ url_for('static', filename='js/bandwidth-control.js') }}"></script>
-</body>
-</html>
+{% endblock %}

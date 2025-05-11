@@ -1,42 +1,104 @@
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bandwidth Control{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">NetControl</a>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="/">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/status">Status</a></li>
-            <li class="nav-item"><a class="nav-link" href="/log">Logs</a></li>
-            <li class="nav-item"><a class="nav-link" href="/test">Test</a></li>
-          </ul>
-          <span class="navbar-text me-2">{{ session['user'] }}</span>
-          <a class="btn btn-outline-light" href="/logout">Logout</a>
-        </div>
-      </div>
-    </nav>
-    <div class="container">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+    {% block head_extra %}{% endblock %}
+
+    </head>
+<body style="font-family: 'Prompt', 'Inter', sans-serif;">
+    <div class="app-layout">
+        <nav class="sidebar">
+            <div class="sidebar-sticky-content">
+                <header class="sidebar-header">
+                    <a href="{{ url_for('dashboard') }}" class="sidebar-title-link">
+                        <h1 class="sidebar-title">Bandwidth Control</h1>
+                    </a>
+                    <p class="sidebar-subtitle">ระบบจัดการทราฟฟิกเครือข่าย</p>
+                </header>
+
+                <ul class="navigation-menu" aria-label="เมนูหลัก">
+                    <li class="menu-item {% if request.endpoint == 'dashboard' %}menu-item-active{% endif %}" data-view="simple-queues" title="จัดการ Rules การจำกัดแบนด์วิดท์พื้นฐาน">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/0fb439213d2cb4644eb3f800c818f25049cb8d6b?placeholderIfAbsent=true" alt="ไอคอน Simple Queues" class="menu-icon">
+                        <a href="{{ url_for('dashboard') }}" class="menu-link-style"><span class="menu-text">Simple Queues</span></a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'queue_tree_view' %}menu-item-active{% endif %}" data-view="queue-tree" title="จัดการโครงสร้าง Queue ขั้นสูง (ถ้ามี)">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/281e70674536454a0bcc371fde243369bc7c0b6d?placeholderIfAbsent=true" alt="ไอคอน Queue Tree" class="menu-icon">
+                        <a href="#" class="menu-link-style"><span class="menu-text">Queue Tree</span></a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'filter_rules_view' %}menu-item-active{% endif %}" data-view="filter-rules" title="จัดการกฎการกรองทราฟฟิก (ถ้ามี)">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/90eaf96a82f05cb778f98c767347e6e9c912f84d?placeholderIfAbsent=true" alt="ไอคอน Filter Rules" class="menu-icon">
+                        <a href="#" class="menu-link-style"><span class="menu-text">Filter Rules</span></a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'status' %}menu-item-active{% endif %}" data-view="status-page" title="ดูสถานะโดยรวมของระบบ">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-status-placeholder.png?placeholder=true" alt="ไอคอนสถานะระบบ" class="menu-icon placeholder-icon">
+                        <a href="{{ url_for('status') }}" class="menu-link-style"><span class="menu-text">สถานะระบบ</span></a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'log_view' %}menu-item-active{% endif %}" data-view="logs-page" title="ดูประวัติการทำงานและ Log ของระบบ">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-logs-placeholder.png?placeholder=true" alt="ไอคอน Logs" class="menu-icon placeholder-icon">
+                         <a href="{{ url_for('log_view') }}" class="menu-link-style"><span class="menu-text">Logs</span></a>
+                    </li>
+                     <li class="menu-item {% if request.endpoint == 'test_page' %}menu-item-active{% endif %}" data-view="test-tools-page" title="เครื่องมือทดสอบระบบเครือข่าย">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-test-tools-placeholder.png?placeholder=true" alt="ไอคอน Test Tools" class="menu-icon placeholder-icon">
+                         <a href="{{ url_for('test_page') }}" class="menu-link-style"><span class="menu-text">Test Tools</span></a>
+                    </li>
+                </ul>
+
+                {% block interface_selector_block %}
+                {% endblock %}
             </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-      {% block content %}{% endblock %}
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+
+            <footer class="sidebar-footer">
+                {% if session.get('logged_in') %}
+                    <div class="user-info" title="ข้อมูลผู้ใช้ที่กำลังเข้าสู่ระบบ">
+                       <span class="user-avatar-placeholder" aria-hidden="true">👤</span>
+                       <span class="user-details">
+                           <strong>{{ session.get('username', 'ผู้ใช้งาน') }}</strong><br>
+                           <small>(สิทธิ์: {{ session.get('role', 'N/A') }})</small>
+                       </span>
+                    </div>
+                    <a href="{{ url_for('logout') }}" class="logout-button" title="ออกจากระบบปัจจุบัน">
+                        <span class="button-icon-placeholder" aria-hidden="true">🚪</span>
+                        ออกจากระบบ
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="login-button-sidebar" title="เข้าสู่ระบบ">
+                        <span class="button-icon-placeholder" aria-hidden="true">🔑</span>
+                        เข้าสู่ระบบ
+                    </a>
+                {% endif %}
+                <p class="app-version">เวอร์ชัน: 1.0.3</p>
+                <p class="copyright-text">&copy; {{ current_year }} BandwidthController Project</p>
+            </footer>
+        </nav>
+
+        <main class="main-content" role="main">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close-alert" data-dismiss="alert" aria-label="Close">&times;</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div> {% block scripts %}
+    {% endblock %}
+</body>
 </html>

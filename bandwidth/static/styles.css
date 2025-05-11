@@ -600,7 +600,20 @@ img {
     cursor: pointer;
     outline: none;
 }
-
+.login-button-submit {
+    display: block; /* << เพิ่ม/แก้ไข บรรทัดนี้ */
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align: center; 
+}
+.prompt-medium {
+  font-family: "Prompt", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
 .modal-form {
     padding: 24px;
     overflow-y: auto; /* Allow form content to scroll */

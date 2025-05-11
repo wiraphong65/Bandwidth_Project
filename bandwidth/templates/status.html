@@ -1,158 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Status</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            padding-top: 56px;
-        }
-        .navbar {
-            background-color: #343a40;
-        }
-        .navbar-brand {
-            color: white;
-        }
-        .navbar-nav .nav-link {
-            color: white;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #f0f0f0;
-        }
-        .container {
-            margin-top: 20px;
-        }
-         .card {
-            margin-bottom: 20px;
-        }
-        .card-header {
-            background-color: #f8f9fa;
-        }
-         .status-item {
-            margin-bottom: 10px;
-        }
-         .status-item strong {
-            display: inline-block;
-            width: 120px; /* Fixed width for labels */
-        }
-         .network-status table {
-             margin-top: 15px;
-         }
-         .network-status th {
-             background-color: #e9ecef;
-         }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <a class="navbar-brand" href="#">Bandwidth Controller</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item"> {# Not active on status page #}
-                    <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
-                </li>
-                {% if session.get('role') == 'admin' %}
-                    <li class="nav-item active"> {# Active on status page #}
-                        <a class="nav-link" href="{{ url_for('status') }}">Status <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('log_view') }}">Logs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('test_page') }}">Test Tools</a>
-                    </li>
-                {% endif %}
-                 {% if session.get('logged_in') %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                </li>
-                {% endif %}
-            </ul>
-             {# Interface selection dropdown is typically only on the dashboard #}
-             {% if interfaces %}
-            <form method="POST" action="{{ url_for('dashboard') }}" class="form-inline my-2 my-lg-0">
-                <select name="interface_dropdown" class="form-control mr-sm-2">
-                    {% for iface in interfaces %}
-                    <option value="{{ iface }}" {% if iface == active_if %} selected {% endif %}>{{ iface }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Set Interface</button>
-            </form>
-            {% endif %}
-        </div>
-    </nav>
+{% extends "base.html" %}
 
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+{% block title %}System Status - Bandwidth Control{% endblock %}
 
-        {% if session.get('role') == 'admin' %} {# Only show status info for admin #}
-            <div class="card">
-                <div class="card-header">
-                    <h4>Server Status</h4>
-                </div>
-                <div class="card-body">
-                    <div class="status-item"><strong>Uptime:</strong> {{ uptime }}</div>
-                    <div class="status-item"><strong>CPU Usage:</strong> {{ cpu_usage }}</div>
-                    <div class="status-item"><strong>Memory Usage:</strong> {{ mem_usage }}</div>
-                    <div class="status-item"><strong>Disk Usage (/):</strong> {{ disk_usage }}</div>
+{% block content %}
+<div class="content-wrapper">
+    <header class="page-header">
+        <h2 id="current-view-title">สถานะระบบ (System Status)</h2>
+    </header>
 
-                    <hr>
+    {% if session.get('role') == 'admin' %}
+        <div class="status-card card"> <div class="card-header">
+                <h4>ข้อมูลสถานะ Server</h4>
+            </div>
+            <div class="card-body">
+                <div class="status-item"><strong>Uptime:</strong> {{ uptime | default('N/A') }}</div>
+                <div class="status-item"><strong>CPU Usage:</strong> {{ cpu_usage | default('N/A') }}</div>
+                <div class="status-item"><strong>Memory Usage:</strong> {{ mem_usage | default('N/A') }}</div>
+                <div class="status-item"><strong>Disk Usage (/):</strong> {{ disk_usage | default('N/A') }}</div>
 
-                    <h5>Network Interface Status</h5>
-                    {% if network_status %}
-                         <div class="network-status">
-                            <table class="table table-striped table-bordered table-sm">
-                                <thead>
+                <hr>
+
+                <h5>Network Interface Status</h5>
+                {% if network_status %}
+                     <div class="network-status-table-container table-responsive-wrapper">
+                        <table class="rules-table status-table"> <thead>
+                                <tr>
+                                    <th>Interface</th>
+                                    <th>RX (Received)</th>
+                                    <th>TX (Transmitted)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for iface, stats in network_status.items() %}
                                     <tr>
-                                        <th>Interface</th>
-                                        <th>RX (Received)</th>
-                                        <th>TX (Transmitted)</th>
+                                        <td>{{ iface }}</td>
+                                        <td>{{ format_bytes(stats.rx_bytes) if stats.rx_bytes is defined else 'N/A' }}</td>
+                                        <td>{{ format_bytes(stats.tx_bytes) if stats.tx_bytes is defined else 'N/A' }}</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {% for iface, stats in network_status.items() %}
-                                        <tr>
-                                            <td>{{ iface }}</td>
-                                            <td>{{ format_bytes(stats.rx_bytes) }}</td> {# Use the passed format_bytes function #}
-                                            <td>{{ format_bytes(stats.tx_bytes) }}</td> {# Use the passed format_bytes function #}
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                         </div>
-                    {% else %}
-                         <p>No network interface statistics available.</p>
-                    {% endif %}
-
-                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                     </div>
+                {% else %}
+                     <p class="empty-state-message">ไม่พบข้อมูลสถานะ Network Interface</p>
+                {% endif %}
             </div>
-        {% else %}
-             <div class="alert alert-danger" role="alert">
-                Unauthorized access. Please login as an admin to view this page.
-            </div>
-        {% endif %}
+        </div>
+    {% else %}
+         <div class="alert alert-danger" role="alert">
+            คุณไม่ได้รับอนุญาตให้เข้าถึงหน้านี้ กรุณาเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบ
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
 
-
-    </div>
-
-</body>
-</html>
+{% block scripts %}
+    {% endblock %}

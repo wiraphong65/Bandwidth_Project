@@ -1,20 +1,158 @@
-{% extends 'base.html' %}
-{% block title %}Login{% endblock %}
-{% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-4">
-    <h3 class="text-center mb-3">Login</h3>
-    <form method="post">
-      <div class="mb-3">
-        <label class="form-label">Username</label>
-        <input type="text" name="username" class="form-control" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" name="password" class="form-control" required>
-      </div>
-      <button type="submit" class="btn btn-primary w-100">Login</button>
-    </form>
-  </div>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - Bandwidth Control</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  
+    
+    <style>
+        body.login-page-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            font-family: 'Prompt', 'Inter', sans-serif;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 25px;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .login-form input[type="text"]:focus,
+        .login-form input[type="password"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        /* CSS สำหรับปุ่ม Login */
+        .login-button-submit {
+            /* ถ้า class .button จากไฟล์ CSS หลักของคุณมีการกำหนด display: inline-flex;
+              การกำหนด display: block; ที่นี่จะ override เพื่อให้ text-align: center; ทำงานได้เต็มที่
+              สำหรับปุ่มที่กว้าง 100% และมีแค่ข้อความ
+            */
+            display: block; /* << เพิ่ม/แก้ไข บรรทัดนี้ */
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center; /* จัดข้อความให้อยู่กึ่งกลาง */
+            /* สไตล์อื่นๆ เช่น สีพื้นหลัง, สีตัวอักษร จะมาจาก class .button และ .button-primary 
+              ที่ควรจะอยู่ในไฟล์ dashboard_styles.css (หรือ styles.css ของคุณ)
+            */
+        }
+        
+        .flash-messages-login {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+    </style>
+</head>
+<body class="login-page-body">
+
+    <div class="login-container">
+        <header class="login-header">
+            <h1 class="login-title">เข้าสู่ระบบ</h1>
+            <p class="login-subtitle">Bandwidth Control Management</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages-login">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category in ['danger', 'success', 'warning', 'info'] else 'secondary' }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" class="login-form" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="username">ชื่อผู้ใช้งาน (Username)</label>
+                <input type="text" id="username" name="username" class="form-input-field" required autofocus placeholder="กรอกชื่อผู้ใช้งานของคุณ">
+            </div>
+
+            <div class="form-group">
+                <label for="password">รหัสผ่าน (Password)</label>
+                <input type="password" id="password" name="password" class="form-input-field" required placeholder="กรอกรหัสผ่าน">
+            </div>
+
+            <button type="submit" class="button button-primary login-button-submit">เข้าสู่ระบบ</button>
+        </form>
+    </div>
+
+</body>
+</html>
