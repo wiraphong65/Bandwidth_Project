@@ -1011,3 +1011,1170 @@ operable program or batch file.
 2025-05-11 12:42:57,081 - app - INFO - app:1920 - Application attempting to shut down.
 2025-05-11 12:42:57,081 - app - INFO - app:1924 - APScheduler shut down successfully.
 2025-05-11 12:42:57,082 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 12:48:42,827 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 12:48:42,837 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 12:48:42,839 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 12:48:42,841 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 12:48:42,841 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 12:48:45,112 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 12:48:45,164 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:48:45,175 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:48:47,296 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:48:47,311 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:48:47,312 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:48:47,327 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:48:47,339 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:10,812 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:10,812 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:49:10,821 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:10,834 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:11,492 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:11,492 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:49:11,503 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:11,513 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:42,842 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:49:42,877 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:49:59,068 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,069 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:49:59,079 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,130 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,676 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,677 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:49:59,686 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,698 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,868 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,868 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:49:59,878 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:49:59,889 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:50:00,055 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:50:00,056 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:50:00,065 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:50:00,076 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:50:42,833 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:50:42,835 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:51:42,837 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:51:42,840 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:51:58,033 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:51:58,034 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 12:51:58,043 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:51:58,056 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 12:52:42,846 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:52:42,851 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:53:42,841 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:53:42,843 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:54:42,838 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:54:42,842 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:55:42,838 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:55:42,842 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:56:42,838 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:56:42,841 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:57:42,842 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:57:42,844 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:58:42,840 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:58:42,842 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 12:59:42,842 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 12:59:42,844 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:00:42,834 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:00:42,836 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:01:42,842 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:01:42,844 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:02:42,835 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:02:42,837 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:03:42,847 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:03:42,849 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:04:42,834 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:04:42,836 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:05:42,837 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:05:42,840 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:06:42,843 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:06:42,847 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:07:42,833 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:07:42,837 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:08:42,846 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:08:42,850 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:09:42,836 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:09:42,838 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:10:42,835 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:10:42,838 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:11:42,834 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:11:42,838 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:11:51,283 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:51,283 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:11:51,293 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:51,307 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:51,882 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:51,882 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:11:51,893 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:51,904 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,066 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,066 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:11:52,076 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,086 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,233 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,233 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:11:52,242 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,253 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,401 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,401 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:11:52,410 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,423 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,581 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,581 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:11:52,591 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:11:52,602 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:02,214 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:02,215 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:12:02,224 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:02,236 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:05,329 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 13:12:05,330 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 13:12:05,331 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 13:12:42,122 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 13:12:42,133 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 13:12:42,134 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 13:12:42,136 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 13:12:42,136 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 13:12:44,244 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 13:12:44,274 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:44,285 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:46,316 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:46,331 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:46,331 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:12:46,345 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:46,356 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:47,512 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:47,513 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:12:47,522 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:47,533 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,103 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,103 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:12:48,113 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,125 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,280 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,280 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:12:48,290 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,300 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,456 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,456 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:12:48,466 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:12:48,476 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,161 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,161 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:19,170 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,182 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,820 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,820 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:19,831 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,841 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,969 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,969 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:19,979 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:19,991 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,134 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,134 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:20,143 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,153 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,305 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,306 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:20,316 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,368 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,448 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,448 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:20,457 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:20,469 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:21,940 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:21,940 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:21,949 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:21,960 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:36,931 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:36,931 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:36,940 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:36,951 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:37,644 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:37,644 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:37,654 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:37,664 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:37,872 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:37,872 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:37,882 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:37,892 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:42,142 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:13:42,150 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:13:43,718 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:43,718 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:43,727 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:43,737 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:48,167 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:48,167 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:48,178 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:48,191 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:49,687 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:49,687 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:13:49,703 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:49,721 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:13:57,395 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 13:13:57,397 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 13:13:57,397 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 13:14:06,973 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 13:14:06,984 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 13:14:06,986 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 13:14:06,987 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 13:14:06,987 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 13:14:09,389 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 13:14:09,415 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:14:09,426 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:14:11,297 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:14:11,311 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:14:11,312 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:14:11,332 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:14:11,344 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:14:57,267 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 13:14:57,269 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 13:14:57,269 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 13:15:03,685 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 13:15:03,696 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 13:15:03,697 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 13:15:03,699 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 13:15:03,699 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 13:15:07,143 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 13:15:07,171 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:15:07,182 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:15:09,046 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:15:09,061 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:15:09,062 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:15:09,080 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:15:09,092 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:16:03,697 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:16:03,709 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:17:03,694 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:17:03,698 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:17:43,192 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,192 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:17:43,202 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,216 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,715 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,715 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:17:43,725 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,736 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,884 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,884 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:17:43,894 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:17:43,904 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:18:03,704 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:18:03,708 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:19:03,692 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:19:03,696 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:19:39,827 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:19:39,838 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:19:42,824 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:19:42,839 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:19:42,839 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:19:42,850 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:19:42,863 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:20:03,699 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:20:03,702 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:21:03,701 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:21:03,705 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:22:03,694 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:22:03,698 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:23:03,704 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:23:03,708 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:24:03,693 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:24:03,698 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:24:21,835 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:21,836 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:24:21,845 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:21,858 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:21,925 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:26,952 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:26,952 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:24:26,963 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:26,974 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:27,043 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:30,054 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:30,054 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:24:30,063 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:30,074 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:24:30,121 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:25:03,697 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:25:03,699 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:25:47,907 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:25:47,908 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:25:47,917 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:25:47,930 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:25:47,991 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:26:03,700 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:26:03,704 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:27:03,697 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:27:03,701 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:28:03,700 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:28:03,702 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:29:03,696 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:29:03,697 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:30:03,702 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:30:03,706 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:31:03,706 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:31:03,708 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:32:03,702 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:32:03,703 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:33:03,697 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:33:03,698 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:34:03,699 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:34:03,701 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:35:03,694 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:35:03,696 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:35:27,201 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:35:27,202 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:35:27,211 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:35:27,225 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:35:27,286 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:03,707 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:36:03,711 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:36:06,597 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:06,597 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:36:06,607 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:06,618 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:06,669 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:07,193 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:07,193 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:36:07,205 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:07,217 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:36:07,261 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:37:03,701 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:37:03,705 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:38:03,693 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:38:03,695 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:39:03,696 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:39:03,699 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:40:03,698 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:40:03,700 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:41:03,700 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:41:03,701 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:42:03,698 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:42:03,702 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:42:32,168 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:42:32,169 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:42:32,180 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:42:32,189 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:42:32,257 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:42:32,751 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:42:32,752 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:42:32,761 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:42:32,773 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:42:32,807 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:43:03,699 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:43:03,703 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:44:03,693 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:44:03,695 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:45:03,703 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:45:03,707 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:46:03,696 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:46:03,700 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:47:03,694 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:47:03,698 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:48:03,706 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:48:03,708 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:49:03,693 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:49:03,695 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:50:03,704 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:50:03,708 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:51:03,702 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:51:03,706 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:52:03,698 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:52:03,702 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:52:51,576 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:51,576 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:52:51,586 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:51,599 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:51,664 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,146 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,146 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:52:52,158 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,167 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,208 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,322 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,323 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:52:52,333 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,344 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,381 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,474 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,475 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:52:52,486 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,496 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,533 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,635 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,635 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:52:52,644 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,656 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:52,693 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:57,475 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:57,476 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:52:57,484 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:57,496 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:52:57,537 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:01,078 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 13:53:01,080 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 13:53:01,081 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 13:53:12,788 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 13:53:12,799 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 13:53:12,802 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 13:53:12,804 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 13:53:12,804 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 13:53:16,088 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 13:53:16,111 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:16,125 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:17,900 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:17,915 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:17,915 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:53:17,953 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:17,964 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:18,033 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:19,362 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:19,363 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:53:19,374 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:19,384 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:53:19,428 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:02,815 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:02,816 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:54:02,826 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:02,840 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:02,880 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,304 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,308 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:54:03,317 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,329 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,368 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,474 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,474 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:54:03,483 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,495 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,535 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,629 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,630 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:54:03,640 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,651 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:03,693 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:07,764 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 13:54:07,766 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 13:54:07,767 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 13:54:11,811 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 13:54:11,823 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 13:54:11,824 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 13:54:11,826 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 13:54:11,826 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 13:54:13,504 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 13:54:13,527 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:13,540 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:15,950 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:15,965 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:15,965 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:54:16,001 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:16,011 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:54:16,099 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:55:11,834 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:55:11,856 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:56:11,842 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:56:11,882 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:57:11,833 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:57:11,836 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:58:11,827 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 13:58:11,829 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 13:58:12,653 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:12,653 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:58:12,663 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:12,676 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:12,721 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,157 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,158 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:58:13,168 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,179 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,220 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,341 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,341 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:58:13,351 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,363 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,406 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,525 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,526 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:58:13,535 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,546 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,586 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,688 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,689 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:58:13,699 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,710 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:13,748 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:21,401 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 13:58:21,402 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 13:58:21,403 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 13:58:24,411 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 13:58:24,421 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 13:58:24,423 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 13:58:24,425 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 13:58:24,425 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 13:58:27,141 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 13:58:27,165 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:27,179 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:30,127 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:30,141 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:30,142 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:58:30,179 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:30,190 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:58:30,334 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:01,865 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:01,866 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:59:01,876 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:01,889 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:01,933 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:02,298 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:02,299 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:59:02,310 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:02,321 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:02,376 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:04,182 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:04,192 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,003 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,003 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:59:19,012 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,028 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,087 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,653 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,653 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:59:19,663 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,675 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:19,726 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,285 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,285 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:59:20,297 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,308 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,363 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,505 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,505 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:59:20,515 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,526 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:20,568 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:24,125 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 13:59:24,126 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 13:59:24,127 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 13:59:38,750 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 13:59:38,760 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 13:59:38,762 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 13:59:38,764 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 13:59:38,764 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 13:59:42,474 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 13:59:42,502 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:42,512 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:44,692 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:44,710 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:44,710 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 13:59:44,739 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:44,752 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 13:59:44,838 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:00:38,758 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:00:38,769 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:01:38,756 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:01:38,760 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:02:38,769 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:02:38,771 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:03:31,471 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:31,471 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:03:31,481 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:31,495 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:31,534 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:31,960 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:31,960 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:03:31,970 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:31,981 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,021 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,176 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,176 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:03:32,186 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,197 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,239 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,363 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,364 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:03:32,374 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,386 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:32,428 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:37,527 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 14:03:37,529 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 14:03:37,530 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 14:03:41,415 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 14:03:41,426 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 14:03:41,428 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 14:03:41,429 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 14:03:41,429 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 14:03:43,815 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 14:03:43,842 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:43,855 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:45,588 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:45,605 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:45,606 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:03:45,640 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:45,651 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:45,756 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:50,237 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:03:50,248 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:04:41,425 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:04:41,436 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:05:41,421 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:05:41,423 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:06:16,282 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:16,283 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:06:16,293 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:16,305 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:16,386 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:17,265 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:17,266 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:06:17,276 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:17,288 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:17,345 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:06:41,424 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:06:41,429 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:07:41,435 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:07:41,437 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:08:38,169 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:38,169 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:08:38,181 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:38,193 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:38,242 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:38,727 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:38,727 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:08:38,738 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:38,751 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:38,805 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:08:41,429 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:08:41,433 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:09:27,322 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:27,322 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:09:27,332 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:27,344 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:27,390 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:27,912 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:27,912 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:09:27,926 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:27,937 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:27,993 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:09:41,434 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:09:41,436 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:10:41,431 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:10:41,432 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:11:41,432 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:11:41,437 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:11:51,626 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:51,626 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:11:51,636 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:51,649 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:51,694 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,130 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,131 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:11:52,149 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,164 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,242 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,648 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,649 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:11:52,659 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,671 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:11:52,720 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:12:41,433 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:12:41,435 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:13:41,437 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:13:41,439 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:14:05,360 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:05,361 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:14:05,371 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:05,386 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:05,439 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:05,903 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:05,904 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:14:05,914 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:05,927 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:05,979 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:14:41,426 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:14:41,430 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:15:14,064 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:15:14,064 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:15:14,074 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:15:14,089 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:15:14,136 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:15:41,425 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:15:41,429 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:16:26,797 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:26,797 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:16:26,806 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:26,818 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:26,864 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,179 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,179 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:16:30,188 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,201 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,247 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,671 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,671 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:16:30,682 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,694 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:30,749 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:32,371 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:32,371 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:16:32,380 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:32,393 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:32,594 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:39,884 - app - INFO - app:1920 - Application attempting to shut down.
+2025-05-11 14:16:39,886 - app - INFO - app:1924 - APScheduler shut down successfully.
+2025-05-11 14:16:39,886 - app - INFO - app:1927 - Application shutdown process complete.
+2025-05-11 14:16:43,748 - app - INFO - app:107 - Logging configured successfully.
+2025-05-11 14:16:43,759 - app - INFO - app:1889 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-11 14:16:43,761 - app - INFO - app:1893 - Database tables created/checked successfully.
+2025-05-11 14:16:43,763 - app - INFO - app:1901 - APScheduler started successfully.
+2025-05-11 14:16:43,763 - app - INFO - app:1907 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-11 14:16:45,609 - app - WARNING - app:1207 - User not logged in, redirecting to login
+2025-05-11 14:16:45,634 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:45,646 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:48,272 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:48,286 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:48,287 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:16:48,327 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:48,339 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:48,457 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:50,134 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:50,135 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:16:50,144 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:50,156 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:16:50,203 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:17:13,714 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:17:13,723 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:17:21,831 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:17:21,840 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:17:43,770 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:17:43,779 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:18:43,760 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:18:43,764 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:19:43,757 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:19:43,761 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:20:43,764 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:20:43,770 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:21:43,764 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:21:43,766 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:22:43,769 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:22:43,771 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:23:43,762 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:23:43,766 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:24:43,765 - app - INFO - app:1111 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-11 14:24:43,768 - app - INFO - app:1160 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-11 14:24:54,746 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:54,746 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:24:54,756 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:54,766 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:54,834 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:55,582 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:55,583 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:24:55,594 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:55,605 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:55,659 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:56,235 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:56,236 - app - INFO - app:1253 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-11 14:24:56,246 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:56,257 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.
+2025-05-11 14:24:56,300 - app - ERROR - app:177 - Command failed: ip -o link show - Exit: 1 - Output: 'ip' is not recognized as an internal or external command,
+operable program or batch file.

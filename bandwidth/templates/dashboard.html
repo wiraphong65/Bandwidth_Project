@@ -1,43 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bandwidth Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bandwidth-control.css') }}">
-</head>
-<body>
-  <div class="app-container">
-    <nav class="sidebar">
-      <header class="sidebar-header">
-        <h1 class="sidebar-title">Bandwidth Control</h1>
-        <p class="sidebar-subtitle">Traffic Management</p>
-      </header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandwidth Control Dashboard - จัดการแบนด์วิดท์</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    </head>
+<body style="font-family: 'Prompt', sans-serif;"> <div class="app-layout">
+        <nav class="sidebar">
+            <div class="sidebar-sticky-content">
+                <header class="sidebar-header">
+                    <h1 class="sidebar-title">Bandwidth Control</h1>
+                    <p class="sidebar-subtitle">ระบบจัดการทราฟฟิกเครือข่าย</p>
+                </header>
 
-      <div class="sidebar-content">
-              </div>
+                <ul class="navigation-menu" aria-label="เมนูหลัก">
+                    <li class="menu-item menu-item-active" data-view="simple-queues" title="จัดการ Rules การจำกัดแบนด์วิดท์พื้นฐาน">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/0fb439213d2cb4644eb3f800c818f25049cb8d6b?placeholderIfAbsent=true" alt="ไอคอน Simple Queues" class="menu-icon">
+                        <span class="menu-text">Simple Queues</span>
+                    </li>
+                    <li class="menu-item" data-view="queue-tree" title="จัดการโครงสร้าง Queue ขั้นสูง (ถ้ามี)">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/281e70674536454a0bcc371fde243369bc7c0b6d?placeholderIfAbsent=true" alt="ไอคอน Queue Tree" class="menu-icon">
+                        <span class="menu-text">Queue Tree</span>
+                    </li>
+                    <li class="menu-item" data-view="filter-rules" title="จัดการกฎการกรองทราฟฟิก (ถ้ามี)">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/90eaf96a82f05cb778f98c767347e6e9c912f84d?placeholderIfAbsent=true" alt="ไอคอน Filter Rules" class="menu-icon">
+                        <span class="menu-text">Filter Rules</span>
+                    </li>
+                    <li class="menu-item" data-view="status-page" title="ดูสถานะโดยรวมของระบบ">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-status-placeholder.png?placeholder=true" alt="ไอคอนสถานะระบบ" class="menu-icon placeholder-icon"> <a href="{{ url_for('status') }}" class="menu-link-style"><span class="menu-text">สถานะระบบ</span></a>
+                    </li>
+                    <li class="menu-item" data-view="logs-page" title="ดูประวัติการทำงานและ Log ของระบบ">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-logs-placeholder.png?placeholder=true" alt="ไอคอน Logs" class="menu-icon placeholder-icon"> <a href="{{ url_for('log_view') }}" class="menu-link-style"><span class="menu-text">Logs</span></a>
+                    </li>
+                </ul>
 
-      <footer class="sidebar-footer">
-        <div class="interface-selector">
-          <label for="interface" class="interface-label">Interface</label>
-          <select id="interface" class="interface-select">
-            {% if interfaces_list %}
-              {% for iface in interfaces_list %}
-              <option value="{{ iface }}" {% if iface == current_active_if %}selected{% endif %}>{{ iface }}</option>
-              {% endfor %}
-            {% else %}
-              <option value="">No interfaces found</option>
-            {% endif %}
-          </select>
-        </div>
-      </footer>
-    </nav>
+                <div class="interface-selector-container">
+                    <label for="interface" class="interface-label">เลือก Network Interface:</label>
+                    <select id="interface" class="interface-select-element" name="interface_dropdown" title="เลือก Interface เพื่อดูและจัดการ Rules">
+                        {% if interfaces %}
+                            {% for iface in interfaces %}
+                                <option value="{{ iface }}" {% if iface == active_if %}selected{% endif %}>{{ iface }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">กำลังโหลด Interfaces...</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
 
-    <main class="main-content">
-          </main>
-  </div>
+            <footer class="sidebar-footer">
+                {% if session.get('logged_in') %}
+                    <div class="user-info" title="ข้อมูลผู้ใช้ที่กำลังเข้าสู่ระบบ">
+                       <span class="user-avatar-placeholder" aria-hidden="true">👤</span>
+                       <span class="user-details">
+                           <strong>{{ session.get('username', 'ผู้ใช้งาน') }}</strong><br>
+                           <small>(สิทธิ์: {{ session.get('role', 'N/A') }})</small>
+                       </span>
+                    </div>
+                    <a href="{{ url_for('logout') }}" class="logout-button" title="ออกจากระบบปัจจุบัน">
+                        <span class="button-icon-placeholder" aria-hidden="true">🚪</span>
+                        ออกจากระบบ
+                    </a>
+                {% endif %}
+                <p class="app-version">เวอร์ชัน: 1.0.3</p>
+                <p class="copyright-text">&copy; {{ current_year }} BandwidthController Project</p>
+            </footer>
+        </nav>
 
-    <script src="{{ url_for('static', filename='js/bandwidth-control.js') }}"></script>
+        <main class="main-content" aria-labelledby="current-view-title">
+            <div class="content-wrapper">
+                <header class="page-header">
+                    <h2 id="current-view-title">การจัดการ Simple Queues</h2>
+                    <div class="action-bar" role="toolbar" aria-label="แถบเครื่องมือจัดการ Rules">
+                        <button id="add-rule-btn" class="button button-primary" title="เพิ่ม Rule ใหม่ (คีย์ลัด: A)">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/e2093452b76d4db8bb4b01a220353959/85ef0503fd981a23e4d6b79dc4e35babdcf32fbc?placeholderIfAbsent=true" alt="" class="button-icon">
+                            เพิ่ม Rule
+                        </button>
+                        <button id="remove-rules-btn" class="button button-danger" title="ลบ Rules ที่เลือก (คีย์ลัด: Delete)" disabled>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-remove-placeholder.png?placeholder=true" alt="" class="button-icon placeholder-icon"> ลบที่เลือก
+                        </button>
+                        <button id="enable-rules-btn" class="button button-secondary" title="สลับสถานะ (เปิด/ปิด) Rules ที่เลือก (คีย์ลัด: E)" disabled>
+                             <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/icon-toggle-placeholder.png?placeholder=true" alt="" class="button-icon placeholder-icon"> เปิด/ปิด
+                        </button>
+                        <div class="search-container">
+                            <label for="search-input" class="visually-hidden">ค้นหา Rules</label>
+                            <input type="search" id="search-input" class="search-input-field" placeholder="ค้นหา (เช่น IP, ชื่อ Rule)..." aria-label="กล่องค้นหา Rules">
+                        </div>
+                    </div>
+                </header>
+
+                <div class="data-table-container">
+                    <div class="table-responsive-wrapper">
+                        <table class="rules-table" aria-label="รายการ Bandwidth Control Rules">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-column" scope="col"><label for="select-all" class="visually-hidden">เลือกทั้งหมด</label><input type="checkbox" id="select-all" title="เลือก/ยกเลิกการเลือก Rules ทั้งหมดในหน้านี้"></th>
+                                    <th scope="col">ชื่อ Rule/คำอธิบาย</th>
+                                    <th scope="col">Target IP</th>
+                                    <th scope="col">ทิศทาง</th>
+                                    <th scope="col">Rate</th>
+                                    <th scope="col">Max Limit</th>
+                                    <th scope="col">กลุ่ม</th>
+                                    <th scope="col">สถานะ</th>
+                                    <th scope="col">กำหนดเวลา</th>
+                                    <th scope="col" class="actions-column">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rules-body">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div id="loading-rules-message" class="loading-state" style="display:none;" aria-live="polite">
+                        <p>กำลังโหลดข้อมูล Rules, กรุณารอสักครู่...</p>
+                    </div>
+                    <div id="no-rules-message" class="empty-state" style="display:none;">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/empty-box-placeholder.png?placeholder=true" alt="ไอคอนกล่องว่าง" class="empty-state-icon">
+                        <p class="empty-state-text">ยังไม่มี Rules สำหรับ Interface นี้ หรือไม่พบข้อมูลที่ตรงกับการค้นหาของคุณ</p>
+                        <button id="add-first-rule-btn" class="button button-primary">เริ่มสร้าง Rule แรก!</button>
+                    </div>
+                </div>
+
+                <section class="monitoring-section" aria-labelledby="monitoring-heading">
+                    <h3 id="monitoring-heading" class="section-title">ภาพรวมการใช้งาน Bandwidth</h3>
+                    <div class="monitoring-layout">
+                        <div class="monitoring-panel download-panel" role="region" aria-labelledby="download-title">
+                            <h4 id="download-title" class="monitoring-title">Download</h4>
+                            <p class="monitoring-value" id="download-value" title="ปริมาณ Download ปัจจุบันของ Interface ที่เลือก">N/A</p>
+                            <p class="monitoring-subtitle">Throughput ปัจจุบัน</p>
+                        </div>
+                        <div class="monitoring-panel upload-panel" role="region" aria-labelledby="upload-title">
+                            <h4 id="upload-title" class="monitoring-title">Upload</h4>
+                            <p class="monitoring-value" id="upload-value" title="ปริมาณ Upload ปัจจุบันของ Interface ที่เลือก">N/A</p>
+                            <p class="monitoring-subtitle">Throughput ปัจจุบัน</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="group-limits-section" aria-labelledby="group-limits-heading">
+                    <h3 id="group-limits-heading" class="section-title">การจัดการ Group Limits</h3>
+                    <div id="group-limits-container">
+                        <p class="empty-state-message">ส่วนการจัดการ Group Limits จะแสดงที่นี่ (ยังไม่เปิดใช้งาน)</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="rule-modal" class="modal" style="display:none;" role="dialog" aria-labelledby="modal-title-text" aria-modal="true">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="modal-title-text" class="modal-title-text">เพิ่ม Rule ใหม่</h3>
+                <button id="close-modal-btn" class="modal-close-button" title="ปิดหน้าต่างนี้" aria-label="ปิดหน้าต่าง">&times;</button>
+            </header>
+            <form id="rule-form" class="modal-form" novalidate>
+                <input type="hidden" id="rule-id-input" name="rule_id">
+
+                <div class="form-section">
+                    <h4 class="form-section-title">ข้อมูลพื้นฐานของ Rule</h4>
+                    <div class="form-row">
+                        <div class="form-group form-group-full">
+                            <label for="rule-description">ชื่อ Rule หรือคำอธิบาย <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="text" id="rule-description" name="description" required placeholder="เช่น 'จำกัดแบนด์วิดท์สำหรับแผนกบัญชี'" aria-describedby="description-help">
+                            <small id="description-help" class="form-text-help">ระบุชื่อที่สื่อความหมายเพื่อให้ง่ายต่อการจัดการ</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-ip">Target IP Address <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="text" id="rule-ip" name="ip" required pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" title="กรุณากรอก IPv4 Address ที่ถูกต้อง (เช่น 192.168.1.10)" placeholder="เช่น 192.168.1.10">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-direction">ทิศทาง (Direction) <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <select id="rule-direction" name="direction" required aria-label="เลือกทิศทางการจำกัดแบนด์วิดท์">
+                                <option value="download" selected>Download (ข้อมูลเข้า)</option>
+                                <option value="upload">Upload (ข้อมูลออก)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-rate-value">Rate จำกัด <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="number" id="rule-rate-value" name="rate_value" min="1" required placeholder="เช่น 5" aria-describedby="rate-help">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-rate-unit">หน่วย Rate <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <select id="rule-rate-unit" name="rate_unit" aria-label="เลือกหน่วยของ Rate">
+                                <option value="kbps">Kbps</option>
+                                <option value="mbps" selected>Mbps</option>
+                                <option value="gbps">Gbps</option>
+                            </select>
+                        </div>
+                    </div>
+                     <small id="rate-help" class="form-text-help">กำหนดความเร็วสูงสุดที่อนุญาตสำหรับ IP นี้</small>
+                </div>
+
+                <fieldset class="form-fieldset">
+                    <legend class="form-section-title">ตัวเลือกขั้นสูง (Advanced Options)</legend>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-burst-value">Max Limit / Burst</label>
+                            <input type="number" id="rule-burst-value" name="burst_value" min="0" placeholder="เช่น 10 (ถ้ามี)" aria-describedby="burst-help">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-burst-unit">หน่วย Burst</label>
+                            <select id="rule-burst-unit" name="burst_unit" aria-label="เลือกหน่วยของ Burst">
+                                <option value="">-</option>
+                                <option value="kbit">kbit</option>
+                                <option value="mbit">Mbit</option>
+                                <option value="gbit">Gbit</option>
+                                <option value="kbps">KB/s (bytes)</option>
+                                <option value="mbps">MB/s (bytes)</option>
+                            </select>
+                        </div>
+                    </div>
+                     <small id="burst-help" class="form-text-help">กำหนดปริมาณข้อมูลที่อนุญาตให้เกิน Rate ได้ชั่วขณะ (ถ้าไม่ระบุ จะเท่ากับ Rate)</small>
+
+                    <div class="form-row">
+                         <div class="form-group">
+                            <label for="rule-cburst-value">Ceiling Burst (CBurst)</label>
+                            <input type="number" id="rule-cburst-value" name="cburst_value" min="0" placeholder="ถ้ามี (สำหรับ HTB)">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-cburst-unit">หน่วย CBurst</label>
+                            <select id="rule-cburst-unit" name="cburst_unit" aria-label="เลือกหน่วยของ Ceiling Burst">
+                                <option value="">-</option>
+                                <option value="kbit">kbit</option>
+                                <option value="mbit">Mbit</option>
+                                <option value="gbit">Gbit</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-group-name">ชื่อกลุ่ม (Group Name)</label>
+                            <input type="text" id="rule-group-name" name="group_name" placeholder="ถ้าต้องการจัด Rule นี้เข้ากลุ่ม">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-priority">Priority (สำหรับ HTB)</label>
+                            <input type="number" id="rule-priority" name="priority" min="0" max="7" placeholder="1-7 (น้อย=สำคัญ)">
+                        </div>
+                    </div>
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-protocol">Protocol</label>
+                            <select id="rule-protocol" name="protocol" aria-label="เลือก Protocol">
+                                <option value="">Any</option>
+                                <option value="tcp">TCP</option>
+                                <option value="udp">UDP</option>
+                                <option value="icmp">ICMP</option>
+                            </select>
+                        </div>
+                         <div class="form-group">
+                            <label for="rule-source-port">Source Port</label>
+                            <input type="text" id="rule-source-port" name="source_port" placeholder="เช่น 80 หรือ 1000-2000">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-destination-port">Destination Port</label>
+                            <input type="text" id="rule-destination-port" name="destination_port" placeholder="เช่น 443">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="form-group">
+                    <input type="checkbox" id="rule-is-enabled" name="is_enabled" checked>
+                    <label for="rule-is-enabled">เปิดใช้งาน Rule นี้ทันทีเมื่อบันทึก</label>
+                </div>
+
+                <div class="form-group scheduling-toggle">
+                    <input type="checkbox" id="enable-scheduling" name="enable_scheduling" aria-controls="scheduling-options">
+                    <label for="enable-scheduling">ตั้งเวลาการทำงานสำหรับ Rule นี้</label>
+                </div>
+
+                <fieldset id="scheduling-options" class="form-fieldset" style="display:none;">
+                    <legend class="form-section-title">ตัวเลือกการตั้งเวลา</legend>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-start-time">เวลาเริ่ม (HH:MM) <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="time" id="rule-start-time" name="start_time" aria-describedby="schedule-time-help">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-end-time">เวลาสิ้นสุด (HH:MM) <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="time" id="rule-end-time" name="end_time" aria-describedby="schedule-time-help">
+                        </div>
+                    </div>
+                     <small id="schedule-time-help" class="form-text-help">จำเป็นต้องระบุถ้าเปิดใช้งานการตั้งเวลา</small>
+
+                    <div class="form-group">
+                        <label>วันในสัปดาห์ที่ใช้งาน (เลือกอย่างน้อย 1 วันถ้าตั้งเวลา):</label>
+                        <div class="weekdays-selector" role="group" aria-label="เลือกวันในสัปดาห์">
+                            <input type="checkbox" id="wd-mon" name="weekdays" value="Mon"><label for="wd-mon">จ.</label>
+                            <input type="checkbox" id="wd-tue" name="weekdays" value="Tue"><label for="wd-tue">อ.</label>
+                            <input type="checkbox" id="wd-wed" name="weekdays" value="Wed"><label for="wd-wed">พ.</label>
+                            <input type="checkbox" id="wd-thu" name="weekdays" value="Thu"><label for="wd-thu">พฤ.</label>
+                            <input type="checkbox" id="wd-fri" name="weekdays" value="Fri"><label for="wd-fri">ศ.</label>
+                            <input type="checkbox" id="wd-sat" name="weekdays" value="Sat"><label for="wd-sat">ส.</label>
+                            <input type="checkbox" id="wd-sun" name="weekdays" value="Sun"><label for="wd-sun">อา.</label>
+                        </div>
+                    </div>
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-start-date">วันที่เริ่ม (ถ้าต้องการระบุช่วงวันที่)</label>
+                            <input type="date" id="rule-start-date" name="start_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-end-date">วันที่สิ้นสุด (ถ้าต้องการระบุช่วงวันที่)</label>
+                            <input type="date" id="rule-end-date" name="end_date">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="modal-actions">
+                    <button type="submit" id="save-rule-btn" class="button button-primary">
+                        <span class="button-icon" aria-hidden="true">💾</span> บันทึก Rule
+                    </button>
+                    <button type="button" id="cancel-modal-btn" class="button button-secondary">
+                        ยกเลิก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/bandwidth-control.js') }}"></script>
 </body>
 </html>
