@@ -1,129 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Logs</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+{% extends "base.html" %}
+
+{% block title %}Application Logs - Bandwidth Control{% endblock %}
+
+{% block head_extra %}
     <style>
-        body {
-            padding-top: 56px;
-        }
-        .navbar {
-            background-color: #343a40;
-        }
-        .navbar-brand {
-            color: white;
-        }
-        .navbar-nav .nav-link {
-            color: white;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #f0f0f0;
-        }
-        .container {
-            margin-top: 20px;
-        }
-         .card {
+        /* สไตล์เฉพาะสำหรับหน้า Logs สามารถย้ายไปไว้ใน dashboard_styles.css ได้ */
+        .logs-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
             margin-bottom: 20px;
         }
-        .card-header {
+
+        .logs-card-header {
+            padding: 12px 20px;
             background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-         .log-content {
-            background-color: #f8f9fa;
+
+        .logs-card-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .log-actions button { /* สไตล์สำหรับปุ่ม Refresh/Download */
+            margin-left: 10px;
+        }
+
+        .logs-card-body {
+            padding: 0; /* ให้ pre จัดการ padding เอง */
+        }
+
+        .log-content-wrapper {
+            max-height: 60vh; /* กำหนดความสูงสูงสุดและให้ scroll ได้ */
+            overflow-y: auto;
             border: 1px solid #dee2e6;
-            padding: 15px;
-            overflow-x: auto; /* Add horizontal scroll for long lines */
-            white-space: pre-wrap; /* Wrap long lines */
-            word-wrap: break-word; /* Break words if needed */
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; /* Monospaced font for logs */
-            font-size: 0.9em;
-         }
-          pre {
-             margin: 0; /* Remove default pre margin */
-             white-space: pre-wrap; /* Ensure pre respects wrapping from parent */
-             word-wrap: break-word;
-          }
+            border-top: none; /* เพราะ header มี border-bottom แล้ว */
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .log-content {
+            background-color: #282c34; /* Dark background for logs */
+            color: #abb2bf; /* Light grey text for logs */
+            padding: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.875em; /* 14px if base is 16px */
+            line-height: 1.6;
+            margin: 0; /* pre tag reset */
+        }
+        .log-content::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .log-content::-webkit-scrollbar-track {
+            background: #3c4048;
+        }
+        .log-content::-webkit-scrollbar-thumb {
+            background-color: #5c6370;
+            border-radius: 4px;
+        }
+        .log-content::-webkit-scrollbar-thumb:hover {
+            background-color: #7f848e;
+        }
+
     </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <a class="navbar-brand" href="#">Bandwidth Controller</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item"> {# Not active on logs page #}
-                    <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
-                </li>
-                {% if session.get('role') == 'admin' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('status') }}">Status</a>
-                    </li>
-                    <li class="nav-item active"> {# Active on logs page #}
-                        <a class="nav-link" href="{{ url_for('log_view') }}">Logs <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('test_page') }}">Test Tools</a>
-                    </li>
-                {% endif %}
-                 {% if session.get('logged_in') %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                </li>
-                {% endif %}
-            </ul>
-             {# Interface selection dropdown - included for consistency but less relevant here #}
-              {% if interfaces %}
-            <form method="POST" action="{{ url_for('dashboard') }}" class="form-inline my-2 my-lg-0">
-                <select name="interface_dropdown" class="form-control mr-sm-2">
-                    {% for iface in interfaces %}
-                    <option value="{{ iface }}" {% if iface == active_if %} selected {% endif %}>{{ iface }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Set Interface</button>
-            </form>
-            {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <header class="page-header">
+        <h2 id="current-view-title">Application Logs</h2>
+        </header>
+
+    {% if session.get('role') == 'admin' %}
+        <div class="logs-card">
+            <div class="logs-card-header">
+                <h4>
+                    Log Viewer 
+                    {% if log_content %}
+                        (แสดงประมาณ {{ log_content.count('\n') + 1 }} บรรทัดล่าสุด)
+                    {% else %}
+                        (ไม่พบข้อมูล Log)
+                    {% endif %}
+                </h4>
+                <div class="log-actions">
+                    <button id="refresh-logs-btn" class="button button-secondary button-sm" title="โหลด Log ล่าสุด">
+                        <span class="button-icon" aria-hidden="true">🔄</span> รีเฟรช
+                    </button>
+                    </div>
+            </div>
+            <div class="logs-card-body">
+                <div class="log-content-wrapper">
+                    <pre id="log-content-pre" class="log-content">{{ log_content | default('ยังไม่มีข้อมูล Log ในขณะนี้ หรือไม่สามารถโหลดไฟล์ Log ได้') }}</pre>
+                </div>
+            </div>
         </div>
-    </nav>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            คุณไม่ได้รับอนุญาตให้เข้าถึงหน้านี้ กรุณาเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบ
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
 
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+{% block scripts %}
+    {% if session.get('role') == 'admin' %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const refreshButton = document.getElementById('refresh-logs-btn');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', function() {
+                    // แสดงสถานะกำลังโหลด (ถ้าต้องการ)
+                    const logPre = document.getElementById('log-content-pre');
+                    if(logPre) logPre.textContent = 'กำลังโหลด Log ล่าสุด...';
+                    
+                    // โหลดหน้าซ้ำเพื่อดึง Log ใหม่
+                    // หรือใช้ AJAX call ไปยัง API endpoint ที่คืนค่า Log content ถ้ามี
+                    window.location.reload(); 
+                });
+            }
 
-         {% if session.get('role') == 'admin' %} {# Only show log content for admin #}
-            <div class="card">
-                <div class="card-header">
-                    <h4>Application Logs (Last {{ log_content.count('\n') + 1 if log_content else 0 }} lines)</h4>
-                </div>
-                <div class="card-body">
-                    <div class="log-content">
-                         <pre>{{ log_content }}</pre> {# Use <pre> to preserve formatting #}
-                    </div>
-                </div>
-            </div>
-         {% else %}
-             <div class="alert alert-danger" role="alert">
-                Unauthorized access. Please login as an admin to view this page.
-            </div>
-         {% endif %}
-
-    </div>
-
-</body>
-</html>
+            // Auto scroll to bottom of log content if there's content
+            const logContentWrapper = document.querySelector('.log-content-wrapper');
+            if (logContentWrapper && logContentWrapper.scrollHeight > logContentWrapper.clientHeight) {
+                logContentWrapper.scrollTop = logContentWrapper.scrollHeight;
+            }
+        });
+    </script>
+    {% endif %}
+{% endblock %}
