@@ -14,6 +14,8 @@ from datetime import datetime, time as dtime, date as ddate
 from sqlalchemy import or_, and_
 from datetime import datetime, timezone
 import shlex
+from datetime import timezone
+import ipaddress
 # --- Flask App Initialization and Configuration ---
 app = Flask(__name__, instance_relative_config=True) # instance_relative_config=True is good practice
 
@@ -1062,34 +1064,185 @@ def is_rule_scheduled_active_now(rule_obj, current_datetime):
     return date_match # If all checks pass or are not applicable
 
 
-# --- (The definitions for apply_single_tc_rule, clear_single_tc_rule, set_bandwidth_limit, set_group_limit, clear_group_limit
-#      MUST BE THE FULL, DETAILED VERSIONS WE DEVELOPED, adapted for single-file app.py.
-#      These are very long. I will provide the set_bandwidth_limit as the most complex example,
-#      and you will need to ensure the others are similarly complete.)
+def parse_rate_to_tc_format(value_str_input, unit_str_input):
+    """
+    Parses and validates rate/burst/size value and unit, converting them
+    into a TC-compatible string, an approximate bits per second equivalent (for rates),
+    and a standardized string for database storage.
 
-# Placeholder for other helpers like apply_single_tc_rule, clear_single_tc_rule - you need their full code
-    # THIS FUNCTION NEEDS ITS FULL IMPLEMENTATION
-    # It uses: app.logger, run_command, parse_rate_to_tc_format (or parse_rate_input),
-    # parse_tc_class_show, parse_tc_filter_show, GroupLimit.query
-    # It constructs and executes multiple `tc` commands for add/change/delete filters and classes.
-    # It handles burst, cburst, priority.
-    # For now, simplified version of what was last provided for this function:
-    if not rule_obj or not rule_obj.interface: return False
-    if not rule_obj.is_enabled: app.logger.info(f"Rule {rule_obj.id} disabled, skipping TC."); return True
+    Args:
+        value_str_input (str): The numeric part of the rate/size (e.g., "10", "512").
+        unit_str_input (str): The unit part (e.g., "Mbps", "kbps", "k", "mbit").
 
-    # ... (Full logic from previous detailed `apply_single_tc_rule` goes here)
-    # ... (This includes ensuring qdiscs, parent group classes, IP classes, filters for upload)
-    # ... (And ingress police filters for download)
-    # ... (Using rule_obj.priority, rule_obj.burst_str, rule_obj.cburst_str correctly)
-    app.logger.info(f"[Placeholder] apply_single_tc_rule for rule ID {rule_obj.id}. TC commands would be built and run here.")
-    # Example: run_command("tc ...")
-    return True # Assume success for placeholder
+    Returns:
+        tuple: (tc_format_str, bits_per_second_equiv_int, db_storage_str)
+               Returns (None, None, None) if validation or parsing fails.
+    """
+    if value_str_input is None or unit_str_input is None:
+        app.logger.warning("parse_rate_to_tc_format: Received None for value or unit.")
+        return None, None, None
+
+    val_str = str(value_str_input).strip()
+    unit_str = str(unit_str_input).strip()
+
+    if not validate_rate_value(val_str): # validate_rate_value เช็คว่าเป็นตัวเลขบวก
+        app.logger.warning(f"parse_rate_to_tc_format: Invalid rate value '{val_str}'.")
+        return None, None, None
+    
+    # validate_rate_unit ควรจะตรวจสอบหน่วยที่รับมาจาก Form/API
+    # (เช่น 'Mbps', 'Kbps', 'k', 'm', 'kbit', 'mbit')
+    if not validate_rate_unit(unit_str): # ใช้ validate_rate_unit ที่มี whitelist กว้างๆ
+        app.logger.warning(f"parse_rate_to_tc_format: Invalid rate unit '{unit_str}'.")
+        return None, None, None
+
+    val_float = float(val_str)
+    unit_lower = unit_str.lower()
+
+    tc_format = None
+    bps_equiv = None # Relevant for rates, less so for absolute burst sizes in bytes
+    db_format = f"{val_str}{unit_str}" # Default DB format to original input if not specifically formatted
+
+    # --- Rate Units (typically for 'rate' and 'ceil' parameters in tc) ---
+    if unit_lower in ["gbps", "gbit"]:
+        tc_format = f"{val_str}gbit"
+        bps_equiv = int(val_float * 1000 * 1000 * 1000)
+        db_format = f"{val_str}Gbps"
+    elif unit_lower in ["mbps", "mbit"]:
+        tc_format = f"{val_str}mbit"
+        bps_equiv = int(val_float * 1000 * 1000)
+        db_format = f"{val_str}Mbps"
+    elif unit_lower in ["kbps", "kbit"]:
+        tc_format = f"{val_str}kbit"
+        bps_equiv = int(val_float * 1000)
+        db_format = f"{val_str}Kbps"
+    elif unit_lower in ["bps", "bit"]:
+        tc_format = f"{val_str}bit" # TC often prefers 'bit' for plain bits
+        bps_equiv = int(val_float)
+        db_format = f"{val_str}bps"
+    
+    # --- Size/Burst Units (typically for 'burst', 'cburst' in bytes for tc, or direct tc byte units) ---
+    # TC HTB burst/cburst parameters expect a size, often with k, m suffixes for kilobytes, megabytes.
+    # Sometimes 'kb'/'mb' are used for kilobits/megabits in burst context by mistake, tc usually means bytes.
+    # We will assume k, m, g here mean kilobytes, megabytes, gigabytes for burst parameters.
+    # 'b' suffix for tc usually means bytes.
+    elif unit_lower == 'g' or unit_lower == 'gb': # Gigabytes for burst/size
+        tc_format = f"{val_str}g" # TC uses 'g' for Giga (often implying Gigabytes for size params)
+        db_format = f"{val_str}GB"
+        bps_equiv = None # Not a rate
+    elif unit_lower == 'm' or unit_lower == 'mb': # Megabytes for burst/size
+        tc_format = f"{val_str}m" # TC uses 'm' for Mega
+        db_format = f"{val_str}MB"
+        bps_equiv = None
+    elif unit_lower == 'k' or unit_lower == 'kb': # Kilobytes for burst/size
+        tc_format = f"{val_str}k" # TC uses 'k' for Kilo
+        db_format = f"{val_str}KB"
+        bps_equiv = None
+    elif unit_lower == 'b': # Bytes for burst/size
+        tc_format = f"{val_str}b" # TC uses 'b' for Bytes
+        db_format = f"{val_str}B"
+        bps_equiv = None
+    # Add cases for 'Kibit', 'Mibit' if your tc version/context uses them for burst bits
+    # elif unit_lower == 'kibit':
+    #     tc_format = f"{val_str}kibit" # etc.
+
+    else:
+        app.logger.error(f"parse_rate_to_tc_format: Unit '{unit_str}' (parsed as '{unit_lower}') is not explicitly handled for TC conversion after validation.")
+        return None, None, None # Unhandled unit that passed initial validation
+
+    # Sanity check the generated tc_format (though validation helpers should catch bad inputs earlier)
+    if tc_format and (validate_tc_specific_rate_string(tc_format) or validate_tc_specific_burst_string(tc_format)):
+        app.logger.debug(f"Parsed rate/size: Input='{val_str}{unit_str}', TC='{tc_format}', BPS='{bps_equiv}', DB='{db_format}'")
+        return tc_format, bps_equiv, db_format
+    else:
+        app.logger.error(f"parse_rate_to_tc_format: Generated tc_format '{tc_format}' is invalid for value '{val_str}' unit '{unit_str}'.")
+        return None, None, None
+
 PROTO_NAME_TO_NUM_MAP = {
     "tcp": "6",
     "udp": "17",
     "icmp": "1",
     # "ip" or "ipv6" don't need a number here as tc handles them directly
 }
+# ใส่ฟังก์ชันนี้เข้าไปในไฟล์ app.py ในส่วนของ Helper Functions
+# หรือถ้ามีไฟล์ helper อื่น ก็ import เข้ามา
+
+def tc_ensure_root_qdisc(interface, default_classid_minor="10", qdisc_type="htb"):
+    """
+    Ensures that the specified root qdisc (HTB or Ingress) exists on the interface.
+    For HTB, it ensures a root qdisc with handle 1: and a default class 1:<default_classid_minor>.
+    For Ingress, it ensures a qdisc with handle ffff:.
+    Args:
+        interface (str): The network interface name.
+        default_classid_minor (str): The minor ID for the default HTB class (e.g., "10" for 1:10).
+        qdisc_type (str): "htb" or "ingress".
+    Returns:
+        bool: True if qdisc is ensured or already exists, False on failure.
+    """
+    if not validate_interface_name(interface):
+        app.logger.error(f"tc_ensure_root_qdisc: Invalid interface name '{interface}'.")
+        return False
+
+    app.logger.debug(f"Ensuring root {qdisc_type.upper()} qdisc on interface {interface}.")
+
+    # ตรวจสอบ qdisc ที่มีอยู่
+    existing_qdiscs_output = run_command(['tc', 'qdisc', 'show', 'dev', interface])
+
+    if qdisc_type == "htb":
+        root_htb_handle = "1:"
+        # ตรวจสอบว่ามี root HTB qdisc handle 1: อยู่แล้วหรือไม่
+        # และตรวจสอบ default class ด้วย
+        if existing_qdiscs_output and f"qdisc htb {root_htb_handle}" in existing_qdiscs_output:
+            app.logger.info(f"Root HTB qdisc {root_htb_handle} already exists on {interface}.")
+            # เพิ่มการตรวจสอบ default class ถ้าจำเป็น
+            # (การ parse output ของ tc qdisc show อาจจะซับซ้อนกว่านี้)
+            # ถ้า default class ยังไม่มี อาจจะต้อง add/change
+            # สำหรับตอนนี้ ถ้า root htb มีอยู่แล้ว ถือว่า OK ไปก่อน
+            return True
+        else:
+            app.logger.info(f"Root HTB qdisc {root_htb_handle} not found on {interface}. Attempting to add.")
+            # ล้าง root qdisc เก่า (ถ้ามี) เพื่อป้องกัน conflict
+            run_command(['tc', 'qdisc', 'del', 'dev', interface, 'root']) # ใช้ || true เพื่อไม่ให้ error ถ้าไม่มีอยู่แล้ว
+
+            # เพิ่ม root HTB qdisc ใหม่ พร้อม default class
+            # default_class_full_id = f"{root_htb_handle.split(':')[0]}:{default_classid_minor}" # เช่น "1:10"
+            # Python 3.9+ สามารถใช้ .removesuffix(':')
+            root_major = root_htb_handle[:-1] if root_htb_handle.endswith(':') else root_htb_handle
+            default_class_full_id = f"{root_major}:{default_classid_minor}"
+
+            cmd_add_root_htb = ['tc', 'qdisc', 'add', 'dev', interface, 'root', 'handle', root_htb_handle, 'htb', 'default', default_classid_minor]
+            if run_command(cmd_add_root_htb) is not None:
+                app.logger.info(f"Successfully added root HTB qdisc {root_htb_handle} with default class {default_class_full_id} on {interface}.")
+                return True
+            else:
+                app.logger.error(f"Failed to add root HTB qdisc {root_htb_handle} on {interface}.")
+                return False
+    elif qdisc_type == "ingress":
+        ingress_handle = "ffff:"
+        if existing_qdiscs_output and f"qdisc ingress {ingress_handle}" in existing_qdiscs_output:
+            app.logger.info(f"Ingress qdisc {ingress_handle} already exists on {interface}.")
+            return True
+        else:
+            app.logger.info(f"Ingress qdisc {ingress_handle} not found on {interface}. Attempting to add.")
+            # ล้าง ingress qdisc เก่า (ถ้ามี)
+            run_command(['tc', 'qdisc', 'del', 'dev', interface, 'ingress'])
+
+            cmd_add_ingress = ['tc', 'qdisc', 'add', 'dev', interface, 'ingress']
+            if run_command(cmd_add_ingress) is not None:
+                app.logger.info(f"Successfully added ingress qdisc {ingress_handle} on {interface}.")
+                return True
+            else:
+                app.logger.error(f"Failed to add ingress qdisc {ingress_handle} on {interface}.")
+                return False
+    else:
+        app.logger.error(f"tc_ensure_root_qdisc: Unsupported qdisc_type '{qdisc_type}'.")
+        return False
+    return False # Default fallback
+# (ตรวจสอบว่า import และ helper functions อื่นๆ เช่น validate_interface_name,
+#  tc_ensure_root_qdisc, parse_rate_input_from_db_string, parse_rate_to_tc_format,
+#  validate_tc_specific_rate_string, validate_tc_specific_burst_string,
+#  validate_tc_classid, validate_priority_str, tc_add_class, tc_del_class,
+#  tc_add_filter_u32, PROTO_NAME_TO_NUM_MAP, shlex, clear_single_tc_rule
+#  ถูก define หรือ import ไว้ด้านบนของไฟล์ app.py แล้ว)
 
 def apply_single_tc_rule(rule_obj):
     """
@@ -1108,50 +1261,81 @@ def apply_single_tc_rule(rule_obj):
         app.logger.error(f"apply_single_tc_rule: Invalid interface name '{rule_obj.interface}' in Rule ID {rule_obj.id}.")
         return False
 
-    # 2. Check if rule is enabled in the database
-    if not rule_obj.is_enabled:
-        app.logger.info(f"Rule ID {rule_obj.id} (IP: {rule_obj.ip}) is disabled in DB. "
-                        f"Attempting to clear any existing TC configurations for it.")
-        return clear_single_tc_rule(rule_obj) # Ensure TC is cleared if rule is disabled
+    # 2. Check if rule is enabled in the database and if it's currently scheduled to be active
+    # This function should only apply TC if the rule is meant to be active NOW.
+    # The is_enabled flag in DB is the user's intent.
+    # The is_active_scheduled flag (or a real-time check like is_rule_scheduled_active_now) determines current operational state.
 
-    app.logger.info(f"Applying TC for Rule ID {rule_obj.id} (IP: {rule_obj.ip}, Dir: {rule_obj.direction}, Interface: {rule_obj.interface})")
+    is_functionally_active = False
+    if rule_obj.is_enabled:
+        if rule_obj.is_scheduled:
+            # For apply_single_tc_rule called by scheduler or reapply, is_active_scheduled should be correct.
+            # If called directly after an edit, is_rule_scheduled_active_now is more accurate for "NOW".
+            # Let's assume for now that if is_scheduled, the caller (like scheduler) has set is_active_scheduled correctly,
+            # OR we check it live. For safety, let's check it live if is_scheduled.
+            is_functionally_active = is_rule_scheduled_active_now(rule_obj, datetime.now()) # Checks .is_enabled internally too
+            app.logger.debug(f"Rule ID {rule_obj.id} is scheduled. Current functional active status (based on time): {is_functionally_active}")
+        else:
+            is_functionally_active = True # Non-scheduled and is_enabled=True means active
+            app.logger.debug(f"Rule ID {rule_obj.id} is not scheduled and DB enabled, thus functionally active.")
+    else: # rule_obj.is_enabled is False
+        app.logger.info(f"Rule ID {rule_obj.id} (IP: {rule_obj.ip}) is disabled in DB (is_enabled=False). "
+                        f"TC rules will not be applied. Attempting to clear any existing TC for it.")
+        return clear_single_tc_rule(rule_obj)
+
+    if not is_functionally_active:
+        app.logger.info(f"Rule ID {rule_obj.id} (IP: {rule_obj.ip}) is not functionally active right now (e.g. outside schedule). "
+                        f"TC rules will not be applied. Attempting to clear any existing TC for it.")
+        return clear_single_tc_rule(rule_obj)
+
+
+    app.logger.info(f"Applying TC for functionally active Rule ID {rule_obj.id} (IP: {rule_obj.ip}, Dir: {rule_obj.direction}, Interface: {rule_obj.interface})")
 
     # 3. Ensure Root Qdisc based on direction
     root_qdisc_type = "htb" if rule_obj.direction == "upload" else "ingress"
-    # HTB default class minor ID, ensure it's a string for tc_ensure_root_qdisc
     htb_default_minor = str(app.config.get('HTB_DEFAULT_CLASS_MINOR_ID', "10"))
     if not tc_ensure_root_qdisc(rule_obj.interface, default_classid_minor=htb_default_minor, qdisc_type=root_qdisc_type):
         app.logger.error(f"Failed to ensure root {root_qdisc_type.upper()} qdisc on {rule_obj.interface} for Rule ID {rule_obj.id}")
         return False
 
-    # 4. Parse and Validate Rates for TC
-    # Main rate
-    tc_rate_main, _, _ = parse_rate_to_tc_format(rule_obj.rate_str) # Assumes rate_str is "ValueUnit"
+    # 4. Parse and Validate Rates for TC from rule_obj (values from DB)
+    # --- Main rate ---
+    parsed_rate_val_main, parsed_rate_unit_main = parse_rate_input_from_db_string(rule_obj.rate_str)
+    if not parsed_rate_val_main or not parsed_rate_unit_main:
+        app.logger.error(f"Rule ID {rule_obj.id}: Could not parse main rate_str '{rule_obj.rate_str}' from DB into value/unit.")
+        return False
+    tc_rate_main, _, _ = parse_rate_to_tc_format(parsed_rate_val_main, parsed_rate_unit_main)
     if not tc_rate_main or not validate_tc_specific_rate_string(tc_rate_main):
-        app.logger.error(f"Rule ID {rule_obj.id}: Invalid main rate_str '{rule_obj.rate_str}' for TC.")
+        app.logger.error(f"Rule ID {rule_obj.id}: Invalid TC format for main rate from DB value '{rule_obj.rate_str}' (parsed as '{parsed_rate_val_main}{parsed_rate_unit_main}' -> TC '{tc_rate_main}').")
         return False
 
-    # Ceil rate (for HTB, often same as main rate if not specified, or from cburst_str)
+    # --- Ceil rate (for HTB) ---
     tc_ceil_main = None
     if rule_obj.direction == "upload":
         if rule_obj.cburst_str: # cburst_str in DB is used as 'ceil' for the HTB class
-            tc_ceil_main, _, _ = parse_rate_to_tc_format(rule_obj.cburst_str)
-            if not tc_ceil_main or not validate_tc_specific_rate_string(tc_ceil_main):
-                app.logger.warning(f"Rule ID {rule_obj.id}: Invalid cburst_str (ceil) '{rule_obj.cburst_str}' for TC. Defaulting ceil to rate.")
-                tc_ceil_main = tc_rate_main # Fallback
+            parsed_ceil_val, parsed_ceil_unit = parse_rate_input_from_db_string(rule_obj.cburst_str)
+            if not parsed_ceil_val or not parsed_ceil_unit:
+                app.logger.warning(f"Rule ID {rule_obj.id}: Could not parse cburst_str (ceil) '{rule_obj.cburst_str}' from DB. Defaulting ceil to main rate.")
+                tc_ceil_main = tc_rate_main # Fallback to main rate
+            else:
+                tc_ceil_main, _, _ = parse_rate_to_tc_format(parsed_ceil_val, parsed_ceil_unit)
+                if not tc_ceil_main or not validate_tc_specific_rate_string(tc_ceil_main):
+                    app.logger.warning(f"Rule ID {rule_obj.id}: Invalid TC format for cburst_str (ceil) '{rule_obj.cburst_str}'. Defaulting ceil to main rate.")
+                    tc_ceil_main = tc_rate_main # Fallback
         else:
-            tc_ceil_main = tc_rate_main # Default ceil to rate if cburst_str is not set
+            tc_ceil_main = tc_rate_main # Default ceil to rate if cburst_str is not set in DB
 
-    # Burst rate (for HTB class)
+    # --- Burst rate (for HTB class) ---
     tc_burst_main = None
     if rule_obj.direction == "upload" and rule_obj.burst_str:
-        # burst_str in DB is for HTB class 'burst' parameter
-        # parse_rate_to_tc_format should ideally also handle units like '15k', '2m', '1600b'
-        # For now, let's assume it returns a TC-compatible string directly or we validate separately
-        tc_burst_main, _, _ = parse_rate_to_tc_format(rule_obj.burst_str)
-        if not tc_burst_main or not validate_tc_specific_burst_string(tc_burst_main):
-            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid burst_str '{rule_obj.burst_str}' for TC. Ignoring burst.")
-            tc_burst_main = None
+        parsed_burst_val, parsed_burst_unit = parse_rate_input_from_db_string(rule_obj.burst_str)
+        if not parsed_burst_val or not parsed_burst_unit:
+            app.logger.warning(f"Rule ID {rule_obj.id}: Could not parse burst_str '{rule_obj.burst_str}' from DB. Ignoring burst.")
+        else:
+            tc_burst_main, _, _ = parse_rate_to_tc_format(parsed_burst_val, parsed_burst_unit)
+            if not tc_burst_main or not validate_tc_specific_burst_string(tc_burst_main):
+                app.logger.warning(f"Rule ID {rule_obj.id}: Invalid TC format for burst_str '{rule_obj.burst_str}'. Ignoring burst.")
+                tc_burst_main = None
     
     # --- UPLOAD DIRECTION ---
     if rule_obj.direction == "upload":
@@ -1159,35 +1343,13 @@ def apply_single_tc_rule(rule_obj):
         ip_classid_for_rule = rule_obj.upload_classid
 
         if not validate_tc_classid(parent_classid_for_ip_rule) or not validate_tc_classid(ip_classid_for_rule):
-            app.logger.error(f"Rule ID {rule_obj.id}: Invalid TC parent ('{parent_classid_for_ip_rule}') or class ('{ip_classid_for_rule}') identifier.")
+            app.logger.error(f"Rule ID {rule_obj.id}: Invalid TC parent ('{parent_classid_for_ip_rule}') or class ('{ip_classid_for_rule}') identifier from DB.")
             return False
         
-        # (Logic for ensuring parent group class exists, if rule_obj.group_name is set,
-        #  should be here, calling tc_add_class for the group. This was in set_bandwidth_limit previously)
-        # For simplicity in this function, we assume parent_classid_for_ip_rule is correctly set.
-
         prio_str_for_tc = str(rule_obj.priority) if rule_obj.priority is not None else None
-        if prio_str_for_tc and not validate_priority_str(prio_str_for_tc, 0, 7): # HTB prio
-            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid priority '{prio_str_for_tc}'. Ignoring priority.")
+        if prio_str_for_tc and not validate_priority_str(prio_str_for_tc, 0, 7):
+            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid priority '{prio_str_for_tc}' from DB. Ignoring priority.")
             prio_str_for_tc = None
-
-        # Action: 'add' or 'change'. Need to check if class already exists to decide.
-        # current_classes_on_iface = parse_tc_class_show(rule_obj.interface)
-        # tc_action_class = "change" if ip_classid_for_rule in current_classes_on_iface else "add"
-        # For simplicity, we'll use "add". `tc class add` might fail if it exists with incompatible params.
-        # A robust solution checks and uses 'change' or deletes and re-adds.
-        # Here, let's assume we try to add, and if it fails because it exists, we might try change or log.
-        # Or, the calling function (set_bandwidth_limit) should have handled overwrite logic.
-        # Let's default to "add" and let tc handle "file exists" if it's truly identical.
-        # If parameters change, "change" is better. Assuming "add" for now, and if it fails, caller might retry with "change".
-        # Better yet: always "delete" then "add" to ensure clean state, or smart "change".
-        # For now, let's assume the `set_bandwidth_limit` or an orchestrator decides add/change.
-        # Here we just execute what is implied. Let's assume this function is called to *create* or *ensure* the class.
-        # A common pattern is `tc class replace ...` which adds if not exists, or changes if it does.
-        # However, `tc class replace` is not as straightforward as `add` or `change` for all parameters.
-        # Let's assume we use 'add', and tc might give 'RTNETLINK answers: File exists'.
-        # This function should be idempotent or the caller handles existence.
-        # Let's try "add", if it fails, try "change". This is a common pattern.
 
         # --- Add/Change HTB Class for the IP Rule ---
         if not tc_add_class(interface=rule_obj.interface,
@@ -1197,8 +1359,7 @@ def apply_single_tc_rule(rule_obj):
                             ceil_str_for_tc=tc_ceil_main,
                             prio_str=prio_str_for_tc,
                             burst_str_for_tc=tc_burst_main,
-                            action="add"): # Try add first
-            # If add failed (e.g. "File exists"), try change
+                            action="add"):
             app.logger.warning(f"TC 'add class' failed for {ip_classid_for_rule}, trying 'change class'.")
             if not tc_add_class(interface=rule_obj.interface,
                                 classid=ip_classid_for_rule,
@@ -1213,21 +1374,18 @@ def apply_single_tc_rule(rule_obj):
         
         # --- Add u32 Filter for the IP Rule ---
         u32_match_parts = []
-        # Protocol for `tc filter ... protocol <proto>`
-        tc_filter_protocol = "ip" # Default
-        if ":" in rule_obj.ip: # IPv6
+        tc_filter_protocol = "ip"
+        if ":" in rule_obj.ip:
             u32_match_parts.append(f"match ip6 src {rule_obj.ip}/128")
             tc_filter_protocol = "ipv6"
-        else: # IPv4
+        else:
             u32_match_parts.append(f"match ip src {rule_obj.ip}/32")
-            tc_filter_protocol = "ip" # Explicitly ip for IPv4 u32
+            tc_filter_protocol = "ip"
         
-        # Protocol and Ports for u32 match expression
         if rule_obj.protocol and rule_obj.protocol.lower() not in ["ip", "ipv6", "all", "any", ""]:
             proto_num_for_match = PROTO_NAME_TO_NUM_MAP.get(rule_obj.protocol.lower())
             if proto_num_for_match:
                 u32_match_parts.append(f"match ip protocol {proto_num_for_match} 0xff")
-                # Ports are matched if protocol is TCP or UDP
                 if rule_obj.protocol.lower() in ["tcp", "udp"]:
                     if rule_obj.source_port and validate_port_number(rule_obj.source_port):
                         u32_match_parts.append(f"match {rule_obj.protocol.lower()} sport {rule_obj.source_port} 0xffff")
@@ -1237,27 +1395,19 @@ def apply_single_tc_rule(rule_obj):
                 app.logger.warning(f"Rule ID {rule_obj.id}: Unsupported protocol '{rule_obj.protocol}' for u32 filter 'match ip protocol'.")
         
         u32_match_expr = " ".join(u32_match_parts)
-        filter_prio_str = str(rule_obj.priority if rule_obj.priority is not None else 10) # Filter priority can be different
-        if not validate_priority_str(filter_prio_str, 1, 49151): # TC filter prio is wide range
+        filter_prio_str = str(rule_obj.priority if rule_obj.priority is not None else 10) # Filter priority default
+        if not validate_priority_str(filter_prio_str, 1, 49151):
             app.logger.warning(f"Rule ID {rule_obj.id}: Invalid filter priority '{filter_prio_str}'. Defaulting to 10.")
             filter_prio_str = "10"
         
-        # Before adding, good practice is to delete any existing filter with the same match criteria but different flowid
-        # This requires parsing existing filters. For now, we try to add.
-        # `tc filter add` might replace if a filter with the same (parent, prio, protocol, u32 selector) exists.
-        # To be absolutely sure for u32, explicit delete of old then add new is safer if params changed.
-        # Let's assume 'add' will try its best, or 'replace' could be used if handle is known.
-        # This function should ideally take a filter_handle_for_add if one is pre-determined and needs to be stable.
         if not tc_add_filter_u32(interface=rule_obj.interface,
-                                 parent_handle=parent_classid_for_ip_rule,
+                                 parent_handle=parent_classid_for_ip_rule, # Filter is child of parent class
                                  prio_str=filter_prio_str,
-                                 protocol_for_tc=tc_filter_protocol, # "ip" or "ipv6" for the `tc filter protocol` part
+                                 protocol_for_tc=tc_filter_protocol,
                                  u32_match_expr_str=u32_match_expr,
-                                 flowid_or_classid=ip_classid_for_rule,
-                                 filter_action_verb="add"): # Could be "replace" if handle known
+                                 flowid_or_classid=ip_classid_for_rule, # Filter directs traffic to this class
+                                 filter_action_verb="add"):
             app.logger.error(f"Failed to apply TC filter for Rule ID {rule_obj.id} pointing to {ip_classid_for_rule}.")
-            # Optional: Rollback class if filter add fails
-            # tc_del_class(rule_obj.interface, ip_classid_for_rule)
             return False
         
         app.logger.info(f"Upload Rule ID {rule_obj.id} TC (class & filter) applied successfully.")
@@ -1265,18 +1415,17 @@ def apply_single_tc_rule(rule_obj):
 
     # --- DOWNLOAD DIRECTION (Ingress Policing) ---
     elif rule_obj.direction == "download":
-        police_flowid_handle = rule_obj.upload_classid # Stored as ":<handle_num>" for police flowid
+        police_flowid_handle = rule_obj.upload_classid # Stored as ":<handle_num>"
         if not (police_flowid_handle and isinstance(police_flowid_handle, str) and police_flowid_handle.startswith(':')):
-            app.logger.error(f"Rule ID {rule_obj.id}: Invalid police flowid_handle format '{police_flowid_handle}'.")
+            app.logger.error(f"Rule ID {rule_obj.id}: Invalid police flowid_handle format '{police_flowid_handle}' from DB for download rule.")
             return False
         
-        # Construct u32 match expression for download
         dl_u32_match_parts = []
-        tc_filter_protocol_dl = "ip" # Default
-        if ":" in rule_obj.ip: # IPv6
+        tc_filter_protocol_dl = "ip"
+        if ":" in rule_obj.ip:
             dl_u32_match_parts.append(f"match ip6 dst {rule_obj.ip}/128")
             tc_filter_protocol_dl = "ipv6"
-        else: # IPv4
+        else:
             dl_u32_match_parts.append(f"match ip dst {rule_obj.ip}/32")
             tc_filter_protocol_dl = "ip"
         
@@ -1285,11 +1434,9 @@ def apply_single_tc_rule(rule_obj):
             if proto_num_for_match:
                 dl_u32_match_parts.append(f"match ip protocol {proto_num_for_match} 0xff")
                 if rule_obj.protocol.lower() in ["tcp", "udp"]:
-                    # For download, destination port on client side is usually ephemeral.
-                    # Source port (server's port) is more common to match.
                     if rule_obj.source_port and validate_port_number(rule_obj.source_port):
                          dl_u32_match_parts.append(f"match {rule_obj.protocol.lower()} sport {rule_obj.source_port} 0xffff")
-                    if rule_obj.destination_port and validate_port_number(rule_obj.destination_port): # Less common but possible
+                    if rule_obj.destination_port and validate_port_number(rule_obj.destination_port):
                          dl_u32_match_parts.append(f"match {rule_obj.protocol.lower()} dport {rule_obj.destination_port} 0xffff")
             else:
                 app.logger.warning(f"Rule ID {rule_obj.id}: Unsupported protocol '{rule_obj.protocol}' for u32 download filter.")
@@ -1300,51 +1447,30 @@ def apply_single_tc_rule(rule_obj):
             app.logger.warning(f"Rule ID {rule_obj.id}: Invalid download filter priority '{filter_prio_str_dl}'. Defaulting to 10.")
             filter_prio_str_dl = "10"
 
-        # Calculate burst for police action (example: 50ms of data at rate)
-        _, rate_bps_for_burst, _ = parse_rate_to_tc_format(rule_obj.rate_str)
-        if rate_bps_for_burst is None:
-             app.logger.error(f"Rule ID {rule_obj.id}: Could not parse rate '{rule_obj.rate_str}' to calculate police burst.")
+        _, rate_bps_for_police_burst, _ = parse_rate_to_tc_format(parsed_rate_val_main, parsed_rate_unit_main)
+        if rate_bps_for_police_burst is None:
+             app.logger.error(f"Rule ID {rule_obj.id}: Could not parse main rate '{rule_obj.rate_str}' to calculate police burst.")
              return False
         
-        burst_factor_seconds = float(app.config.get('POLICE_BURST_FACTOR_SECONDS', 0.05)) # 50ms
+        burst_factor_seconds = float(app.config.get('POLICE_BURST_FACTOR_SECONDS', 0.05))
         min_burst_bytes_config = int(app.config.get('POLICE_BURST_MIN_BYTES', 1600))
-        calculated_burst_bytes = max(int((rate_bps_for_burst / 8) * burst_factor_seconds), min_burst_bytes_config)
+        calculated_burst_bytes = max(int((rate_bps_for_police_burst / 8) * burst_factor_seconds), min_burst_bytes_config)
         
-        # Construct the full `tc filter add ... action police ...` command as a list
-        # Note: `tc filter add ... u32 ... action police ...` is one way.
-        # `tc filter replace ...` requires a handle. If `police_flowid_handle` is just `:minor_id`,
-        # tc needs a proper kernel handle (e.g., 800::XYZ) for `replace by handle`.
-        # Adding with the same (parent,prio,protocol,selector) usually replaces u32.
-        
-        # Build the action part for police
-        action_police_str = f"police rate {tc_rate_main} burst {calculated_burst_bytes}b drop flowid {police_flowid_handle}"
-        
-        # tc_add_filter_u32 expects flowid_or_classid, but for police, the action string contains it.
-        # This means tc_add_filter_u32 might need adjustment or a new function for police filters.
-        # Let's try to adapt: flowid_or_classid becomes the target for 'action ...'
-        # However, `tc filter ... u32 ... action police ... flowid ...` is the structure.
-        # So, the `flowid_or_classid` in `tc_add_filter_u32` should be the action string itself for police.
-
-        # Re-thinking: `tc_add_filter_u32` is for filters that point to a class (flowid <classid>).
-        # For police, the action is part of the filter. We might need a dedicated function or extend `tc_add_filter_u32`.
-
-        # Let's assume for now we build the command directly here for ingress police
         cmd_list_police = ['tc', 'filter', 'add', 'dev', rule_obj.interface,
                            'parent', 'ffff:', 'protocol', tc_filter_protocol_dl, 'prio', filter_prio_str_dl,
                            'u32']
-        cmd_list_police.extend(shlex.split(dl_u32_match_expr)) # Add match expression parts
+        cmd_list_police.extend(shlex.split(dl_u32_match_expr))
         cmd_list_police.extend(['action', 'police', 'rate', tc_rate_main, 
-                                'burst', f"{calculated_burst_bytes}b", # TC expects burst in bytes like '1600b' or '10k'
-                                'drop', # Default action on exceed
-                                'flowid', police_flowid_handle]) # flowid for police is for identification/stats
+                                'burst', f"{calculated_burst_bytes}b",
+                                'drop', 
+                                'flowid', police_flowid_handle])
 
         app.logger.info(f"TC CMD (Download Police): {' '.join(cmd_list_police)}")
         if run_command(cmd_list_police) is not None:
             app.logger.info(f"Download Rule ID {rule_obj.id} (police) TC command executed successfully.")
             return True
         else:
-            # Try 'replace' if 'add' failed (might be needed if filter with same selector exists)
-            cmd_list_police[2] = 'replace' # Change 'add' to 'replace'
+            cmd_list_police[2] = 'replace'
             app.logger.warning(f"TC 'add filter police' failed for Rule ID {rule_obj.id}, trying 'replace'. Original CMD: {' '.join(cmd_list_police)}")
             if run_command(cmd_list_police) is not None:
                 app.logger.info(f"Download Rule ID {rule_obj.id} (police) TC 'replace' command executed successfully.")
@@ -1355,7 +1481,6 @@ def apply_single_tc_rule(rule_obj):
     
     app.logger.error(f"apply_single_tc_rule: Unhandled direction '{rule_obj.direction}' or logic path for Rule ID {rule_obj.id}")
     return False
-
 
 def clear_single_tc_rule(rule_obj):
     """
@@ -2628,110 +2753,124 @@ def api_toggle_rule_status(interface_name, rule_id):
 
 # 7. API Endpoint สำหรับ Add New Rule (โครงสร้างเบื้องต้น)
 @app.route("/api/rules/<string:interface_name>", methods=["POST"])
-def api_add_new_rule(interface_name): # ควรใช้ชื่อฟังก์ชันที่สื่อถึงการ Add เช่น api_create_rule
+def api_add_new_rule(interface_name):
     if not session.get('logged_in') or session.get('role') != 'admin':
         return jsonify({"error": "Unauthorized"}), 401
     
     active_if_session = session.get('active_interface')
-    if interface_name != active_if_session:
-         return jsonify({"error": f"Interface mismatch. Active is {active_if_session}"}), 400
+    if not validate_interface_name(interface_name) or interface_name != active_if_session:
+         app.logger.warning(f"API Add Rule: Interface mismatch or invalid. Provided: '{interface_name}', Session: '{active_if_session}'")
+         return jsonify({"error": f"Interface mismatch or invalid. Active is '{active_if_session}'"}), 400
 
-    data = request.json # ข้อมูล rule ใหม่ที่ส่งมาจาก frontend
-    app.logger.info(f"API Add Rule received: {data} for interface {interface_name}")
+    data = request.json
+    if not data:
+        app.logger.error("API Add Rule: No JSON data received in POST request.")
+        return jsonify({"error": "No JSON data received"}), 400
+        
+    app.logger.info(f"API Add Rule received for interface '{interface_name}': {data}")
 
-    # --- การ Mapping ข้อมูลจาก Frontend (data) ไปยังพารามิเตอร์ของ set_bandwidth_limit ---
-    # นี่คือส่วนสำคัญที่ต้องปรับให้ตรงกับฟอร์ม "Add New" ใน Modal ของคุณ
-    # และโครงสร้าง BandwidthRule ใน JavaScript ของคุณ
-    
-    # ตัวอย่าง (คุณต้องปรับให้ครบถ้วนตามฟอร์มและ set_bandwidth_limit)
     try:
-        ip_val = data.get('target')
-        rate_str_val = data.get('rate') # เช่น "10 Mbps"
-        name_val = data.get('name')     # map ไปที่ description
-        enabled_val = data.get('enabled', True) # ถ้า frontend ไม่ส่งมา ให้ default เป็น True
-        # max_limit_val = data.get('maxLimit') # ต้อง map ไปที่ burst/cburst ถ้าใช้
+        # ดึงค่าทั้งหมดที่ frontend ส่งมา และ set_bandwidth_limit ต้องการ
+        ip_val = data.get('ip')
+        rate_value_form_val = data.get('rate_value_form')
+        rate_unit_form_val = data.get('rate_unit_form')
+        direction_val = data.get('direction')
+        
+        description_val = data.get('description')
+        is_enabled_val = data.get('is_enabled', True) # Default เป็น True ถ้าไม่ได้ส่งมา
+        
+        group_name_val = data.get('group_name')
+        protocol_val = data.get('protocol')
+        source_port_val = data.get('source_port')
+        destination_port_val = data.get('destination_port')
+        priority_form_str_val = data.get('priority_form_str') # JavaScript ส่งเป็น priority_form_str
 
-        # Frontend ต้องส่ง "direction" มาด้วย ถ้า set_bandwidth_limit ต้องการ
-        direction_val = data.get('direction') # เช่น "upload" หรือ "download"
-        if not direction_val: # ถ้า frontend ไม่ได้ส่งมา อาจจะต้องมี default หรือ error
-             return jsonify({"error": "Direction is required for new rule"}), 400
+        burst_value_form_val = data.get('burst_value_form')
+        burst_unit_form_val = data.get('burst_unit_form')
+        cburst_value_form_val = data.get('cburst_value_form')
+        cburst_unit_form_val = data.get('cburst_unit_form')
 
+        is_scheduled_val = data.get('is_scheduled', False)
+        start_time_val = data.get('start_time')
+        end_time_val = data.get('end_time')
+        weekdays_val = data.get('weekdays') # ควรเป็น string "Mon,Tue,Wed"
+        start_date_val = data.get('start_date')
+        end_date_val = data.get('end_date')
 
-        # Parse rate_str_val "10 Mbps" -> "10", "Mbps"
-        rate_parts = rate_str_val.split()
-        if len(rate_parts) != 2:
-            return jsonify({"error": "Invalid rate format. Expected 'value unit' (e.g., '10 Mbps')."}), 400
-        rate_value_form = rate_parts[0]
-        rate_unit_form = rate_parts[1] # e.g. Mbps, Kbps, etc.
+        # --- ตรวจสอบค่าที่จำเป็นเบื้องต้น ---
+        if not ip_val:
+            return jsonify({"error": "Target IP (ip) is required."}), 400
+        if not rate_value_form_val or not rate_unit_form_val:
+            app.logger.error("API Add Rule: Missing 'rate_value_form' or 'rate_unit_form' in payload.")
+            return jsonify({"error": "Rate value and unit (rate_value_form, rate_unit_form) are required."}), 400
+        if not direction_val:
+             return jsonify({"error": "Direction is required."}), 400
+        # (คุณอาจจะเพิ่มการ Validate อื่นๆ ที่นี่สำหรับ field อื่นๆ ก่อนเรียก set_bandwidth_limit)
 
-        # Fields อื่นๆ ที่ set_bandwidth_limit ต้องการ:
-        # protocol, source_port, destination_port, group_name,
-        # burst_value_form, burst_unit_form, cburst_value_form, cburst_unit_form,
-        # is_scheduled, start_time, end_time, weekdays, start_date, end_date, priority
-
-        # สมมติว่า Modal ของคุณมี fields เหล่านี้ และส่งมาใน `data`
-        protocol_val = data.get('protocol') # ถ้าไม่มีเป็น None ได้
-        sport_val = data.get('source_port')
-        dport_val = data.get('destination_port')
-        group_val = data.get('group_name')
-        priority_val = data.get('priority') # อาจจะต้องแปลงเป็น int
-
-        # สำหรับ burst/cburst (อาจจะ map มาจาก maxLimit หรือมี field แยกใน modal)
-        # ตัวอย่างง่ายๆ: ถ้ามี maxLimit และ rate, อาจจะให้ burst = rate, cburst = maxLimit
-        # burst_value_form_val, burst_unit_form_val = None, None
-        # cburst_value_form_val, cburst_unit_form_val = None, None
-        # if max_limit_val:
-        #    cburst_parts = max_limit_val.split()
-        #    if len(cburst_parts) == 2:
-        #        cburst_value_form_val = cburst_parts[0]
-        #        cburst_unit_form_val = cburst_parts[1]
-        #    burst_value_form_val = rate_value_form # สมมติ burst = rate
-        #    burst_unit_form_val = rate_unit_form
-
+        # --- เรียกใช้ set_bandwidth_limit ---
+        # existing_rule_id_to_update ควรเป็น None สำหรับการสร้าง Rule ใหม่
         success = set_bandwidth_limit(
             interface=interface_name,
             ip=ip_val,
-            rate_value_form=rate_value_form,
-            rate_unit_form=rate_unit_form,
-            direction=direction_val, # สำคัญมาก
-            description=name_val,
-            is_enabled=enabled_val,
+            rate_value_form=rate_value_form_val,
+            rate_unit_form=rate_unit_form_val,
+            direction=direction_val,
+            description=description_val,
+            is_enabled=is_enabled_val,
             protocol=protocol_val,
-            source_port=sport_val,
-            destination_port=dport_val,
-            group=group_val,
-            priority=int(priority_val) if priority_val is not None and str(priority_val).isdigit() else None,
-            # burst_value_form=burst_value_form_val, burst_unit_form=burst_unit_form_val,
-            # cburst_value_form=cburst_value_form_val, cburst_unit_form=cburst_unit_form_val,
-            is_scheduled=data.get('is_scheduled', False), # Default ถ้าไม่มี
-            start_time=data.get('start_time'),
-            end_time=data.get('end_time'),
-            weekdays=data.get('weekdays'), # ควรเป็น string "Mon,Tue,Wed"
-            start_date=data.get('start_date'),
-            end_date=data.get('end_date'),
-            overwrite=False # เป็นการเพิ่ม Rule ใหม่
+            source_port=source_port_val,
+            destination_port=destination_port_val,
+            group_name=group_name_val, # Parameter ใน set_bandwidth_limit คือ group_name
+            priority_form_str=priority_form_str_val, # Parameter ใน set_bandwidth_limit คือ priority_form_str
+            burst_value_form=burst_value_form_val,
+            burst_unit_form=burst_unit_form_val,
+            cburst_value_form=cburst_value_form_val,
+            cburst_unit_form=cburst_unit_form_val,
+            is_scheduled=is_scheduled_val,
+            start_time=start_time_val,
+            end_time=end_time_val,
+            weekdays=weekdays_val,
+            start_date=start_date_val,
+            end_date=end_date_val,
+            overwrite=False, # สำหรับการ Add Rule ใหม่, overwrite ปกติจะเป็น False
+            existing_rule_id_to_update=None # นี่คือการสร้าง Rule ใหม่
         )
 
         if success:
-            # คืน rule ที่สร้างใหม่ (หรือแค่ message)
-            # การดึง rule ที่เพิ่งสร้างจาก DB แล้วส่งกลับไปจะดีที่สุด
-            # เพื่อให้ client มี ID และข้อมูลที่ถูกต้องทั้งหมด
-            # rule_just_added = Rule.query.filter_by(...).first() # หา rule ที่เพิ่ง add
-            # return jsonify(rule_model_to_dict_for_frontend(rule_just_added)), 201
-            return jsonify({"message": "Rule added successfully. Please refresh rule list."}), 201 # ให้ client fetch ใหม่
+            # ดึง Rule ที่เพิ่งสร้างล่าสุดเพื่อส่งกลับไป (ถ้าต้องการ ID และข้อมูลที่สมบูรณ์)
+            # หรือแค่ส่ง message ตอบกลับ
+            app.logger.info(f"API: Rule for IP {ip_val} on {interface_name} added successfully.")
+            # การส่ง object ที่สร้างใหม่กลับไปจะดีกว่าการให้ client refresh ทั้งหมด
+            # แต่ต้อง query มาจาก DB หลัง commit ใน set_bandwidth_limit
+            # For now, just a success message:
+            # flashed_messages = get_flashed_messages(with_categories=True) # flash ไม่เหมาะกับ API response โดยตรง
+            # success_message = "Rule added successfully."
+            # for cat, msg in flashed_messages:
+            #     if cat == 'success': success_message = msg; break
+            
+            # ควรจะ query rule ที่เพิ่งสร้าง แล้ว return object นั้นผ่าน rule_model_to_dict_for_frontend
+            # แต่เพื่อความง่าย, ส่ง message ไปก่อน
+            return jsonify({"message": "Rule added successfully. Consider refreshing the rule list."}), 201
         else:
-            # set_bandwidth_limit ควรจะ return error message ที่ชัดเจนกว่าการใช้ flash
-            # หรือมีการ throw exception ที่จับได้
-            flashed_messages = get_flashed_messages(with_categories=True)
-            error_message = "Failed to add rule on backend. "
+            # set_bandwidth_limit ควรจะมีการจัดการ error message ผ่าน flash
+            # สำหรับ API เราควรดึง error message นั้นมาแสดง
+            flashed_messages = get_flashed_messages(with_categories=True) # ดึง flash message
+            error_message = "Failed to add rule. "
             if flashed_messages:
-                error_message += " ".join([msg for cat, msg in flashed_messages if cat == 'danger'])
-            app.logger.error(f"API Add Rule Error: {error_message} Data: {data}")
-            return jsonify({"error": error_message or "Unknown error adding rule."}), 500
+                # รวมเฉพาะ error messages
+                danger_messages = [msg for cat, msg in flashed_messages if cat == 'danger']
+                if danger_messages:
+                    error_message += " ".join(danger_messages)
+                else: # ถ้าไม่มี danger messages อาจจะเป็น info หรือ warning ที่ควรแจ้ง
+                    all_msgs = [f"[{cat}] {msg}" for cat, msg in flashed_messages]
+                    error_message += " ".join(all_msgs) if all_msgs else "Unknown error during rule creation."
+
+            app.logger.error(f"API Add Rule Error on backend: {error_message} - Data: {data}")
+            return jsonify({"error": error_message}), 500
             
     except Exception as e:
-        app.logger.error(f"API Add Rule - Exception: {e}", exc_info=True)
-        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+        app.logger.error(f"API Add Rule - Unhandled Exception: {e}", exc_info=True)
+        return jsonify({"error": f"An unexpected server error occurred: {str(e)}"}), 500
 
 
 

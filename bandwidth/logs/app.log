@@ -3835,3 +3835,8 @@ operable program or batch file.
 2025-05-12 13:01:02,666 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
 2025-05-12 13:02:02,667 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
 2025-05-12 13:02:02,669 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 13:03:02,668 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 13:03:02,670 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 13:03:05,772 - app - INFO - app:3028 - Application attempting to shut down.
+2025-05-12 13:03:05,773 - app - INFO - app:3032 - APScheduler shut down successfully.
+2025-05-12 13:03:05,773 - app - INFO - app:3035 - Application shutdown process complete.
