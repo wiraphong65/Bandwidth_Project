@@ -13,7 +13,7 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime, time as dtime, date as ddate
 from sqlalchemy import or_, and_
 from datetime import datetime, timezone
-
+import shlex
 # --- Flask App Initialization and Configuration ---
 app = Flask(__name__, instance_relative_config=True) # instance_relative_config=True is good practice
 
@@ -165,40 +165,276 @@ _bandwidth_rules_cache = [] # List of Rule objects for the active interface
 _group_limits_cache = {}    # Dict: {group_name: {direction: GroupLimitObject}}
 
 # --- Helper Functions ---
-def run_command(command):
-    app.logger.debug(f"Executing command: {command}")
+def run_command(cmd_list, timeout=15):
+    """
+    Executes a system command securely using shell=False.
+    Args:
+        cmd_list (list): The command and its arguments as a list of strings.
+        timeout (int): Timeout in seconds for the command.
+    Returns:
+        str: The combined stdout of the command if successful.
+        None: On any failure (CalledProcessError, FileNotFoundError, TimeoutExpired, other Exception).
+              Error details are logged.
+    Raises:
+        ValueError: If cmd_list is not a list of strings.
+    """
+    if not isinstance(cmd_list, list) or not all(isinstance(arg, str) for arg in cmd_list):
+        app.logger.error(f"run_command: Invalid cmd_list format. Expected list of strings. Got: {cmd_list}")
+        # Instead of raising ValueError which might crash the app if not caught by caller,
+        # log and return None, consistent with other errors. Caller should check for None.
+        return None
+
+    log_cmd_str = ""
     try:
-        process = subprocess.run(command, shell=True, check=True, capture_output=True, text=True, encoding='utf-8', timeout=15)
-        output_str = (process.stdout + process.stderr).strip()
-        if output_str: app.logger.debug(f"Command output: {output_str}")
-        return output_str
+        # subprocess.list2cmdline is Windows-specific for exact cmd.exe representation.
+        # For logging on Linux, ' '.join or shlex.join (Python 3.8+) are common.
+        # Using shlex.join is safer if arguments might contain spaces.
+        if hasattr(shlex, 'join'): # Python 3.8+
+            log_cmd_str = shlex.join(cmd_list)
+        else:
+            log_cmd_str = ' '.join(cmd_list) # Fallback for older Python, less safe for complex args with spaces
+    except Exception: # Fallback in case shlex operations fail
+        log_cmd_str = str(cmd_list)
+
+
+    app.logger.debug(f"Executing command list: {cmd_list} (Formatted for log: {log_cmd_str})")
+
+    try:
+        process = subprocess.run(
+            cmd_list,
+            shell=False,
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            timeout=timeout
+        )
+        
+        stdout_output = process.stdout.strip() if process.stdout else ""
+        stderr_output = process.stderr.strip() if process.stderr else ""
+
+        if stderr_output:
+            app.logger.warning(f"Command '{log_cmd_str}' produced stderr (though it might not indicate an error):\n{stderr_output}")
+        
+        # Log stdout only if it's not excessively long, or log a summary
+        # For tc commands, stdout is often empty on success unless asking for stats/show.
+        if stdout_output:
+             app.logger.debug(f"Command '{log_cmd_str}' stdout:\n{stdout_output}")
+        elif not stderr_output : # No stdout and no stderr, usually means success for action commands
+             app.logger.debug(f"Command '{log_cmd_str}' executed successfully with no stdout/stderr output.")
+             
+        return stdout_output # Caller can decide if empty stdout is an issue for 'show' commands
+
     except subprocess.CalledProcessError as e:
-        error_msg = (e.stdout + e.stderr).strip() if e.stdout or e.stderr else "No output"
-        app.logger.error(f"Command failed: {command} - Exit: {e.returncode} - Output: {error_msg}")
+        error_stdout = e.stdout.strip() if e.stdout else "No stdout."
+        error_stderr = e.stderr.strip() if e.stderr else "No stderr."
+        app.logger.error(
+            f"Command failed: {log_cmd_str}\n"
+            f"Exit Code: {e.returncode}\n"
+            f"Stdout: {error_stdout}\n"
+            f"Stderr: {error_stderr}"
+        )
         return None
     except FileNotFoundError:
-        app.logger.error(f"Command not found: {command.split(' ')[0]}. Is it installed and in PATH?")
+        app.logger.error(f"Command not found: {cmd_list[0]}. Ensure it is installed and in the system's PATH.")
         return None
     except subprocess.TimeoutExpired:
-        app.logger.error(f"Command timed out: {command}")
+        app.logger.error(f"Command timed out after {timeout}s: {log_cmd_str}")
         return None
     except Exception as e_run_cmd:
-        app.logger.exception(f"Exception executing command: {command}")
+        app.logger.error(f"An unexpected exception occurred while executing command '{log_cmd_str}': {e_run_cmd}", exc_info=True)
         return None
 
 def get_interfaces():
     app.logger.debug("Getting network interfaces")
-    output = run_command("ip -o link show") # Linux specific
+    # Changed to list format for run_command
+    output = run_command(['ip', '-o', 'link', 'show']) # Linux specific
     interfaces = []
-    if output:
+    if output: # run_command returns stdout string on success, or None on failure
         for line in output.splitlines():
-            match = re.match(r'^\d+:\s+([\w.-]+):', line)
+            match = re.match(r'^\d+:\s+([\w.-@]+):', line) # Adjusted regex slightly for iface@phys
             if match:
                 iface = match.group(1)
-                if iface != 'lo' and not iface.startswith(('docker', 'veth', 'br-', 'virbr', 'kube-', 'cni', 'flannel', 'vxlan', 'geneve', 'bond', 'dummy', 'ifb')):
+                # Your existing exclusion logic
+                if iface != 'lo' and not any(iface.startswith(prefix) for prefix in 
+                                             ['docker', 'veth', 'br-', 'virbr', 'kube-', 
+                                              'cni', 'flannel', 'vxlan', 'geneve', 'bond', 
+                                              'dummy', 'ifb', 'sit', 'lo', 'tun', 'tap']):
                     interfaces.append(iface)
     app.logger.debug(f"Found interfaces: {interfaces}")
     return interfaces
+
+def validate_interface_name(if_name, allow_sub_interfaces=True):
+    """Validates network interface name."""
+    if not if_name or not isinstance(if_name, str):
+        app.logger.warning(f"Validation failed: Interface name is not a string or is empty ('{if_name}').")
+        return False
+    pattern = r"^[a-zA-Z0-9_.-]{1,16}$" # Standard interface names
+    if allow_sub_interfaces:
+        pattern = r"^[a-zA-Z0-9_.-@]{1,32}$" # Allows for VLANs like eth0.10 or eth0.10@eth0
+    
+    if not re.match(pattern, if_name):
+        app.logger.warning(f"Validation failed: Interface name '{if_name}' has invalid characters or length (pattern: {pattern}).")
+        return False
+    if any(char in if_name for char in ";|&`$()<>\n\t\r\b"): # Stricter check for shell-problematic chars
+        app.logger.error(f"Validation failed: Interface name '{if_name}' contains potentially malicious or problematic characters.")
+        return False
+    return True
+
+def validate_ip_address(ip_str):
+    """Validates if the string is a valid IPv4 or IPv6 address."""
+    if not ip_str or not isinstance(ip_str, str):
+        app.logger.warning(f"Validation failed: IP address is not a string or is empty ('{ip_str}').")
+        return False
+    try:
+        ipaddress.ip_address(ip_str.strip()) # Use strip() to handle leading/trailing spaces
+        return True
+    except ValueError:
+        app.logger.warning(f"Validation failed: Invalid IP address format ('{ip_str}').")
+        return False
+
+def validate_rate_value(rate_val_str):
+    """Validates if the rate value is a positive number string."""
+    if rate_val_str is None:
+        app.logger.warning("Validation failed: Rate value is None.")
+        return False # Assuming rate value is usually required
+    try:
+        val = float(str(rate_val_str).strip())
+        if val <= 0:
+            app.logger.warning(f"Validation failed: Rate value '{rate_val_str}' must be positive.")
+            return False
+        return True
+    except (ValueError, TypeError):
+        app.logger.warning(f"Validation failed: Rate value '{rate_val_str}' is not a valid number.")
+        return False
+
+def validate_rate_unit(rate_unit_str, allowed_units_list=None):
+    """Validates if the rate unit is in the allowed list (case-insensitive)."""
+    if not rate_unit_str or not isinstance(rate_unit_str, str):
+        app.logger.warning(f"Validation failed: Rate unit is not a string or is empty ('{rate_unit_str}').")
+        return False
+    
+    unit_to_check = rate_unit_str.strip().lower()
+    if not unit_to_check:
+        app.logger.warning("Validation failed: Rate unit is empty after stripping.")
+        return False
+
+    if allowed_units_list is None:
+        allowed_units_list = ['bps', 'kbps', 'mbps', 'gbps', 'bit', 'kbit', 'mbit', 'gbit', # For rates
+                              'k', 'm', 'g', 'b', 'kb', 'mb', 'gb'] # For burst/size/tc direct units
+    
+    if unit_to_check not in [unit.lower() for unit in allowed_units_list]:
+        app.logger.warning(f"Validation failed: Rate unit '{rate_unit_str}' (checked as '{unit_to_check}') is not in allowed list ({allowed_units_list}).")
+        return False
+    return True
+
+def validate_port_number(port_str):
+    """Validates if the port is a valid number string (1-65535) or empty/None if optional."""
+    stripped_port_str = str(port_str).strip() if port_str is not None else ""
+    if not stripped_port_str: # Optional port
+        return True
+    try:
+        port = int(stripped_port_str)
+        if not (1 <= port <= 65535):
+            app.logger.warning(f"Validation failed: Port number '{port_str}' out of range (1-65535).")
+            return False
+        return True
+    except (ValueError, TypeError):
+        app.logger.warning(f"Validation failed: Port '{port_str}' is not a valid integer.")
+        return False
+
+def validate_protocol(protocol_str, allowed_protocols_list=None):
+    """Validates protocol string against an allowed list (case-insensitive)."""
+    stripped_protocol = protocol_str.strip().lower() if isinstance(protocol_str, str) else ""
+    if not stripped_protocol: # Optional protocol (might mean 'ip' or 'any' depending on context)
+        return True 
+
+    if allowed_protocols_list is None:
+        allowed_protocols_list = ['ip', 'ipv6', 'tcp', 'udp', 'icmp', 'any'] 
+
+    if stripped_protocol not in [p.lower() for p in allowed_protocols_list]:
+        app.logger.warning(f"Validation failed: Protocol '{protocol_str}' (checked as '{stripped_protocol}') is not in allowed list ({allowed_protocols_list}).")
+        return False
+    return True
+
+def validate_tc_classid(classid_str):
+    """Validates format of TC class ID like '1:10', '100:AB', or root/parent handles like '1:', 'ffff:'."""
+    if not classid_str or not isinstance(classid_str, str): return False
+    stripped_classid = classid_str.strip()
+    if stripped_classid in ["1:", "root", "ffff:", "ingress"]: # Common parent/root handles
+        return True
+    # Standard classid format e.g., <major>:<minor> (hex or dec for major, hex for minor for HTB often)
+    if not re.match(r"^[0-9a-fA-F]+:[0-9a-fA-F]{1,4}$", stripped_classid):
+        app.logger.warning(f"Validation failed: TC ClassID '{classid_str}' format is invalid.")
+        return False
+    return True
+
+def validate_tc_specific_rate_string(rate_str_for_tc):
+    """Validates rate strings like '10mbit', '512kbit' intended for direct TC usage."""
+    if not rate_str_for_tc or not isinstance(rate_str_for_tc, str): return False
+    if not re.match(r"^\d+(\.\d+)?(bit|bps|[kmgt]bit|[kmgt]bps)$", rate_str_for_tc.strip(), re.IGNORECASE): # Added 't' for terabit
+        app.logger.warning(f"Validation failed: TC-specific rate string '{rate_str_for_tc}' format is invalid.")
+        return False
+    return True
+
+def validate_tc_specific_burst_string(burst_str_for_tc):
+    """Validates burst strings like '15k', '1600b', '2m' for direct TC usage."""
+    if not burst_str_for_tc or not isinstance(burst_str_for_tc, str): return False
+    # Allows for optional 'b' at the end of k/m/g units, and plain numbers (bytes)
+    if not re.match(r"^\d+[kmgt]?b?$", burst_str_for_tc.strip(), re.IGNORECASE): # Added 't'
+        app.logger.warning(f"Validation failed: TC-specific burst string '{burst_str_for_tc}' format is invalid.")
+        return False
+    return True
+
+def validate_description(desc_str, max_length=255):
+    """Validates description string."""
+    if desc_str is None: return True # Optional
+    if not isinstance(desc_str, str):
+        app.logger.warning(f"Validation failed: Description is not a string.")
+        return False
+    if len(desc_str) > max_length:
+        app.logger.warning(f"Validation failed: Description exceeds max length of {max_length} characters.")
+        return False
+    # Potentially check for harmful characters if displaying as HTML without escaping,
+    # but for DB storage and tc comments, most things are fine.
+    # Avoid newlines if tc comments don't support them.
+    if '\n' in desc_str or '\r' in desc_str:
+        app.logger.warning(f"Validation failed: Description contains newline characters.")
+        return False
+    return True
+
+def validate_group_name(group_name_str, max_length=50):
+    """Validates group name string."""
+    if group_name_str is None: return True # Optional
+    if not isinstance(group_name_str, str) or not group_name_str.strip():
+        if group_name_str is not None and group_name_str.strip() == "": # Allow empty string if it means "no group"
+             return True
+        app.logger.warning(f"Validation failed: Group name is not a string or is empty ('{group_name_str}').")
+        return False
+    
+    stripped_name = group_name_str.strip()
+    if not re.match(r"^[a-zA-Z0-9_.-]{1,50}$", stripped_name): # Similar to interface names but no '@'
+        app.logger.warning(f"Validation failed: Group name '{stripped_name}' has invalid characters or length.")
+        return False
+    if len(stripped_name) > max_length:
+        app.logger.warning(f"Validation failed: Group name exceeds max length of {max_length} characters.")
+        return False
+    return True
+
+def validate_priority_str(prio_str, min_val=0, max_val=7):
+    """Validates priority string, ensuring it's an int within range."""
+    if prio_str is None or str(prio_str).strip() == "": # Optional priority
+        return True
+    try:
+        prio_int = int(str(prio_str).strip())
+        if not (min_val <= prio_int <= max_val):
+            app.logger.warning(f"Validation failed: Priority '{prio_str}' out of range ({min_val}-{max_val}).")
+            return False
+        return True
+    except (ValueError, TypeError):
+        app.logger.warning(f"Validation failed: Priority '{prio_str}' is not a valid integer.")
+        return False
+
 
 def is_float(value):
     if value is None: return False
@@ -231,16 +467,27 @@ def format_bytes(byte_count):
     return f"{b/1024**4:.2f} TB"
 
 def get_tc_stats(interface):
-    # ... (Full implementation from flask_bandwidth_control_full/app.py, ensuring run_command is used)
-    # This function needs to be robustly implemented with correct regex for your tc output.
-    # The version in the uploaded file was a good start.
-    if not interface: return {}
+    """
+    Fetches and parses statistics from 'tc -s class show' and 'tc -s filter show'.
+    Args:
+        interface (str): The network interface name (should be pre-validated).
+    Returns:
+        dict: A dictionary containing parsed TC statistics.
+    """
+    if not validate_interface_name(interface):
+        app.logger.error(f"get_tc_stats: Invalid interface name '{interface}'.")
+        return {}
+
     app.logger.debug(f"Fetching TC stats for interface: {interface}")
     tc_stats = {}
-    class_output = run_command(f"tc -s class show dev {interface}")
+
+    # Command for TC class stats
+    cmd_list_class = ['tc', '-s', 'class', 'show', 'dev', interface]
+    class_output = run_command(cmd_list_class) # <--- เรียกแบบใหม่
+
     if class_output:
-        # Regex for 'class htb <id> ... bytes <bytes> ... pkts <pkts>' (order of bytes/pkts might vary)
-        # Or 'class htb <id> ... Sent <bytes> bytes <pkts> pkts'
+        # (คง Logic การ Parse 'class_output' เดิมของคุณไว้ที่นี่)
+        # ตัวอย่าง Regex เดิมของคุณ (อาจจะต้องปรับปรุงความแม่นยำ):
         class_pattern = re.compile(
             r"class\s+\S+\s+(?P<classid>\w+:\w+).*?"
             r"(?:Sent\s+(?P<bytes_sent>\d+)\s+bytes\s+(?P<pkts_sent>\d+)\s+pkt|bytes\s+(?P<bytes>\d+).*?pkts\s+(?P<pkts>\d+))",
@@ -252,72 +499,496 @@ def get_tc_stats(interface):
             bytes_val = data.get('bytes_sent') or data.get('bytes')
             pkts_val = data.get('pkts_sent') or data.get('pkts')
             if class_id and bytes_val and pkts_val:
-                try: tc_stats[class_id] = {'pkts': int(pkts_val), 'bytes': int(bytes_val)}
-                except ValueError: app.logger.warning(f"Could not parse stats for class {class_id}")
+                try:
+                    tc_stats[class_id] = {'pkts': int(pkts_val), 'bytes': int(bytes_val)}
+                except ValueError:
+                    app.logger.warning(f"get_tc_stats: Could not parse stats for class {class_id} from output.")
+    else:
+        app.logger.warning(f"get_tc_stats: No output or error from 'tc class show' for interface {interface}.")
 
-    filter_output = run_command(f"tc -s filter show dev {interface} ingress")
+
+    # Command for TC filter stats (ingress)
+    cmd_list_filter = ['tc', '-s', 'filter', 'show', 'dev', interface, 'ingress']
+    filter_output = run_command(cmd_list_filter) # <--- เรียกแบบใหม่
+
     if filter_output:
-        # Looking for 'flowid :<handle_id> ... pkts <pkts> bytes <bytes>'
-        # Or 'police ... pkts <pkts> bytes <bytes> ... flowid :<handle_id>'
+        # (คง Logic การ Parse 'filter_output' เดิมของคุณไว้ที่นี่)
+        # ตัวอย่าง Regex เดิมของคุณ (อาจจะต้องปรับปรุงความแม่นยำ):
         filter_pattern = re.compile(
             r"filter\s+parent\s+ffff:.*?protocol\s+\S+.*?pref\s+\d+.*?"
             r"(?:handle\s+(?P<handle_hex>0x[0-9a-fA-F]+)\s+)?.*?"
             r"(?:flowid\s+:(?P<flowid_minor>\d+)|police.*?flowid\s+:(?P<flowid_minor_alt>\d+)).*?"
-            r"pkts\s+(?P<packets>\d+)\s+bytes\s+(?P<bytes_val>\d+)", # Corrected group name
+            r"pkts\s+(?P<packets>\d+)\s+bytes\s+(?P<bytes_val>\d+)",
             re.DOTALL
         )
         for match in filter_pattern.finditer(filter_output):
             data = match.groupdict()
             filter_id_key = None
             pkts_val = data.get('packets')
-            bytes_val_parsed = data.get('bytes_val') # Corrected group name
-            
+            bytes_val_parsed = data.get('bytes_val')
             flowid_minor_val = data.get('flowid_minor') or data.get('flowid_minor_alt')
-            
-            if flowid_minor_val: filter_id_key = f":{flowid_minor_val}"
-            elif data.get('handle_hex'): filter_id_key = data.get('handle_hex')
+
+            if flowid_minor_val:
+                filter_id_key = f":{flowid_minor_val}"
+            elif data.get('handle_hex'): # Kernel handle if present
+                filter_id_key = data.get('handle_hex')
             
             if filter_id_key and pkts_val and bytes_val_parsed:
-                try: tc_stats[filter_id_key] = {'pkts': int(pkts_val), 'bytes': int(bytes_val_parsed)}
-                except ValueError: app.logger.warning(f"Could not parse stats for filter {filter_id_key}")
+                try:
+                    tc_stats[filter_id_key] = {'pkts': int(pkts_val), 'bytes': int(bytes_val_parsed)}
+                except ValueError:
+                    app.logger.warning(f"get_tc_stats: Could not parse stats for filter {filter_id_key} from output.")
+    else:
+        app.logger.warning(f"get_tc_stats: No output or error from 'tc filter show ingress' for interface {interface}.")
+
     return tc_stats
 
 
-def parse_tc_qdisc_show(interface):
-    # ... (Full implementation from flask_bandwidth_control_full/app.py)
-    qdiscs = {}
-    output = run_command(f"tc qdisc show dev {interface}")
-    if output:
-        qdisc_regex = re.compile(r'qdisc\s+([a-zA-Z0-9_-]+)\s+([0-9a-fA-F]+:(?:[0-9a-fA-F]*)?)\s+.*?dev\s+([\w.-]+)\s*(?:parent\s+([0-9a-fA-F]+:(?:[0-9a-fA-F]*)?))?.*?')
-        for line in output.splitlines():
-            match = qdisc_regex.match(line)
-            if match and match.group(3) == interface:
-                qdiscs[match.group(2)] = {'type': match.group(1), 'parent': match.group(4) or 'root'}
-    return qdiscs
+# ใน app.py
+# ... (import statements และ app.logger, run_command, validation helpers ของคุณ) ...
 
-def parse_tc_class_show(interface):
-    # ... (Full implementation from flask_bandwidth_control_full/app.py)
-    classes = {}
-    output = run_command(f"tc class show dev {interface}")
+def parse_tc_qdisc_show(interface):
+    """
+    Parses the output of 'tc qdisc show dev <interface>'.
+    Args:
+        interface (str): The network interface name (should be pre-validated).
+    Returns:
+        dict: A dictionary of parsed qdiscs, keyed by handle.
+    """
+    if not validate_interface_name(interface):
+        app.logger.error(f"parse_tc_qdisc_show: Invalid interface name '{interface}'.")
+        return {}
+
+    qdiscs = {}
+    cmd_list = ['tc', 'qdisc', 'show', 'dev', interface]
+    # สำหรับคำสั่งที่มี option มากขึ้น เช่น `tc -d qdisc show dev {interface}` เพื่อเอา default class
+    # cmd_list = ['tc', '-d', 'qdisc', 'show', 'dev', interface]
+    
+    output = run_command(cmd_list) # <--- เรียกแบบใหม่
+
     if output:
-        class_regex = re.compile(
-            r"class\s+(?P<type>\w+)\s+(?P<classid>\w+:\w+)\s+parent\s+(?P<parent>\w+:\w*)"
-            r"(?:\s+prio\s+(?P<prio>\d+))?\s+rate\s+(?P<rate>[\w./]+(?:bit|bps|Bps))" # Simplified rate
-            r"(?:\s+ceil\s+(?P<ceil>[\w./]+(?:bit|bps|Bps)))?"
-            r"(?:\s+burst\s+(?P<burst>[\w./]+(?:b|bit|Bps)))?"
-            r"(?:\s+cburst\s+(?P<cburst>[\w./]+(?:b|bit|Bps)))?", re.IGNORECASE
+        # (คง Logic การ Parse output เดิมของคุณไว้ที่นี่)
+        # ตัวอย่าง Regex เดิมของคุณ (อาจจะต้องปรับปรุงความแม่นยำ):
+        # qdisc\s+([a-zA-Z0-9_-]+)\s+([0-9a-fA-F]+:(?:[0-9a-fA-F]*)?)\s+.*?dev\s+([\w.-]+)\s*(?:parent\s+([0-9a-fA-F]+:(?:[0-9a-fA-F]*)?|root))?.*?
+        # ควรจะปรับปรุง Regex ให้แม่นยำขึ้น หรือใช้การ split line แล้ว parse ทีละบรรทัด
+        # ตัวอย่างการปรับปรุง Regex ให้ครอบคลุมรายละเอียดมากขึ้น (เช่น default class สำหรับ htb):
+        qdisc_pattern = re.compile(
+            r"qdisc\s+(?P<type>\w+)\s+(?P<handle>[0-9a-fA-F]+:(?:[0-9a-fA-F]*)?)\s+"
+            r"(?:parent\s+(?P<parent>[0-9a-fA-F]+:(?:[0-9a-fA-F]*)?|root)\s+)?" # Parent is optional for root
+            r"(?:dev\s+[\w.-@]+\s+)?" # dev part might not always be there if already specified
+            r"(?P<details>.*)"
         )
         for line in output.splitlines():
-            match = class_regex.search(line)
+            line = line.strip()
+            match = qdisc_pattern.match(line)
             if match:
                 data = match.groupdict()
-                classes[data['classid']] = {
-                    'parent': data['parent'], 'prio': int(data['prio']) if data['prio'] else 0,
-                    'rate_str': data['rate'], 'ceil_str': data.get('ceil') or data['rate'],
-                    'burst_str': data.get('burst'), 'cburst_str': data.get('cburst')
+                handle = data['handle']
+                qdisc_info = {
+                    'type': data['type'],
+                    'parent': data['parent'] if data['parent'] else 'root', # Handle case where parent is not explicitly root
+                    'raw_details': data['details']
                 }
-    return classes
+                if data['type'] == 'htb':
+                    default_match = re.search(r'default\s+([0-9a-fA-F]+)', data['details']) # default minor id (hex)
+                    if default_match:
+                        qdisc_info['default_minor_id'] = default_match.group(1)
+                    r2q_match = re.search(r'r2q\s+(\d+)', data['details'])
+                    if r2q_match:
+                        qdisc_info['r2q'] = r2q_match.group(1)
+                # Add more parsers for other qdisc types if needed (e.g., ingress, fq_codel)
+                qdiscs[handle] = qdisc_info
+    else:
+        app.logger.warning(f"parse_tc_qdisc_show: No output or error from 'tc qdisc show' for interface {interface}.")
+    
+    app.logger.debug(f"Parsed qdiscs for {interface}: {qdiscs}")
+    return qdiscs
 
+# ใน app.py
+# ... (import statements และ app.logger, run_command, validation helpers ของคุณ) ...
+
+def parse_tc_class_show(interface):
+    """
+    Parses the output of 'tc -s -d class show dev <interface>'.
+    Args:
+        interface (str): The network interface name (should be pre-validated).
+    Returns:
+        dict: A dictionary of parsed classes, keyed by classid.
+    """
+    if not validate_interface_name(interface):
+        app.logger.error(f"parse_tc_class_show: Invalid interface name '{interface}'.")
+        return {}
+
+    classes = {}
+    # Use -s for statistics, -d for details
+    cmd_list = ['tc', '-s', '-d', 'class', 'show', 'dev', interface]
+    output = run_command(cmd_list) # <--- เรียกแบบใหม่
+
+    if output:
+        # (คง Logic การ Parse output เดิมของคุณไว้ที่นี่ หรือปรับปรุง Regex)
+        # Regex เดิมของคุณอาจจะต้องปรับให้รองรับ output จาก -s -d
+        # ตัวอย่าง Regex ที่พยายามจะละเอียดขึ้น (อาจจะต้องทดสอบและปรับปรุงอีก):
+        class_pattern = re.compile(
+            r"class\s+(?P<type>htb)\s+(?P<classid>[0-9a-fA-F]+:[0-9a-fA-F]+)\s+"
+            r"parent\s+(?P<parent>[0-9a-fA-F]+:(?:[0-9a-fA-F]*)?)\s+"
+            r"(?:leaf\s+([0-9a-fA-F]+:))?\s*" # Optional leaf qdisc handle
+            r"(?:prio\s+(?P<prio>\d+)\s+)?"
+            r"rate\s+(?P<rate>\d+[a-zA-Z_]*(?:bit|bps|Bps))\s*"
+            r"(?:ceil\s+(?P<ceil>\d+[a-zA-Z_]*(?:bit|bps|Bps))\s*)?"
+            r"(?:burst\s+(?P<burst>\d+[a-zA-Zkmg]?b?(?:yte)?)\s*(?:\(bytes\s+\d+\))?\s*)?"
+            r"(?:cburst\s+(?P<cburst>\d+[a-zA-Zkmg]?b?(?:yte)?)\s*(?:\(bytes\s+\d+\))?\s*)?"
+            # Statistics part
+            r"(?:Sent\s+(?P<sent_bytes>\d+)\s+bytes\s+(?P<sent_pkts>\d+)\s+pkt\s*)?"
+            r"(?:\(dropped\s+(?P<dropped_pkts>\d+),\s*overlimits\s+(?P<overlimits>\d+)\s+requeues\s+(?P<requeues>\d+)\))?"
+            # Other details
+            r"(?:quantum\s+(?P<quantum>\d+)\s*)?"
+            r"(?:level\s+(?P<level>\d+)\s*)?",
+            re.IGNORECASE
+        )
+        
+        # TC output can be multi-line per class, especially with -s -d
+        # It's safer to split output into blocks per "class " line
+        class_blocks = re.split(r'(?=class htb)', output) # Split keeping "class htb"
+
+        for block in class_blocks:
+            if not block.strip().startswith("class htb"):
+                continue
+            
+            match = class_pattern.search(block.replace('\n', ' ')) # Replace newlines for easier regex on block
+            if match:
+                data = match.groupdict()
+                classid = data['classid']
+                class_info = {
+                    'type': data['type'],
+                    'parent': data['parent'],
+                    'rate_str': data['rate'],
+                    'ceil_str': data.get('ceil') or data['rate'], # Default ceil to rate if not present
+                    'prio': int(data['prio']) if data.get('prio') else None,
+                    'burst_str': data.get('burst'),
+                    'cburst_str': data.get('cburst'),
+                    'sent_bytes': int(data['sent_bytes']) if data.get('sent_bytes') else 0,
+                    'sent_pkts': int(data['sent_pkts']) if data.get('sent_pkts') else 0,
+                    'dropped_pkts': int(data['dropped_pkts']) if data.get('dropped_pkts') else 0,
+                    'overlimits': int(data['overlimits']) if data.get('overlimits') else 0,
+                    'quantum': data.get('quantum'),
+                    'level': data.get('level')
+                }
+                classes[classid] = class_info
+            else:
+                app.logger.warning(f"parse_tc_class_show: No regex match for class block:\n{block[:200]}...") # Log snippet
+    else:
+        app.logger.warning(f"parse_tc_class_show: No output or error from 'tc class show' for interface {interface}.")
+
+    app.logger.debug(f"Parsed classes for {interface}: {classes}")
+    return classes
+# ใน app.py
+# ... (import statements และ app.logger, run_command, validation helpers ของคุณ) ...
+# ใน app.py
+# ... (import statements และ app.logger, run_command, validation helpers ของคุณ) ...
+
+# (ฟังก์ชัน parse_tc_class_show และ parse_tc_filter_show ของคุณควรจะยังคงอยู่
+# และถ้ามีการเรียก run_command ภายในนั้น ก็ควรจะอัปเดตให้ใช้ cmd_list)
+
+def tc_add_class(interface, classid, parent_classid, rate_str_for_tc,
+                 ceil_str_for_tc=None, prio_str=None,
+                 burst_str_for_tc=None, cburst_str_for_tc=None,
+                 action="add"):
+    """
+    Adds or changes a TC class using HTB.
+    All arguments are expected to be pre-validated for general type and basic format.
+    This function performs final TC-specific format validation.
+    Args:
+        interface (str): Validated network interface name.
+        classid (str): Validated TC class ID (e.g., "1:10").
+        parent_classid (str): Validated parent TC class ID (e.g., "1:1" or "1:").
+        rate_str_for_tc (str): Validated TC rate string (e.g., "10mbit").
+        ceil_str_for_tc (str, optional): Validated TC ceil rate string. Defaults to rate_str_for_tc.
+        prio_str (str, optional): Validated priority as a string (e.g., "1", "7").
+        burst_str_for_tc (str, optional): Validated TC burst string (e.g., "15k").
+        cburst_str_for_tc (str, optional): Validated TC cburst string.
+        action (str): "add" or "change".
+    Returns:
+        bool: True on success, False on failure.
+    """
+    if not (validate_interface_name(interface) and
+            validate_tc_classid(classid) and
+            validate_tc_classid(parent_classid) and # Handles "1:", "ffff:" etc.
+            validate_tc_specific_rate_string(rate_str_for_tc) and
+            action in ["add", "change"]):
+        app.logger.error(f"tc_add_class: Pre-validation failed for critical arguments: "
+                         f"IF='{interface}', CID='{classid}', PID='{parent_classid}', Rate='{rate_str_for_tc}', Act='{action}'")
+        return False
+
+    effective_ceil_str = ceil_str_for_tc if ceil_str_for_tc else rate_str_for_tc
+    if not validate_tc_specific_rate_string(effective_ceil_str):
+        app.logger.error(f"tc_add_class: Invalid TC-specific ceil string: {effective_ceil_str}")
+        return False
+
+    if prio_str is not None and not validate_priority_str(prio_str, 0, 7): # HTB Prio 0-7
+        app.logger.error(f"tc_add_class: Invalid priority string for TC: {prio_str}")
+        return False
+
+    if burst_str_for_tc and not validate_tc_specific_burst_string(burst_str_for_tc):
+        app.logger.error(f"tc_add_class: Invalid TC-specific burst string: {burst_str_for_tc}")
+        return False
+    if cburst_str_for_tc and not validate_tc_specific_burst_string(cburst_str_for_tc):
+        app.logger.error(f"tc_add_class: Invalid TC-specific cburst string: {cburst_str_for_tc}")
+        return False
+
+    cmd_list = ['tc', 'class', action, 'dev', interface,
+                'parent', parent_classid, 'classid', classid, 'htb',
+                'rate', rate_str_for_tc, 'ceil', effective_ceil_str]
+
+    if prio_str is not None:
+        cmd_list.extend(['prio', prio_str])
+    if burst_str_for_tc:
+        cmd_list.extend(['burst', burst_str_for_tc])
+    if cburst_str_for_tc: # Note: For HTB, 'ceil' is the primary max rate. 'cburst' is less common.
+        cmd_list.extend(['cburst', cburst_str_for_tc])
+
+    app.logger.info(f"TC CMD: {' '.join(cmd_list)}")
+    if run_command(cmd_list) is not None:
+        app.logger.info(f"TC: Successfully {action}ed class {classid} on {interface}.")
+        return True
+    else:
+        app.logger.error(f"TC: Failed to {action} class {classid} on {interface}. Command: {' '.join(cmd_list)}")
+        return False
+
+def tc_del_class(interface, classid):
+    """
+    Deletes a TC class.
+    Args:
+        interface (str): The network interface name (pre-validated).
+        classid (str): The TC class ID to delete (pre-validated, e.g., "1:10").
+    Returns:
+        bool: True if command execution seemed successful (or class was already gone).
+              False if command execution failed for other reasons.
+    """
+    if not validate_interface_name(interface) or not validate_tc_classid(classid):
+        app.logger.error(f"tc_del_class: Invalid arguments. IF='{interface}', CID='{classid}'")
+        return False
+
+    cmd_list = ['tc', 'class', 'del', 'dev', interface, 'classid', classid]
+    
+    app.logger.info(f"TC CMD: {' '.join(cmd_list)}")
+    output = run_command(cmd_list)
+
+    if output is not None: # Command executed, even if tc reported "No such file or directory" (which is success for delete)
+        app.logger.info(f"TC: Class deletion command for {classid} on {interface} executed. Output: '{output if output else 'No output'}'")
+        # Further check if it actually deleted it could be done by parsing tc class show again,
+        # but for simplicity, we assume if tc didn't throw a hard error (like bad args), it's fine.
+        return True
+    else:
+        # run_command logs the specific error (CalledProcessError, Timeout, etc.)
+        app.logger.warning(f"TC: Failed to execute delete command for class {classid} on {interface}. Command: {' '.join(cmd_list)}")
+        return False
+
+
+def tc_add_filter_u32(interface, parent_handle, prio_str, # prio is string for tc
+                      protocol_for_tc, u32_match_expr_str, flowid_or_classid,
+                      filter_action_verb="add", filter_handle_for_add=None): # filter_handle_for_add e.g., "800::1"
+    """
+    Adds or changes/replaces a u32 TC filter.
+    All arguments MUST BE PRE-VALIDATED.
+    Args:
+        interface (str): Validated interface.
+        parent_handle (str): Validated parent qdisc/class handle (e.g., "1:0", "ffff:").
+        prio_str (str): Validated priority string (e.g., "1").
+        protocol_for_tc (str): Validated protocol string for TC (e.g., "ip", "ipv6", "tcp").
+        u32_match_expr_str (str): The pre-constructed and validated u32 match expression string.
+                                  Example: "match ip src 192.168.1.10/32"
+                                  Example: "match ip protocol 6 0xff match tcp dport 80 0xffff"
+        flowid_or_classid (str): Validated target class ID (e.g., "1:10") or police flowid (e.g., ":1").
+        filter_action_verb (str): "add", "change", or "replace".
+        filter_handle_for_add (str, optional): Specific handle for `tc filter add` (e.g., "800::1").
+    Returns:
+        bool: True on success, False on failure.
+    """
+    # --- Final TC-specific validations ---
+    if not (validate_interface_name(interface) and
+            validate_tc_classid(parent_handle) and # Handles "1:", "ffff:" etc.
+            validate_priority_str(prio_str, 1, 65535) and # TC filter prio range
+            validate_protocol(protocol_for_tc, ['ip', 'ipv6', 'arp', 'all']) and # TC filter protocols
+            u32_match_expr_str and isinstance(u32_match_expr_str, str) and
+            (validate_tc_classid(flowid_or_classid) or (isinstance(flowid_or_classid, str) and flowid_or_classid.startswith(':'))) and # for police flowid :<handle>
+            filter_action_verb in ["add", "change", "replace"]):
+        app.logger.error(f"tc_add_filter_u32: Pre-validation failed for critical arguments. "
+                         f"IF='{interface}', Parent='{parent_handle}', Prio='{prio_str}', Proto='{protocol_for_tc}', "
+                         f"Match='{u32_match_expr_str[:50]}...', FlowID='{flowid_or_classid}', Action='{filter_action_verb}'")
+        return False
+    
+    if filter_handle_for_add and (not isinstance(filter_handle_for_add, str) or not re.match(r"^[0-9a-fA-F]+::[0-9a-fA-F]*$", filter_handle_for_add)):
+        app.logger.error(f"tc_add_filter_u32: Invalid filter_handle_for_add format: {filter_handle_for_add}")
+        return False
+
+    cmd_list = ['tc', 'filter', filter_action_verb, 'dev', interface,
+                'parent', parent_handle, 'protocol', protocol_for_tc, 'prio', prio_str]
+
+    if filter_handle_for_add and filter_action_verb == "add": # Handle for 'add' specifically
+        cmd_list.extend(['handle', filter_handle_for_add])
+    
+    # u32_match_expr_str is assumed to be correctly formatted sequence of "match ..."
+    # It's tricky to split it into list elements perfectly if it contains spaces within matches.
+    # For `shell=False`, if u32_match_expr_str is complex, it might need careful splitting.
+    # Simplest is often to pass it as one argument if `tc u32` parser handles that.
+    # Let's assume tc u32 can parse "match ip src x match ip dport y" as subsequent arguments if `u32` is the command
+    # So we add 'u32' then arguments for the match expression.
+    cmd_list.append('u32')
+    cmd_list.extend(shlex.split(u32_match_expr_str)) # Split the match expression into parts
+
+    cmd_list.extend(['flowid', flowid_or_classid])
+    
+    app.logger.info(f"TC CMD: {' '.join(cmd_list)}") # For logging
+    if run_command(cmd_list) is not None:
+        app.logger.info(f"TC: Successfully {filter_action_verb}ed u32 filter on {interface}.")
+        return True
+    else:
+        app.logger.error(f"TC: Failed to {filter_action_verb} u32 filter on {interface}. Command: {' '.join(cmd_list)}")
+        return False
+
+def tc_del_filter_u32(interface, parent_handle, prio_str, protocol_for_tc, u32_match_expr_str):
+    """
+    Deletes a u32 TC filter based on its match criteria.
+    All arguments MUST BE PRE-VALIDATED.
+    Args:
+        interface (str): Validated interface.
+        parent_handle (str): Validated parent qdisc/class handle.
+        prio_str (str): Validated priority string.
+        protocol_for_tc (str): Validated protocol string for TC.
+        u32_match_expr_str (str): The pre-constructed and validated u32 match expression.
+    Returns:
+        bool: True on success or if filter was already gone, False on failure.
+    """
+    if not (validate_interface_name(interface) and
+            validate_tc_classid(parent_handle) and
+            validate_priority_str(prio_str, 1, 65535) and
+            validate_protocol(protocol_for_tc, ['ip', 'ipv6', 'arp', 'all']) and
+            u32_match_expr_str and isinstance(u32_match_expr_str, str)):
+        app.logger.error(f"tc_del_filter_u32: Pre-validation failed for critical arguments.")
+        return False
+
+    cmd_list = ['tc', 'filter', 'del', 'dev', interface,
+                'parent', parent_handle, 'protocol', protocol_for_tc, 'prio', prio_str,
+                'u32']
+    cmd_list.extend(shlex.split(u32_match_expr_str)) # Split match expression
+    
+    app.logger.info(f"TC CMD: {' '.join(cmd_list)}")
+    output = run_command(cmd_list)
+
+    if output is not None:
+        app.logger.info(f"TC: u32 filter deletion command for '{u32_match_expr_str[:50]}...' on {interface} executed. Output: '{output if output else 'No output'}'")
+        return True
+    else:
+        app.logger.warning(f"TC: Failed to execute delete command for u32 filter '{u32_match_expr_str[:50]}...' on {interface}. Command: {' '.join(cmd_list)}")
+        return False
+def parse_tc_filters_advanced(interface, parent_handle_filter_str=None):
+    """
+    Parses 'tc -s -d filter show dev <interface> [parent <handle>]'.
+    Args:
+        interface (str): The network interface name (pre-validated).
+        parent_handle_filter_str (str, optional): Specific parent handle to filter by (e.g., "1:0", "ffff:").
+                                                 Should be pre-validated if provided.
+    Returns:
+        list: A list of dictionaries, each representing a parsed filter.
+    """
+    if not validate_interface_name(interface):
+        app.logger.error(f"parse_tc_filters_advanced: Invalid interface name '{interface}'.")
+        return []
+    
+    if parent_handle_filter_str and not validate_tc_classid(parent_handle_filter_str): # classid validator works for handles too
+        app.logger.error(f"parse_tc_filters_advanced: Invalid parent_handle_filter_str '{parent_handle_filter_str}'.")
+        return []
+
+    filters_list = []
+    cmd_list = ['tc', '-s', '-d', 'filter', 'show', 'dev', interface]
+    if parent_handle_filter_str:
+        cmd_list.extend(['parent', parent_handle_filter_str])
+    
+    output = run_command(cmd_list) # <--- เรียกแบบใหม่
+
+    if not output:
+        app.logger.warning(f"parse_tc_filters_advanced: No output or error for command: {' '.join(cmd_list)}")
+        return filters_list
+
+    # TC filter output is tricky as one filter can span multiple lines and actions.
+    # We split by "filter parent" assuming each new filter starts with this.
+    # This regex tries to capture a full filter block.
+    filter_block_pattern = re.compile(r"filter\s+parent\s+(?P<parent>[0-9a-fA-F]+:(?:[0-9a-fA-F]*)?)\s*(?:protocol\s+(?P<protocol>\S+))?\s*(?:pref\s+(?P<prio>\d+))?\s*(?P<type>\w+)(?P<rest_of_filter_line>.*?)(?=(?:filter\s+parent|\Z))", re.DOTALL | re.IGNORECASE)
+    
+    for match_obj in filter_block_pattern.finditer(output):
+        filter_data = match_obj.groupdict()
+        full_block_text = match_obj.group(0) # The entire text for this filter block
+        
+        parsed_filter = {
+            'parent': filter_data['parent'],
+            'protocol': filter_data.get('protocol', 'all').lower(), # Default to 'all' if not specified
+            'prio': filter_data.get('prio', '0'), # Default prio if not specified
+            'type': filter_data['type'].lower(),
+            'match': {}, # To store u32 match details
+            'actions': [], # To store actions like police, mirred
+            'raw_block': full_block_text.strip() # For debugging
+        }
+
+        # Extract handle (fh or handle 0x...)
+        handle_match = re.search(r"(?:fh\s+|handle\s+)(?P<handle>[0-9a-fA-F]+::[0-9a-fA-F]*|0x[0-9a-fA-F]+)", full_block_text, re.IGNORECASE)
+        if handle_match:
+            parsed_filter['handle'] = handle_match.group('handle')
+
+        # Extract flowid/classid (target of the filter)
+        flowid_match = re.search(r"(?:flowid|classid)\s+([0-9a-fA-F]+:[0-9a-fA-F]+|:[0-9a-fA-F]+)", full_block_text, re.IGNORECASE) # Police uses :handle
+        if flowid_match:
+            parsed_filter['flowid'] = flowid_match.group(1)
+        
+        # --- Parse u32 match details (example, can be expanded) ---
+        if parsed_filter['type'] == 'u32':
+            # Example: match ip src 192.168.1.10/32
+            # Example: match ip protocol 6 0xff match tcp dport 80 0xffff
+            u32_matches = re.findall(r"match\s+([a-zA-Z0-9_]+)\s+([^ \n\t]+(?:\s+[^ \n\t]+)?)", full_block_text, re.IGNORECASE)
+            for u32_match_key, u32_match_val in u32_matches:
+                # This is a very basic parsing of u32. Real u32 can be complex (offsets, masks).
+                # For 'ip protocol 6 0xff', key='ip', val='protocol 6 0xff'
+                # You might need a more structured approach if you need to deeply parse u32 keys/values/masks/offsets.
+                parsed_filter['match'][u32_match_key.lower()] = u32_match_val.strip()
+
+                # Try to extract specific IP/Port matches for easier use later
+                if u32_match_key.lower() == 'ip' or u32_match_key.lower() == 'ip6':
+                    if 'src' in u32_match_val.lower():
+                        ip_src_m = re.search(r"src\s+([0-9a-fA-F.:/]+)", u32_match_val, re.IGNORECASE)
+                        if ip_src_m: parsed_filter['match']['ip_src_extracted'] = ip_src_m.group(1)
+                    if 'dst' in u32_match_val.lower():
+                        ip_dst_m = re.search(r"dst\s+([0-9a-fA-F.:/]+)", u32_match_val, re.IGNORECASE)
+                        if ip_dst_m: parsed_filter['match']['ip_dst_extracted'] = ip_dst_m.group(1)
+                    if 'protocol' in u32_match_val.lower():
+                        proto_m = re.search(r"protocol\s+(\d+)\s+0xff", u32_match_val, re.IGNORECASE)
+                        if proto_m: parsed_filter['match']['ip_protocol_num_extracted'] = proto_m.group(1)
+
+                if u32_match_key.lower() == 'tcp' or u32_match_key.lower() == 'udp':
+                    if 'sport' in u32_match_val.lower():
+                        sport_m = re.search(r"sport\s+(\d+)\s+0xffff", u32_match_val, re.IGNORECASE)
+                        if sport_m: parsed_filter['match']['sport_extracted'] = sport_m.group(1)
+                    if 'dport' in u32_match_val.lower():
+                        dport_m = re.search(r"dport\s+(\d+)\s+0xffff", u32_match_val, re.IGNORECASE)
+                        if dport_m: parsed_filter['match']['dport_extracted'] = dport_m.group(1)
+        
+        # --- Parse actions (example for police) ---
+        action_police_match = re.search(r"action\s+police\s+rate\s+(?P<rate>\S+)\s+burst\s+(?P<burst>\S+)(?:\s+conform-exceed\s+(?P<conf_excd>\S+))?", full_block_text, re.IGNORECASE)
+        if action_police_match:
+            police_action = {'type': 'police'}
+            police_action.update(action_police_match.groupdict())
+            parsed_filter['actions'].append(police_action)
+        
+        # Add more action parsers (mirred, drop, etc.) if needed
+
+        # Statistics (from -s flag)
+        sent_stats_match = re.search(r"Sent\s+(?P<sent_bytes>\d+)\s+bytes\s+(?P<sent_pkts>\d+)\s+pkt", full_block_text)
+        if sent_stats_match:
+            parsed_filter['sent_bytes'] = int(sent_stats_match.group('sent_bytes'))
+            parsed_filter['sent_pkts'] = int(sent_stats_match.group('sent_pkts'))
+        
+        filters_list.append(parsed_filter)
+        app.logger.debug(f"Parsed filter on {interface} (parent {parent_handle_filter_str or 'any'}): {parsed_filter}")
+        
+    return filters_list
 def parse_tc_filter_show(interface, direction_unused=None): # direction not strictly used if parsing all
     # ... (Full implementation from flask_bandwidth_control_full/app.py or refined version)
     # This function is complex and depends heavily on the exact output of `tc filter show`.
@@ -413,463 +1084,817 @@ def is_rule_scheduled_active_now(rule_obj, current_datetime):
     app.logger.info(f"[Placeholder] apply_single_tc_rule for rule ID {rule_obj.id}. TC commands would be built and run here.")
     # Example: run_command("tc ...")
     return True # Assume success for placeholder
+PROTO_NAME_TO_NUM_MAP = {
+    "tcp": "6",
+    "udp": "17",
+    "icmp": "1",
+    # "ip" or "ipv6" don't need a number here as tc handles them directly
+}
+
 def apply_single_tc_rule(rule_obj):
+    """
+    Applies a single TC rule (from DB object) to the system.
+    Args:
+        rule_obj (Rule): The SQLAlchemy Rule object.
+    Returns:
+        bool: True if TC commands were successfully applied (or rule is disabled), False otherwise.
+    """
     if not rule_obj or not rule_obj.interface:
-        app.logger.error("apply_single_tc_rule called with invalid rule object or interface.")
+        app.logger.error("apply_single_tc_rule: Invalid rule_obj or missing interface.")
         return False
-    
-    if not rule_obj.is_enabled: # NEW: Check if rule is enabled
-        app.logger.info(f"Rule ID {rule_obj.id} is disabled. Skipping TC application.")
-        return True # Considered success as no action needed
 
-    interface = rule_obj.interface
-    ip = rule_obj.ip
-    # Use parsed rate for TC command from a helper or re-parse here
-    rate_val_str, tc_unit, _ = parse_rate_to_tc_format(rule_obj.rate_str)
-    if not rate_val_str:
-        app.logger.error(f"Cannot apply TC rule for DB ID {rule_obj.id}: Invalid rate_str '{rule_obj.rate_str}'.")
+    # 1. Validate interface from rule_obj
+    if not validate_interface_name(rule_obj.interface):
+        app.logger.error(f"apply_single_tc_rule: Invalid interface name '{rule_obj.interface}' in Rule ID {rule_obj.id}.")
         return False
-    tc_rate_str_cmd_rule = f"{rate_val_str}{tc_unit}"
 
-    # Burst and Cburst for upload
-    burst_cmd_part = ""
+    # 2. Check if rule is enabled in the database
+    if not rule_obj.is_enabled:
+        app.logger.info(f"Rule ID {rule_obj.id} (IP: {rule_obj.ip}) is disabled in DB. "
+                        f"Attempting to clear any existing TC configurations for it.")
+        return clear_single_tc_rule(rule_obj) # Ensure TC is cleared if rule is disabled
+
+    app.logger.info(f"Applying TC for Rule ID {rule_obj.id} (IP: {rule_obj.ip}, Dir: {rule_obj.direction}, Interface: {rule_obj.interface})")
+
+    # 3. Ensure Root Qdisc based on direction
+    root_qdisc_type = "htb" if rule_obj.direction == "upload" else "ingress"
+    # HTB default class minor ID, ensure it's a string for tc_ensure_root_qdisc
+    htb_default_minor = str(app.config.get('HTB_DEFAULT_CLASS_MINOR_ID', "10"))
+    if not tc_ensure_root_qdisc(rule_obj.interface, default_classid_minor=htb_default_minor, qdisc_type=root_qdisc_type):
+        app.logger.error(f"Failed to ensure root {root_qdisc_type.upper()} qdisc on {rule_obj.interface} for Rule ID {rule_obj.id}")
+        return False
+
+    # 4. Parse and Validate Rates for TC
+    # Main rate
+    tc_rate_main, _, _ = parse_rate_to_tc_format(rule_obj.rate_str) # Assumes rate_str is "ValueUnit"
+    if not tc_rate_main or not validate_tc_specific_rate_string(tc_rate_main):
+        app.logger.error(f"Rule ID {rule_obj.id}: Invalid main rate_str '{rule_obj.rate_str}' for TC.")
+        return False
+
+    # Ceil rate (for HTB, often same as main rate if not specified, or from cburst_str)
+    tc_ceil_main = None
     if rule_obj.direction == "upload":
-        if rule_obj.burst_str:
-            burst_val_str, burst_tc_unit, _ = parse_rate_to_tc_format(rule_obj.burst_str)
-            if burst_val_str: burst_cmd_part += f" burst {burst_val_str}{burst_tc_unit}"
-        if rule_obj.cburst_str:
-            cburst_val_str, cburst_tc_unit, _ = parse_rate_to_tc_format(rule_obj.cburst_str)
-            if cburst_val_str: burst_cmd_part += f" cburst {cburst_val_str}{cburst_tc_unit}"
+        if rule_obj.cburst_str: # cburst_str in DB is used as 'ceil' for the HTB class
+            tc_ceil_main, _, _ = parse_rate_to_tc_format(rule_obj.cburst_str)
+            if not tc_ceil_main or not validate_tc_specific_rate_string(tc_ceil_main):
+                app.logger.warning(f"Rule ID {rule_obj.id}: Invalid cburst_str (ceil) '{rule_obj.cburst_str}' for TC. Defaulting ceil to rate.")
+                tc_ceil_main = tc_rate_main # Fallback
+        else:
+            tc_ceil_main = tc_rate_main # Default ceil to rate if cburst_str is not set
 
+    # Burst rate (for HTB class)
+    tc_burst_main = None
+    if rule_obj.direction == "upload" and rule_obj.burst_str:
+        # burst_str in DB is for HTB class 'burst' parameter
+        # parse_rate_to_tc_format should ideally also handle units like '15k', '2m', '1600b'
+        # For now, let's assume it returns a TC-compatible string directly or we validate separately
+        tc_burst_main, _, _ = parse_rate_to_tc_format(rule_obj.burst_str)
+        if not tc_burst_main or not validate_tc_specific_burst_string(tc_burst_main):
+            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid burst_str '{rule_obj.burst_str}' for TC. Ignoring burst.")
+            tc_burst_main = None
+    
+    # --- UPLOAD DIRECTION ---
+    if rule_obj.direction == "upload":
+        parent_classid_for_ip_rule = rule_obj.upload_parent_handle
+        ip_classid_for_rule = rule_obj.upload_classid
 
-    direction = rule_obj.direction
-    group = rule_obj.group_name
-    protocol = rule_obj.protocol
-    source_port = rule_obj.source_port
-    destination_port = rule_obj.destination_port
-    tc_identifier = rule_obj.upload_classid
-    parent_handle_stored = rule_obj.upload_parent_handle
+        if not validate_tc_classid(parent_classid_for_ip_rule) or not validate_tc_classid(ip_classid_for_rule):
+            app.logger.error(f"Rule ID {rule_obj.id}: Invalid TC parent ('{parent_classid_for_ip_rule}') or class ('{ip_classid_for_rule}') identifier.")
+            return False
+        
+        # (Logic for ensuring parent group class exists, if rule_obj.group_name is set,
+        #  should be here, calling tc_add_class for the group. This was in set_bandwidth_limit previously)
+        # For simplicity in this function, we assume parent_classid_for_ip_rule is correctly set.
 
-    if not tc_identifier:
-        app.logger.error(f"Cannot apply TC rule for DB ID {rule_obj.id}: Missing TC identifier (upload_classid).")
-        return False
+        prio_str_for_tc = str(rule_obj.priority) if rule_obj.priority is not None else None
+        if prio_str_for_tc and not validate_priority_str(prio_str_for_tc, 0, 7): # HTB prio
+            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid priority '{prio_str_for_tc}'. Ignoring priority.")
+            prio_str_for_tc = None
 
-    app.logger.info(f"Applying TC for rule ID {rule_obj.id}: IP={ip}, Dir={direction}, Rate(TC)={tc_rate_str_cmd_rule}, BurstCmd='{burst_cmd_part}', Filter='{protocol or 'Any'}:{source_port or '-'}:{destination_port or '-'}'. TC ID: {tc_identifier}")
+        # Action: 'add' or 'change'. Need to check if class already exists to decide.
+        # current_classes_on_iface = parse_tc_class_show(rule_obj.interface)
+        # tc_action_class = "change" if ip_classid_for_rule in current_classes_on_iface else "add"
+        # For simplicity, we'll use "add". `tc class add` might fail if it exists with incompatible params.
+        # A robust solution checks and uses 'change' or deletes and re-adds.
+        # Here, let's assume we try to add, and if it fails because it exists, we might try change or log.
+        # Or, the calling function (set_bandwidth_limit) should have handled overwrite logic.
+        # Let's default to "add" and let tc handle "file exists" if it's truly identical.
+        # If parameters change, "change" is better. Assuming "add" for now, and if it fails, caller might retry with "change".
+        # Better yet: always "delete" then "add" to ensure clean state, or smart "change".
+        # For now, let's assume the `set_bandwidth_limit` or an orchestrator decides add/change.
+        # Here we just execute what is implied. Let's assume this function is called to *create* or *ensure* the class.
+        # A common pattern is `tc class replace ...` which adds if not exists, or changes if it does.
+        # However, `tc class replace` is not as straightforward as `add` or `change` for all parameters.
+        # Let's assume we use 'add', and tc might give 'RTNETLINK answers: File exists'.
+        # This function should be idempotent or the caller handles existence.
+        # Let's try "add", if it fails, try "change". This is a common pattern.
 
-    current_classes = parse_tc_class_show(interface)
-    current_filters = parse_tc_filter_show(interface, direction) # This might need refinement for upload filter checks
-    commands_to_execute = []
-
-    if direction == "upload":
-        commands_to_execute.append(f"tc qdisc add dev {interface} root handle 1: htb default 10 2>/dev/null || true")
-    else: # download
-        commands_to_execute.append(f"tc qdisc add dev {interface} ingress 2>/dev/null || true")
-
-    parent_handle = parent_handle_stored
-    if direction == "upload" and group:
-        group_limit_db = GroupLimit.query.filter_by(interface=interface, group_name=group, direction="upload").first()
-        if group_limit_db and group_limit_db.upload_classid:
-            parent_handle = group_limit_db.upload_classid
-            grp_rate_val_str, grp_tc_unit, _ = parse_rate_to_tc_format(group_limit_db.rate_str)
-            grp_burst_cmd_part = ""
-            if group_limit_db.burst_str:
-                grp_burst_val_str, grp_burst_tc_unit, _ = parse_rate_to_tc_format(group_limit_db.burst_str)
-                if grp_burst_val_str: grp_burst_cmd_part += f" burst {grp_burst_val_str}{grp_burst_tc_unit}"
-            if group_limit_db.cburst_str:
-                grp_cburst_val_str, grp_cburst_tc_unit, _ = parse_rate_to_tc_format(group_limit_db.cburst_str)
-                if grp_cburst_val_str: grp_burst_cmd_part += f" cburst {grp_cburst_val_str}{grp_cburst_tc_unit}"
-
-            group_tc_rate_str_cmd = f"{grp_rate_val_str}{grp_tc_unit}"
-            if existing_group_class_tc := current_classes.get(group_limit_db.upload_classid):
-                if existing_group_class_tc['parent'] == "1:":
-                    commands_to_execute.append(f"tc class change dev {interface} parent 1: classid {group_limit_db.upload_classid} htb rate {group_tc_rate_str_cmd} ceil {group_tc_rate_str_cmd}{grp_burst_cmd_part} 2>/dev/null || true")
-                # else: problem, parent mismatch, set_group_limit should handle this conflict. Here we assume it's correct or will be.
+        # --- Add/Change HTB Class for the IP Rule ---
+        if not tc_add_class(interface=rule_obj.interface,
+                            classid=ip_classid_for_rule,
+                            parent_classid=parent_classid_for_ip_rule,
+                            rate_str_for_tc=tc_rate_main,
+                            ceil_str_for_tc=tc_ceil_main,
+                            prio_str=prio_str_for_tc,
+                            burst_str_for_tc=tc_burst_main,
+                            action="add"): # Try add first
+            # If add failed (e.g. "File exists"), try change
+            app.logger.warning(f"TC 'add class' failed for {ip_classid_for_rule}, trying 'change class'.")
+            if not tc_add_class(interface=rule_obj.interface,
+                                classid=ip_classid_for_rule,
+                                parent_classid=parent_classid_for_ip_rule,
+                                rate_str_for_tc=tc_rate_main,
+                                ceil_str_for_tc=tc_ceil_main,
+                                prio_str=prio_str_for_tc,
+                                burst_str_for_tc=tc_burst_main,
+                                action="change"):
+                app.logger.error(f"Failed to apply TC class {ip_classid_for_rule} for Rule ID {rule_obj.id} (both add and change failed).")
+                return False
+        
+        # --- Add u32 Filter for the IP Rule ---
+        u32_match_parts = []
+        # Protocol for `tc filter ... protocol <proto>`
+        tc_filter_protocol = "ip" # Default
+        if ":" in rule_obj.ip: # IPv6
+            u32_match_parts.append(f"match ip6 src {rule_obj.ip}/128")
+            tc_filter_protocol = "ipv6"
+        else: # IPv4
+            u32_match_parts.append(f"match ip src {rule_obj.ip}/32")
+            tc_filter_protocol = "ip" # Explicitly ip for IPv4 u32
+        
+        # Protocol and Ports for u32 match expression
+        if rule_obj.protocol and rule_obj.protocol.lower() not in ["ip", "ipv6", "all", "any", ""]:
+            proto_num_for_match = PROTO_NAME_TO_NUM_MAP.get(rule_obj.protocol.lower())
+            if proto_num_for_match:
+                u32_match_parts.append(f"match ip protocol {proto_num_for_match} 0xff")
+                # Ports are matched if protocol is TCP or UDP
+                if rule_obj.protocol.lower() in ["tcp", "udp"]:
+                    if rule_obj.source_port and validate_port_number(rule_obj.source_port):
+                        u32_match_parts.append(f"match {rule_obj.protocol.lower()} sport {rule_obj.source_port} 0xffff")
+                    if rule_obj.destination_port and validate_port_number(rule_obj.destination_port):
+                        u32_match_parts.append(f"match {rule_obj.protocol.lower()} dport {rule_obj.destination_port} 0xffff")
             else:
-                commands_to_execute.append(f"tc class add dev {interface} parent 1: classid {group_limit_db.upload_classid} htb rate {group_tc_rate_str_cmd} ceil {group_tc_rate_str_cmd}{grp_burst_cmd_part} 2>/dev/null || true")
+                app.logger.warning(f"Rule ID {rule_obj.id}: Unsupported protocol '{rule_obj.protocol}' for u32 filter 'match ip protocol'.")
+        
+        u32_match_expr = " ".join(u32_match_parts)
+        filter_prio_str = str(rule_obj.priority if rule_obj.priority is not None else 10) # Filter priority can be different
+        if not validate_priority_str(filter_prio_str, 1, 49151): # TC filter prio is wide range
+            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid filter priority '{filter_prio_str}'. Defaulting to 10.")
+            filter_prio_str = "10"
+        
+        # Before adding, good practice is to delete any existing filter with the same match criteria but different flowid
+        # This requires parsing existing filters. For now, we try to add.
+        # `tc filter add` might replace if a filter with the same (parent, prio, protocol, u32 selector) exists.
+        # To be absolutely sure for u32, explicit delete of old then add new is safer if params changed.
+        # Let's assume 'add' will try its best, or 'replace' could be used if handle is known.
+        # This function should ideally take a filter_handle_for_add if one is pre-determined and needs to be stable.
+        if not tc_add_filter_u32(interface=rule_obj.interface,
+                                 parent_handle=parent_classid_for_ip_rule,
+                                 prio_str=filter_prio_str,
+                                 protocol_for_tc=tc_filter_protocol, # "ip" or "ipv6" for the `tc filter protocol` part
+                                 u32_match_expr_str=u32_match_expr,
+                                 flowid_or_classid=ip_classid_for_rule,
+                                 filter_action_verb="add"): # Could be "replace" if handle known
+            app.logger.error(f"Failed to apply TC filter for Rule ID {rule_obj.id} pointing to {ip_classid_for_rule}.")
+            # Optional: Rollback class if filter add fails
+            # tc_del_class(rule_obj.interface, ip_classid_for_rule)
+            return False
+        
+        app.logger.info(f"Upload Rule ID {rule_obj.id} TC (class & filter) applied successfully.")
+        return True
+
+    # --- DOWNLOAD DIRECTION (Ingress Policing) ---
+    elif rule_obj.direction == "download":
+        police_flowid_handle = rule_obj.upload_classid # Stored as ":<handle_num>" for police flowid
+        if not (police_flowid_handle and isinstance(police_flowid_handle, str) and police_flowid_handle.startswith(':')):
+            app.logger.error(f"Rule ID {rule_obj.id}: Invalid police flowid_handle format '{police_flowid_handle}'.")
+            return False
+        
+        # Construct u32 match expression for download
+        dl_u32_match_parts = []
+        tc_filter_protocol_dl = "ip" # Default
+        if ":" in rule_obj.ip: # IPv6
+            dl_u32_match_parts.append(f"match ip6 dst {rule_obj.ip}/128")
+            tc_filter_protocol_dl = "ipv6"
+        else: # IPv4
+            dl_u32_match_parts.append(f"match ip dst {rule_obj.ip}/32")
+            tc_filter_protocol_dl = "ip"
+        
+        if rule_obj.protocol and rule_obj.protocol.lower() not in ["ip", "ipv6", "all", "any", ""]:
+            proto_num_for_match = PROTO_NAME_TO_NUM_MAP.get(rule_obj.protocol.lower())
+            if proto_num_for_match:
+                dl_u32_match_parts.append(f"match ip protocol {proto_num_for_match} 0xff")
+                if rule_obj.protocol.lower() in ["tcp", "udp"]:
+                    # For download, destination port on client side is usually ephemeral.
+                    # Source port (server's port) is more common to match.
+                    if rule_obj.source_port and validate_port_number(rule_obj.source_port):
+                         dl_u32_match_parts.append(f"match {rule_obj.protocol.lower()} sport {rule_obj.source_port} 0xffff")
+                    if rule_obj.destination_port and validate_port_number(rule_obj.destination_port): # Less common but possible
+                         dl_u32_match_parts.append(f"match {rule_obj.protocol.lower()} dport {rule_obj.destination_port} 0xffff")
+            else:
+                app.logger.warning(f"Rule ID {rule_obj.id}: Unsupported protocol '{rule_obj.protocol}' for u32 download filter.")
+        
+        dl_u32_match_expr = " ".join(dl_u32_match_parts)
+        filter_prio_str_dl = str(rule_obj.priority if rule_obj.priority is not None else 10)
+        if not validate_priority_str(filter_prio_str_dl, 1, 49151):
+            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid download filter priority '{filter_prio_str_dl}'. Defaulting to 10.")
+            filter_prio_str_dl = "10"
+
+        # Calculate burst for police action (example: 50ms of data at rate)
+        _, rate_bps_for_burst, _ = parse_rate_to_tc_format(rule_obj.rate_str)
+        if rate_bps_for_burst is None:
+             app.logger.error(f"Rule ID {rule_obj.id}: Could not parse rate '{rule_obj.rate_str}' to calculate police burst.")
+             return False
+        
+        burst_factor_seconds = float(app.config.get('POLICE_BURST_FACTOR_SECONDS', 0.05)) # 50ms
+        min_burst_bytes_config = int(app.config.get('POLICE_BURST_MIN_BYTES', 1600))
+        calculated_burst_bytes = max(int((rate_bps_for_burst / 8) * burst_factor_seconds), min_burst_bytes_config)
+        
+        # Construct the full `tc filter add ... action police ...` command as a list
+        # Note: `tc filter add ... u32 ... action police ...` is one way.
+        # `tc filter replace ...` requires a handle. If `police_flowid_handle` is just `:minor_id`,
+        # tc needs a proper kernel handle (e.g., 800::XYZ) for `replace by handle`.
+        # Adding with the same (parent,prio,protocol,selector) usually replaces u32.
+        
+        # Build the action part for police
+        action_police_str = f"police rate {tc_rate_main} burst {calculated_burst_bytes}b drop flowid {police_flowid_handle}"
+        
+        # tc_add_filter_u32 expects flowid_or_classid, but for police, the action string contains it.
+        # This means tc_add_filter_u32 might need adjustment or a new function for police filters.
+        # Let's try to adapt: flowid_or_classid becomes the target for 'action ...'
+        # However, `tc filter ... u32 ... action police ... flowid ...` is the structure.
+        # So, the `flowid_or_classid` in `tc_add_filter_u32` should be the action string itself for police.
+
+        # Re-thinking: `tc_add_filter_u32` is for filters that point to a class (flowid <classid>).
+        # For police, the action is part of the filter. We might need a dedicated function or extend `tc_add_filter_u32`.
+
+        # Let's assume for now we build the command directly here for ingress police
+        cmd_list_police = ['tc', 'filter', 'add', 'dev', rule_obj.interface,
+                           'parent', 'ffff:', 'protocol', tc_filter_protocol_dl, 'prio', filter_prio_str_dl,
+                           'u32']
+        cmd_list_police.extend(shlex.split(dl_u32_match_expr)) # Add match expression parts
+        cmd_list_police.extend(['action', 'police', 'rate', tc_rate_main, 
+                                'burst', f"{calculated_burst_bytes}b", # TC expects burst in bytes like '1600b' or '10k'
+                                'drop', # Default action on exceed
+                                'flowid', police_flowid_handle]) # flowid for police is for identification/stats
+
+        app.logger.info(f"TC CMD (Download Police): {' '.join(cmd_list_police)}")
+        if run_command(cmd_list_police) is not None:
+            app.logger.info(f"Download Rule ID {rule_obj.id} (police) TC command executed successfully.")
+            return True
         else:
-            parent_handle = "1:" # Fallback
-    elif not parent_handle:
-        parent_handle = "1:" if direction == "upload" else "ffff:"
+            # Try 'replace' if 'add' failed (might be needed if filter with same selector exists)
+            cmd_list_police[2] = 'replace' # Change 'add' to 'replace'
+            app.logger.warning(f"TC 'add filter police' failed for Rule ID {rule_obj.id}, trying 'replace'. Original CMD: {' '.join(cmd_list_police)}")
+            if run_command(cmd_list_police) is not None:
+                app.logger.info(f"Download Rule ID {rule_obj.id} (police) TC 'replace' command executed successfully.")
+                return True
+            else:
+                app.logger.error(f"Failed to apply TC police filter for Download Rule ID {rule_obj.id} (add and replace failed).")
+                return False
+    
+    app.logger.error(f"apply_single_tc_rule: Unhandled direction '{rule_obj.direction}' or logic path for Rule ID {rule_obj.id}")
+    return False
 
-
-    filter_prio = 1
-    filter_protocol_cmd = protocol.lower() if protocol else "ip"
-    match_details_parts = []
-    # Basic IPv4/IPv6 check for match string (can be more robust)
-    if ":" in ip: # crude IPv6 check
-        match_details_parts.append(f"ip6 {'src' if direction == 'upload' else 'dst'} {ip}/128")
-        if filter_protocol_cmd == "ip": filter_protocol_cmd = "ipv6" # Ensure protocol for filter command
-    else:
-        match_details_parts.append(f"ip {'src' if direction == 'upload' else 'dst'} {ip}/32")
-
-    if protocol and protocol.lower() != "ip" and protocol.lower() != "ipv6": match_details_parts.append(f"protocol {protocol.lower()}") # Avoid redundant protocol if already ip/ipv6
-    if protocol and protocol.lower() in ['tcp', 'udp']:
-        if source_port: match_details_parts.append(f"{protocol.lower()} sport {source_port}") # tc uses sport/dport
-        if destination_port: match_details_parts.append(f"{protocol.lower()} dport {destination_port}")
-    u32_match_string = " ".join(match_details_parts)
-
-    if direction == "upload":
-        classid = tc_identifier
-        if existing_ip_class_tc := current_classes.get(classid):
-            if existing_ip_class_tc['parent'] == parent_handle:
-                commands_to_execute.append(f"tc class change dev {interface} parent {parent_handle} classid {classid} htb rate {tc_rate_str_cmd_rule} ceil {tc_rate_str_cmd_rule}{burst_cmd_part} 2>/dev/null || true")
-        else: # Add if not existing or parent mismatch (rely on set_bandwidth_limit to create unique classid)
-            commands_to_execute.append(f"tc class add dev {interface} parent {parent_handle} classid {classid} htb rate {tc_rate_str_cmd_rule} ceil {tc_rate_str_cmd_rule}{burst_cmd_part} 2>/dev/null || true")
-
-        intended_filter_key = f"{parent_handle}|{filter_prio}|{filter_protocol_cmd}|{u32_match_string}"
-        existing_filter_tc = current_filters.get(intended_filter_key) # current_filters key format needs to align
-        if existing_filter_tc and existing_filter_tc.get('flowid') == classid:
-            pass # Filter exists and is correct
-        else:
-            if existing_filter_tc: # Exists but wrong flowid or other mismatch
-                commands_to_execute.append(f"tc filter del dev {interface} parent {parent_handle} protocol {filter_protocol_cmd} prio {filter_prio} u32 match {u32_match_string} 2>/dev/null || true")
-            commands_to_execute.append(f"tc filter add dev {interface} parent {parent_handle} protocol {filter_protocol_cmd} prio {filter_prio} u32 match {u32_match_string} flowid {classid}")
-
-    elif direction == "download":
-        filter_parent = "ffff:"
-        filter_handle_str = tc_identifier
-        try:
-            filter_handle_num = int(filter_handle_str.lstrip(':'))
-        except (ValueError, AttributeError):
-            return False # Invalid handle
-
-        _, _, rate_bps_for_burst = parse_rate_to_tc_format(rule_obj.rate_str)
-        burst_bytes = max(int(rate_bps_for_burst * 0.1 / 8), 1600) # Example burst calc
-
-        intended_filter_key = f"{filter_parent}|{filter_prio}|{filter_protocol_cmd}|{u32_match_string}"
-        existing_filter_tc = current_filters.get(intended_filter_key)
-        add_or_replace_cmd = "add" # Default to add
-
-        if existing_filter_tc:
-            # Try to determine if existing filter matches the handle we intend to use/reuse
-            ef_handle_num = None
-            if existing_filter_tc.get('handle_hex'):
-                try: ef_handle_num = int(existing_filter_tc['handle_hex'], 16)
-                except: pass
-            elif existing_filter_tc.get('flowid','').startswith(':'): # flowid stores :handle for police
-                try: ef_handle_num = int(existing_filter_tc['flowid'].lstrip(':'))
-                except: pass
-
-            if ef_handle_num is not None and ef_handle_num == filter_handle_num:
-                add_or_replace_cmd = "replace"
-            else: # Mismatch or existing doesn't have a clear handle, delete old and add new
-                commands_to_execute.append(f"tc filter del dev {interface} parent {filter_parent} protocol {filter_protocol_cmd} prio {filter_prio} u32 match {u32_match_string} 2>/dev/null || true")
-
-        base_filter_cmd = f"tc filter {add_or_replace_cmd} dev {interface} parent {filter_parent} protocol {filter_protocol_cmd} prio {filter_prio}"
-        # For 'replace', if by handle, match criteria is not always needed if handle is unique for parent+prio+protocol
-        # However, tc u32 replace often needs match. Let's be explicit.
-        # The 'handle' keyword in tc filter add/replace is for assigning a specific handle, not for matching an existing one to replace.
-        # The 'flowid' in police action can also take the ':<handle_num>' form.
-        commands_to_execute.append(f"{base_filter_cmd} u32 match {u32_match_string} police rate {tc_rate_str_cmd_rule} burst {burst_bytes}b action drop flowid :{filter_handle_num} handle {filter_handle_num}")
-
-
-    tc_execution_success = True
-    for cmd in commands_to_execute:
-        if run_command(cmd) is None and "del" not in cmd.lower() and "change" not in cmd.lower() and "|| true" not in cmd: # Be more lenient on del/change failures if they are to ensure state
-            # A more robust check would be to verify state after, not just command success
-            app.logger.error(f"TC command failed critically during apply_single_tc_rule for ID {rule_obj.id}: {cmd}")
-            tc_execution_success = False
-            # break # Stop on critical failure
-    return tc_execution_success
 
 def clear_single_tc_rule(rule_obj):
-    if not rule_obj or not rule_obj.interface: return False
-    interface = rule_obj.interface
-    ip = rule_obj.ip
-    direction = rule_obj.direction
-    tc_identifier = rule_obj.upload_classid
-    parent_handle_stored = rule_obj.upload_parent_handle
+    """
+    Clears/Deletes a single TC rule from the system based on the DB object.
+    Args:
+        rule_obj (Rule): The SQLAlchemy Rule object.
+    Returns:
+        bool: True if TC commands seemed successful or rule was already gone, False otherwise.
+    """
+    if not rule_obj or not rule_obj.interface:
+        app.logger.debug("clear_single_tc_rule: No rule object or interface, nothing to clear from TC perspective.")
+        return True # Considered success as no TC action needed if no rule info
 
-    if not tc_identifier: return True # Nothing to clear based on DB
+    if not validate_interface_name(rule_obj.interface):
+        app.logger.error(f"clear_single_tc_rule: Invalid interface name '{rule_obj.interface}' in Rule ID {rule_obj.id}.")
+        return False # Cannot proceed
 
-    commands_to_execute = []
-    if direction == "upload":
-        classid_to_del = tc_identifier
-        parent_to_use = parent_handle_stored or "1:"
-        protocol = rule_obj.protocol
-        source_port = rule_obj.source_port
-        destination_port = rule_obj.destination_port
-        filter_prio = 1
-        filter_protocol_cmd = protocol.lower() if protocol else "ip"
+    app.logger.info(f"Attempting to clear TC for Rule ID {rule_obj.id} (IP: {rule_obj.ip}, Dir: {rule_obj.direction}, Interface: {rule_obj.interface})")
 
-        match_details_parts = []
-        if ":" in ip:
-            match_details_parts.append(f"ip6 src {ip}/128")
-            if filter_protocol_cmd == "ip": filter_protocol_cmd = "ipv6"
+    success = True
+    if rule_obj.direction == "upload":
+        ip_classid_to_del = rule_obj.upload_classid
+        parent_handle_of_filter = rule_obj.upload_parent_handle
+
+        if not validate_tc_classid(parent_handle_of_filter) or \
+           (ip_classid_to_del and not validate_tc_classid(ip_classid_to_del)): # classid can be None if never applied
+            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid TC parent ('{parent_handle_of_filter}') or class ('{ip_classid_to_del}') identifier for deletion. Might not be fully cleared.")
+            # Continue to attempt deletion with what we have, but log warning
+
+        # --- Construct u32 match expression for deletion ---
+        u32_match_parts_del = []
+        tc_filter_protocol_del = "ip"
+        if ":" in rule_obj.ip: # IPv6
+            u32_match_parts_del.append(f"match ip6 src {rule_obj.ip}/128")
+            tc_filter_protocol_del = "ipv6"
+        else: # IPv4
+            u32_match_parts_del.append(f"match ip src {rule_obj.ip}/32")
+            tc_filter_protocol_del = "ip"
+
+        if rule_obj.protocol and rule_obj.protocol.lower() not in ["ip", "ipv6", "all", "any", ""]:
+            proto_num_for_match = PROTO_NAME_TO_NUM_MAP.get(rule_obj.protocol.lower())
+            if proto_num_for_match:
+                u32_match_parts_del.append(f"match ip protocol {proto_num_for_match} 0xff")
+                if rule_obj.protocol.lower() in ["tcp", "udp"]:
+                    if rule_obj.source_port and validate_port_number(rule_obj.source_port):
+                        u32_match_parts_del.append(f"match {rule_obj.protocol.lower()} sport {rule_obj.source_port} 0xffff")
+                    if rule_obj.destination_port and validate_port_number(rule_obj.destination_port):
+                        u32_match_parts_del.append(f"match {rule_obj.protocol.lower()} dport {rule_obj.destination_port} 0xffff")
+        
+        u32_match_expr_to_del = " ".join(u32_match_parts_del)
+        filter_prio_to_del_str = str(rule_obj.priority if rule_obj.priority is not None else 10) # Use same prio as add
+        if not validate_priority_str(filter_prio_to_del_str, 1, 49151): filter_prio_to_del_str = "10"
+
+
+        # Delete filter first
+        if u32_match_expr_to_del and parent_handle_of_filter: # Ensure we have enough to identify filter
+            if not tc_del_filter_u32(rule_obj.interface, parent_handle_of_filter, filter_prio_to_del_str,
+                                     tc_filter_protocol_del, u32_match_expr_to_del):
+                app.logger.warning(f"Problem deleting TC filter for Upload Rule ID {rule_obj.id}. Class {ip_classid_to_del} might remain if it existed.")
+                # Not setting success = False here, as class deletion is often more critical to free up ID
         else:
-            match_details_parts.append(f"ip src {ip}/32")
+            app.logger.warning(f"Rule ID {rule_obj.id}: Not enough info to construct specific filter deletion command for upload. Skipping filter delete.")
 
-        if protocol and protocol.lower() not in ["ip", "ipv6"]: match_details_parts.append(f"protocol {protocol.lower()}")
-        if protocol and protocol.lower() in ['tcp', 'udp']:
-            if source_port: match_details_parts.append(f"{protocol.lower()} sport {source_port}")
-            if destination_port: match_details_parts.append(f"{protocol.lower()} dport {destination_port}")
-        u32_match_string = " ".join(match_details_parts)
+        # Then delete class
+        if ip_classid_to_del:
+            if not tc_del_class(rule_obj.interface, ip_classid_to_del):
+                app.logger.warning(f"Failed to delete TC class {ip_classid_to_del} for Rule ID {rule_obj.id}.")
+                success = False # Class deletion failure is more significant for resource cleanup
+        else:
+            app.logger.info(f"No ip_classid (upload_classid) found for Upload Rule ID {rule_obj.id}, skipping class deletion.")
 
-        commands_to_execute.append(f"tc filter del dev {interface} parent {parent_to_use} protocol {filter_protocol_cmd} prio {filter_prio} u32 match {u32_match_string} 2>/dev/null || true")
-        commands_to_execute.append(f"tc class del dev {interface} classid {classid_to_del} 2>/dev/null || true")
+        if success: app.logger.info(f"Upload Rule ID {rule_obj.id} TC clear attempt finished.")
 
-    elif direction == "download":
-        filter_parent = "ffff:"
-        filter_handle_str = tc_identifier
-        try:
-            handle_id_num = int(filter_handle_str.lstrip(':'))
-            # To delete a police filter, matching on handle isn't enough if other params differ.
-            # Deleting by full match is safer if possible, or by handle if it was uniquely assigned.
-            # The 'handle <num>' in tc filter del refers to the internal kernel handle, not the :<flowid_minor> one directly.
-            # However, if 'handle <num>' was used at creation with 'flowid :<num>', we can try deleting with 'handle <num>'.
-            # A more robust way is to delete by specific match details if they are known and unique.
-            # For simplicity, if 'handle <num>' was assigned, we try to remove using it.
-            # This part is tricky without exact knowledge of how tc filter del matches existing filters by handle vs other properties.
-            # The simplest tc filter del ... handle <handle_id_num> might not always work if it's a u32 filter not created with that exact handle as primary ID.
-            # Deleting with parent ffff: prio protocol and match (if available and used for this rule) is more specific for u32.
-            # Since we stored tc_identifier as ':<handle_num>', let's assume we want to delete using this.
-            commands_to_execute.append(f"tc filter del dev {interface} parent {filter_parent} protocol ip prio 1 flower ip_proto ip dst {ip} action police flowid :{handle_id_num} 2>/dev/null || true") # Example for flower, u32 is different
-            commands_to_execute.append(f"tc filter del dev {interface} parent {filter_parent} handle 800::{handle_id_num} 2>/dev/null || true") # trying to delete by a common tc handle format for ingress if that was used.
-            # The most reliable way to delete the ingress u32 filter is by its exact match criteria if `handle` wasn't the primary identifier in creation.
-            # Given tc_identifier is just ':handle_num', the original add command must have used '... handle <handle_num> flowid :<handle_num>'
-            # So deleting by '... handle <handle_num>' (actual hex handle) might be better if we knew it.
-            # Or delete by matching all params of the u32 filter.
-            # The clear_single_tc_rule from apply_single_tc_rule for download should be used here.
-            protocol = rule_obj.protocol
-            source_port = rule_obj.source_port # Not typically used for download IP dst rule
-            destination_port = rule_obj.destination_port
-            filter_prio = 1
-            filter_protocol_cmd = protocol.lower() if protocol else "ip"
-            if ":" in ip: # crude IPv6 check
-                match_details_parts_del = [f"ip6 dst {ip}/128"]
-                if filter_protocol_cmd == "ip": filter_protocol_cmd = "ipv6"
-            else:
-                match_details_parts_del = [f"ip dst {ip}/32"]
-            if protocol and protocol.lower() not in ['ip', 'ipv6']: match_details_parts_del.append(f"protocol {protocol.lower()}")
-            if protocol and protocol.lower() in ['tcp', 'udp'] and destination_port : # dport for download
-                 match_details_parts_del.append(f"{protocol.lower()} dport {destination_port}")
-            u32_match_string_del = " ".join(match_details_parts_del)
+    elif rule_obj.direction == "download":
+        police_flowid_handle_to_del = rule_obj.upload_classid # Stored as ":<handle_num>"
+        
+        if not (police_flowid_handle_to_del and isinstance(police_flowid_handle_to_del, str) and police_flowid_handle_to_del.startswith(':')):
+            app.logger.warning(f"Rule ID {rule_obj.id}: Invalid or missing police flowid_handle '{police_flowid_handle_to_del}' for download rule deletion. Cannot reliably delete.")
+            return True # Assume nothing to delete if identifier is bad
 
-            commands_to_execute.append(f"tc filter del dev {interface} parent {filter_parent} protocol {filter_protocol_cmd} prio {filter_prio} u32 match {u32_match_string_del} 2>/dev/null || true")
+        # --- Construct u32 match expression for deletion ---
+        dl_u32_match_parts_del = []
+        tc_filter_protocol_dl_del = "ip"
+        if ":" in rule_obj.ip: # IPv6
+            dl_u32_match_parts_del.append(f"match ip6 dst {rule_obj.ip}/128")
+            tc_filter_protocol_dl_del = "ipv6"
+        else: # IPv4
+            dl_u32_match_parts_del.append(f"match ip dst {rule_obj.ip}/32")
+            tc_filter_protocol_dl_del = "ip"
 
-        except (ValueError, AttributeError): return False
+        if rule_obj.protocol and rule_obj.protocol.lower() not in ["ip", "ipv6", "all", "any", ""]:
+            proto_num_for_match = PROTO_NAME_TO_NUM_MAP.get(rule_obj.protocol.lower())
+            if proto_num_for_match:
+                dl_u32_match_parts_del.append(f"match ip protocol {proto_num_for_match} 0xff")
+                if rule_obj.protocol.lower() in ["tcp", "udp"]:
+                    if rule_obj.source_port and validate_port_number(rule_obj.source_port):
+                         dl_u32_match_parts_del.append(f"match {rule_obj.protocol.lower()} sport {rule_obj.source_port} 0xffff")
+                    if rule_obj.destination_port and validate_port_number(rule_obj.destination_port):
+                         dl_u32_match_parts_del.append(f"match {rule_obj.protocol.lower()} dport {rule_obj.destination_port} 0xffff")
+        
+        dl_u32_match_expr_to_del = " ".join(dl_u32_match_parts_del)
+        filter_prio_to_del_str_dl = str(rule_obj.priority if rule_obj.priority is not None else 10)
+        if not validate_priority_str(filter_prio_to_del_str_dl, 1, 49151): filter_prio_to_del_str_dl = "10"
 
-    tc_execution_success = True
-    for cmd in commands_to_execute:
-        if run_command(cmd) is None and "|| true" not in cmd: # If command fails and not already lenient
-            tc_execution_success = False
-    return tc_execution_success
+        # For ingress police, the "flowid :<handle>" is part of the "action police" statement.
+        # Deleting requires matching the filter selector (parent, prio, proto, u32 match).
+        # The tc_del_filter_u32 should handle this.
+        if not tc_del_filter_u32(interface=rule_obj.interface,
+                                 parent_handle="ffff:", # Ingress parent
+                                 prio_str=filter_prio_to_del_str_dl,
+                                 protocol_for_tc=tc_filter_protocol_dl_del,
+                                 u32_match_expr_str=dl_u32_match_expr_to_del):
+            app.logger.warning(f"Failed to delete TC police filter for Download Rule ID {rule_obj.id} by match criteria.")
+            success = False
+        
+        if success: app.logger.info(f"Download Rule ID {rule_obj.id} (police) TC clear attempt finished.")
+    
+    return success
+# ใน app.py
+# ... (import statements, app setup, models, run_command, validation helpers,
+#      tc_ensure_root_qdisc, tc_add_class, tc_del_class, tc_add_filter_u32, tc_del_filter_u32,
+#      apply_single_tc_rule, clear_single_tc_rule, parse_rate_to_tc_format, etc. ควรถูก define ไว้ด้านบนแล้ว)
 
-
-
-def set_bandwidth_limit(interface, ip, rate_value_form, rate_unit_form, direction, group=None, overwrite=False,
+def set_bandwidth_limit(interface, ip,
+                        rate_value_form, rate_unit_form,
+                        direction, group_name=None, overwrite=False,
                         protocol=None, source_port=None, destination_port=None,
-                        is_scheduled=False, start_time=None, end_time=None, weekdays=None, start_date=None, end_date=None,
-                        description=None, is_enabled=True, # NEW fields
-                        burst_value_form=None, burst_unit_form=None, # NEW burst fields
-                        cburst_value_form=None, cburst_unit_form=None): # NEW cburst fields
-    app.logger.info(f"set_bandwidth_limit called: ip={ip}, rate={rate_value_form}{rate_unit_form}, dir={direction}, sched={is_scheduled}, enabled={is_enabled}, desc={description}, burst={burst_value_form}{burst_unit_form}")
+                        is_scheduled=False, start_time=None, end_time=None,
+                        weekdays=None, start_date=None, end_date=None,
+                        description=None, is_enabled=True, priority_form_str=None, # เปลี่ยนชื่อเพื่อบ่งบอกว่าเป็น string จาก form
+                        burst_value_form=None, burst_unit_form=None,
+                        cburst_value_form=None, cburst_unit_form=None, # สำหรับ HTB Class Ceil
+                        existing_rule_id_to_update=None): # หากเป็น None คือการสร้าง Rule ใหม่
+    """
+    สร้างหรืออัปเดต Rule การจำกัดแบนด์วิดท์ใน Database และสั่งงาน TC
+    มีการตรวจสอบ Input ทั้งหมดอย่างละเอียด
+    Args:
+        Argument ที่ลงท้ายด้วย "_form" คือค่าดิบจาก Form/API และต้องถูก Validate
+        existing_rule_id_to_update (int, optional): ถ้ามีค่า จะเป็นการอัปเดต Rule ที่มีอยู่แล้ว
+    Returns:
+        bool: True ถ้าสำเร็จ, False ถ้าล้มเหลว (พร้อม flash message)
+    """
+    app.logger.info(f"set_bandwidth_limit: เริ่มทำงาน IP='{ip}', Rate='{rate_value_form}{rate_unit_form}', Dir='{direction}', Iface='{interface}', "
+                    f"Group='{group_name}', Overwrite='{overwrite}', ExistingID='{existing_rule_id_to_update}', Enabled='{is_enabled}'")
 
-    tc_rate_str_cmd, rate_in_bps, rate_str_for_db = parse_rate_input(rate_value_form, rate_unit_form)
-    if tc_rate_str_cmd is None:
-        flash(f"Invalid rate value or unit: {rate_value_form}{rate_unit_form}. Must be a positive number and unit (bps, kbps, mbps, gbps).", "danger")
-        return False
+    # --- 1. ตรวจสอบ Input อย่างละเอียด ---
+    if not validate_interface_name(interface):
+        flash(f"ชื่อ Interface ไม่ถูกต้อง: '{interface}'", "danger"); return False
+    if not validate_ip_address(ip): # ip ควรถูก normalize ก่อน (ถ้าจำเป็น)
+        flash(f"รูปแบบ IP Address ไม่ถูกต้อง: '{ip}'", "danger"); return False
 
-    # Parse burst and cburst if provided (for upload)
-    burst_str_for_db, cburst_str_for_db = None, None
-    if direction == "upload":
-        if burst_value_form and burst_unit_form:
-            _, _, burst_str_for_db = parse_rate_input(burst_value_form, burst_unit_form)
-            if not burst_str_for_db:
-                flash(f"Invalid burst rate/unit: {burst_value_form}{burst_unit_form}", "danger"); return False
-        if cburst_value_form and cburst_unit_form:
-            _, _, cburst_str_for_db = parse_rate_input(cburst_value_form, cburst_unit_form)
-            if not cburst_str_for_db:
-                flash(f"Invalid ceiling burst rate/unit: {cburst_value_form}{cburst_unit_form}", "danger"); return False
+    # ตรวจสอบ Rate หลัก
+    if not validate_rate_value(rate_value_form) or \
+       not validate_rate_unit(rate_unit_form, ['bps', 'kbps', 'mbps', 'gbps', 'bit', 'kbit', 'mbit', 'gbit']): # Whitelist ของหน่วยที่รับจาก Input
+        flash(f"ค่า Rate หรือ Unit สำหรับแบนด์วิดท์หลักไม่ถูกต้อง: '{rate_value_form}{rate_unit_form}'", "danger"); return False
 
-    if direction not in ['upload', 'download']: flash("Invalid direction.", "danger"); return False
-    # Simplified validation for protocol/ports (assuming already done in route)
+    if direction not in ['upload', 'download']:
+        flash("Direction ไม่ถูกต้อง ต้องเป็น 'upload' หรือ 'download'", "danger"); return False
+    if group_name and not validate_group_name(group_name): # group_name เป็น Optional
+        flash(f"รูปแบบ Group Name ไม่ถูกต้อง: '{group_name}'", "danger"); return False
+    
+    # ตรวจสอบ Protocol และ Port
+    protocol_clean = str(protocol).strip().lower() if isinstance(protocol, str) else None
+    if protocol_clean == "any": protocol_clean = None # ถือว่า "any" คือไม่ระบุ Protocol L4 ที่เจาะจง
+
+    if protocol_clean and not validate_protocol(protocol_clean, ['ip', 'ipv6', 'tcp', 'udp', 'icmp']): # รายการ Protocol ที่เข้มงวดขึ้น
+        flash(f"Protocol ที่ระบุไม่ถูกต้อง: '{protocol}'", "danger"); return False
+    
+    source_port_clean = str(source_port).strip() if source_port is not None else None
+    destination_port_clean = str(destination_port).strip() if destination_port is not None else None
+    if not validate_port_number(source_port_clean) or not validate_port_number(destination_port_clean):
+        flash("หมายเลข Source Port หรือ Destination Port ไม่ถูกต้อง", "danger"); return False
+    if not source_port_clean: source_port_clean = None # ทำให้สตริงว่างเป็น None
+    if not destination_port_clean: destination_port_clean = None
+
+    # ตรวจสอบ Description (Optional)
+    description_clean = str(description).strip() if isinstance(description, str) else None
+    if description_clean is not None and not validate_description(description_clean): # validate_description ควรจัดการกรณี None ได้
+        flash("Description ยาวเกินไปหรือมีอักขระที่ไม่ถูกต้อง", "danger"); return False
+
+    # ตรวจสอบ Priority (Optional, สำหรับ HTB classes)
+    priority_for_db = None # เก็บเป็น Integer ใน DB
+    if priority_form_str is not None and str(priority_form_str).strip():
+        if not validate_priority_str(str(priority_form_str).strip(), 0, 7): # Priority ของ HTB class ปกติคือ 0-7
+            flash(f"ค่า Priority ไม่ถูกต้อง '{priority_form_str}'. ต้องเป็นตัวเลข 0-7", "danger"); return False
+        priority_for_db = int(str(priority_form_str).strip())
+
+    # ตรวจสอบ Burst และ Ceil/Cburst (สำหรับ Upload HTB class parameters)
+    burst_str_for_db = None # สำหรับเก็บค่าเดิมที่ User ป้อน (ถ้าต้องการ) หรือค่าที่แปลงแล้วสำหรับ DB
+    tc_burst_cmd_str = None # สำหรับส่งให้ tc_add_class
+    if direction == "upload" and burst_value_form and burst_unit_form:
+        if not validate_rate_value(burst_value_form) or \
+           not validate_rate_unit(burst_unit_form, ['k', 'm', 'g', 'b', 'kb', 'mb', 'gb', 'kbit', 'mbit', 'gbit']): # หน่วยของ TC burst
+            flash(f"ค่า Burst หรือ Unit ไม่ถูกต้อง: '{burst_value_form}{burst_unit_form}'", "danger"); return False
+        # parse_rate_to_tc_format ควรจะสามารถจัดการหน่วยเหล่านี้เพื่อสร้าง tc_burst_cmd_str และ burst_str_for_db ที่เหมาะสม
+        tc_burst_cmd_str, _, burst_str_for_db = parse_rate_to_tc_format(str(burst_value_form), burst_unit_form)
+        if not tc_burst_cmd_str: # การ Parse ล้มเหลว
+             flash(f"ไม่สามารถแปลง Burst '{burst_value_form}{burst_unit_form}' ให้อยู่ในรูปแบบ TC ได้", "danger"); return False
+
+    cburst_str_for_db = None # สำหรับเก็บใน Rule.cburst_str (ใช้เป็น Ceil ของ HTB class)
+    tc_ceil_cmd_str = None   # จะเป็น Argument 'ceil' สำหรับ tc_add_class
+    if direction == "upload" and cburst_value_form and cburst_unit_form: # ผู้ใช้ระบุ Ceil มาโดยตรง
+        if not validate_rate_value(cburst_value_form) or \
+           not validate_rate_unit(cburst_unit_form, ['bps', 'kbps', 'mbps', 'gbps', 'bit', 'kbit', 'mbit', 'gbit']): # หน่วยของ Ceil เหมือน Rate
+            flash(f"ค่า Ceil หรือ Unit ไม่ถูกต้อง: '{cburst_value_form}{cburst_unit_form}'", "danger"); return False
+        tc_ceil_cmd_str, _, cburst_str_for_db = parse_rate_to_tc_format(str(cburst_value_form), cburst_unit_form)
+        if not tc_ceil_cmd_str:
+            flash(f"ไม่สามารถแปลง Ceil '{cburst_value_form}{cburst_unit_form}' ให้อยู่ในรูปแบบ TC ได้", "danger"); return False
+
+    # ตรวจสอบ Scheduling parameters ถ้าเปิดใช้งาน
     if is_scheduled:
-        if not start_time or not end_time: is_scheduled = False # Revert to non-scheduled if core time info missing
-        # Add more format checks for time/date if needed, or rely on form validation
+        if not start_time or not end_time:
+            flash("ต้องระบุ Start Time และ End Time สำหรับ Rule ที่ตั้งเวลา", "danger"); return False
+        if not (re.match(r"^\d{2}:\d{2}$", start_time) and re.match(r"^\d{2}:\d{2}$", end_time)):
+            flash("รูปแบบ Time ไม่ถูกต้อง (HH:MM) สำหรับการตั้งเวลา", "danger"); return False
+        if weekdays and not re.match(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,(Mon|Tue|Wed|Thu|Fri|Sat|Sun))*$", weekdays, re.IGNORECASE):
+            flash("รูปแบบ Weekdays ไม่ถูกต้อง (เช่น Mon,Tue,Wed)", "danger"); return False
+        # อนุญาตให้ start_date/end_date เป็นค่าว่างได้
+        if start_date and start_date.strip() and not re.match(r"^\d{4}-\d{2}-\d{2}$", start_date.strip()):
+            flash("รูปแบบ Start Date ไม่ถูกต้อง (YYYY-MM-DD)", "danger"); return False
+        if end_date and end_date.strip() and not re.match(r"^\d{4}-\d{2}-\d{2}$", end_date.strip()):
+            flash("รูปแบบ End Date ไม่ถูกต้อง (YYYY-MM-DD)", "danger"); return False
+    # --- สิ้นสุดการตรวจสอบ Input ---
 
-    # Check for existing rule based on more complete filter criteria if you want truly unique rules
-    # For now, using existing logic: interface, ip, direction
-    # If you want to allow multiple rules for the same IP but different ports/protocols, the unique constraint in DB and this query needs adjustment.
-    # Current unique constraint includes protocol, source_port, destination_port. So this query should too.
-    existing_rule_db = Rule.query.filter_by(
-        interface=interface, ip=ip, direction=direction,
-        protocol=protocol if protocol else None, # Ensure None is used if empty string
-        source_port=source_port if source_port else None,
-        destination_port=destination_port if destination_port else None
-    ).first()
+    # แปลง Rate หลักสำหรับ TC และ DB
+    tc_rate_main_cmd, _, rate_str_for_db_main = parse_rate_to_tc_format(str(rate_value_form), rate_unit_form)
+    if not tc_rate_main_cmd: # ควรถูกดักจับโดย Validation ก่อนหน้าแล้ว แต่เป็นการป้องกันอีกชั้น
+        flash(f"Error ร้ายแรงในการแปลง Rate หลัก: '{rate_value_form}{rate_unit_form}'", "danger"); return False
 
+    # สำหรับ HTB class, ถ้า Ceil ไม่ได้ถูกระบุจาก cburst_*, ให้ default เป็น Rate หลัก
+    if direction == "upload" and not tc_ceil_cmd_str:
+        tc_ceil_cmd_str = tc_rate_main_cmd
+        # cburst_str_for_db จะเหมือน rate_str_for_db_main ถ้าไม่ได้ตั้งค่ามา หรือเป็น None
+        # ขึ้นอยู่กับว่าต้องการเก็บค่าที่แปลงแล้ว หรือค่าที่ user ป้อน หรือ None ถ้าไม่ระบุ
+        # ในที่นี้ ถ้า tc_ceil_cmd_str ถูก default เป็น tc_rate_main_cmd, cburst_str_for_db ควรจะสะท้อนสิ่งนั้น
+        cburst_str_for_db = rate_str_for_db_main # หรือ None ถ้าต้องการให้ชัดเจนว่าไม่ได้ตั้งค่ามา
 
-    if existing_rule_db and overwrite:
-        app.logger.info(f"Overwrite requested for existing rule ID {existing_rule_db.id}.")
-        # If old rule was active (not scheduled, or scheduled and active_scheduled), clear its TC
-        if not existing_rule_db.is_scheduled or existing_rule_db.is_active_scheduled:
-            if not clear_single_tc_rule(existing_rule_db):
-                flash(f"Warning: Failed to clear old TC for rule {existing_rule_db.id} during overwrite. Manual check advised.", "warning")
-        db.session.delete(existing_rule_db)
-        # db.session.commit() # Commit deletion before adding new to avoid unique constraint issue if key parts are same
-        # Better: commit after new rule is added, or handle unique constraint error
-    elif existing_rule_db and not overwrite:
-        flash(f"Rule for IP {ip} ({direction}) with these filter criteria already exists. Use overwrite or delete existing.", "danger")
-        return False
+    # --- จัดการ Rule ที่มีอยู่แล้ว / Logic การ Overwrite ---
+    rule_being_processed = None
+    if existing_rule_id_to_update: # นี่คือการ UPDATE
+        rule_being_processed = db.session.get(Rule, existing_rule_id_to_update)
+        if not rule_being_processed:
+            flash(f"ไม่พบ Rule ID {existing_rule_id_to_update} สำหรับการอัปเดต", "danger"); return False
+        # Key identifiers ไม่ควรเปลี่ยนระหว่างการอัปเดตผ่านฟังก์ชันนี้
+        # หากต้องการเปลี่ยน IP, Direction, Protocol/Ports ควรจะเป็นการลบ Rule เก่าแล้วสร้างใหม่
+        if rule_being_processed.interface != interface or \
+           rule_being_processed.ip != ip or \
+           rule_being_processed.direction != direction or \
+           (rule_being_processed.protocol or None) != (protocol_clean or None) or \
+           (rule_being_processed.source_port or None) != (source_port_clean or None) or \
+           (rule_being_processed.destination_port or None) != (destination_port_clean or None):
+            flash("ไม่สามารถเปลี่ยน Interface, IP, Direction, หรือ Protocol/Ports หลักระหว่างการแก้ไข Rule ได้ กรุณาลบแล้วสร้างใหม่หากต้องการเปลี่ยนแปลงค่าเหล่านี้", "danger")
+            app.logger.warning(f"ความพยายามในการเปลี่ยน Key identifiers ของ Rule ID {existing_rule_id_to_update} ถูกยกเลิก")
+            return False
+        app.logger.info(f"กำลังอัปเดต Rule ID {rule_being_processed.id} ที่มีอยู่ จะทำการล้าง TC config เก่าก่อน")
+        if not clear_single_tc_rule(rule_being_processed): # ส่ง DB object เดิมไปล้าง TC
+            flash(f"คำเตือน: การล้าง TC config เก่าสำหรับ Rule ID {rule_being_processed.id} ก่อนอัปเดตอาจล้มเหลว ดำเนินการต่อด้วยความระมัดระวัง", "warning")
+            # อาจจะไม่ใช่ Critical error ที่ต้องหยุดทันที แต่ควร Log ไว้
 
-    # Generate TC Identifiers (Class ID for upload, Filter Handle for download)
-    # This logic needs to ensure uniqueness if multiple rules for same IP but different filters are allowed.
-    # For simplicity, if overwrite is true, try to reuse. Otherwise, generate new.
-    intended_ip_classid_to_store = None
-    intended_parent_handle_to_store = None
+    else: # นี่คือการเพิ่ม Rule ใหม่
+        # ตรวจสอบ Conflict โดยใช้ Unique Constraint Fields ทั้งหมด
+        # (interface, ip, direction, protocol, source_port, destination_port)
+        query_conflict = Rule.query.filter_by(
+            interface=interface, ip=ip, direction=direction,
+            protocol=protocol_clean, # ใช้ค่าที่ Clean แล้ว
+            source_port=source_port_clean,
+            destination_port=destination_port_clean
+        )
+        existing_rule_for_conflict_check = query_conflict.first()
+
+        if existing_rule_for_conflict_check:
+            if overwrite:
+                app.logger.info(f"Overwrite: พบ Rule ID {existing_rule_for_conflict_check.id} ที่มีเงื่อนไขซ้ำซ้อน กำลังลบ TC และ DB entry เก่า")
+                if not clear_single_tc_rule(existing_rule_for_conflict_check):
+                    flash(f"คำเตือน: การล้าง TC config ของ Rule เดิม (ID: {existing_rule_for_conflict_check.id}) ระหว่างการ Overwrite อาจล้มเหลว", "warning")
+                db.session.delete(existing_rule_for_conflict_check)
+                try:
+                    db.session.commit() # Commit การลบก่อน เพื่อป้องกัน Unique Constraint ตอน Add ใหม่
+                except Exception as e_del_commit:
+                    db.session.rollback()
+                    app.logger.error(f"DB error ขณะ commit การลบ rule ID {existing_rule_for_conflict_check.id} ระหว่าง overwrite: {e_del_commit}", exc_info=True)
+                    flash("เกิดข้อผิดพลาดในการลบ Rule เดิมระหว่างการ Overwrite การดำเนินการถูกยกเลิก", "danger"); return False
+                rule_being_processed = None # เพื่อให้สร้าง Object ใหม่ด้านล่าง
+            else: # Conflict และไม่ได้เลือก Overwrite
+                flash(f"Rule ที่มี Interface, IP, Direction, และ Filter Criteria เดียวกันนี้มีอยู่แล้ว (ID: {existing_rule_for_conflict_check.id}) กรุณาเลือก 'overwrite' หรือแก้ไข Rule ที่มีอยู่", "danger")
+                return False
+    
+    # --- สร้างหรืออัปเดต Rule Object ใน DB ---
+    if rule_being_processed is None: # สร้าง Rule object ใหม่ (กรณี Add ใหม่ หรือ Overwrite)
+        rule_being_processed = Rule(interface=interface, ip=ip, direction=direction)
+        # สร้าง TC Identifiers (upload_classid, upload_parent_handle) สำหรับ Rule ใหม่เท่านั้น
+        # (ถ้าเป็นการ Update, TC Identifiers เดิมจาก rule_being_processed (ที่ get มาจาก DB) ควรถูกใช้ต่อ)
+        parent_handle_for_new_rule = "1:" if direction == "upload" else "ffff:" # Default TC parent
+        if direction == "upload" and group_name: # ถ้า Rule อยู่ในกลุ่ม Parent จะเป็น Class ID ของกลุ่ม
+            group_db_obj = GroupLimit.query.filter_by(interface=interface, group_name=group_name, direction="upload").first()
+            if group_db_obj and group_db_obj.upload_classid and validate_tc_classid(group_db_obj.upload_classid):
+                parent_handle_for_new_rule = group_db_obj.upload_classid
+            elif group_db_obj:
+                 app.logger.warning(f"กลุ่ม '{group_name}' ถูกค้นพบแต่มี upload_classid ('{group_db_obj.upload_classid}') ไม่ถูกต้อง Rule จะใช้ Parent หลัก ('1:') แทน")
+            # ถ้าไม่พบ group_db_obj, parent_handle_for_new_rule จะยังคงเป็น "1:"
+        
+        if not validate_tc_classid(parent_handle_for_new_rule): # ควรจะ Valid เสมอถ้า Logic ถูก
+            app.logger.error(f"Internal Error: Parent Handle ที่สร้างขึ้น ('{parent_handle_for_new_rule}') สำหรับ Rule ใหม่ไม่ถูกต้อง")
+            flash("เกิดข้อผิดพลาดภายในในการสร้าง TC Parent Handle", "danger"); return False
+
+        rule_being_processed.upload_parent_handle = parent_handle_for_new_rule
+        
+        if direction == "upload": # สร้าง Class ID สำหรับ HTB class
+            # รูปแบบเช่น "1:101" (major ของ parent : minor ที่ unique)
+            unique_seed_class = f"{interface}-{ip}-{direction}-{protocol_clean or 'any'}-{source_port_clean or 'any'}-{destination_port_clean or 'any'}-{parent_handle_for_new_rule}-{os.urandom(4).hex()}"
+            ip_unique_minor_id = (abs(hash(unique_seed_class)) % 64900) + 100 # ช่วง 100-65000
+            parent_major_id_str = parent_handle_for_new_rule.split(':')[0]
+            rule_being_processed.upload_classid = f"{parent_major_id_str}:{ip_unique_minor_id}"
+        else: # Download - สร้าง Handle สำหรับ Ingress police filter flowid
+            unique_seed_filter = f"dl-{interface}-{ip}-{direction}-{protocol_clean or 'any'}-{source_port_clean or 'any'}-{destination_port_clean or 'any'}-{os.urandom(4).hex()}"
+            filter_handle_num = abs(hash(unique_seed_filter)) % 65500 + 1 # ช่วง 1-65535
+            rule_being_processed.upload_classid = f":{filter_handle_num}" # เก็บในรูปแบบ ":<num>"
+
+        # Validate TC identifier ที่สร้างขึ้น
+        if not ((direction == "upload" and validate_tc_classid(rule_being_processed.upload_classid)) or \
+                (direction == "download" and isinstance(rule_being_processed.upload_classid, str) and rule_being_processed.upload_classid.startswith(':'))):
+            app.logger.error(f"Internal Error: TC Identifier ที่สร้างขึ้น ('{rule_being_processed.upload_classid}') ไม่ถูกต้อง")
+            flash("เกิดข้อผิดพลาดภายในในการสร้าง TC Identifier", "danger"); return False
+        app.logger.info(f"สร้าง TC Identifiers ใหม่สำหรับ Rule: Parent='{rule_being_processed.upload_parent_handle}', ID='{rule_being_processed.upload_classid}'")
+
+    # อัปเดต Field อื่นๆ ทั้งหมดใน rule_being_processed object
+    rule_being_processed.rate_str = rate_str_for_db_main
+    rule_being_processed.group_name = group_name if group_name else None # เก็บ None ถ้า group_name ว่าง
+    rule_being_processed.protocol = protocol_clean
+    rule_being_processed.source_port = source_port_clean
+    rule_being_processed.destination_port = destination_port_clean
+    rule_being_processed.description = description_clean
+    rule_being_processed.is_enabled = is_enabled
+    rule_being_processed.priority = priority_for_db # เก็บเป็น Integer
 
     if direction == "upload":
-        potential_parent_handle = "1:"
-        if group:
-            gl = GroupLimit.query.filter_by(interface=interface, group_name=group, direction="upload").first()
-            if gl and gl.upload_classid: potential_parent_handle = gl.upload_classid
+        rule_being_processed.burst_str = burst_str_for_db
+        rule_being_processed.cburst_str = cburst_str_for_db # จะถูกใช้เป็น 'ceil' สำหรับ tc_add_class
+    else: # Download (police) ไม่ได้เก็บ burst/cburst ใน DB แบบนี้ (คำนวณตอน Apply)
+        rule_being_processed.burst_str = None
+        rule_being_processed.cburst_str = None
 
-        if existing_rule_db and overwrite and existing_rule_db.upload_classid:
-            intended_ip_classid_to_store = existing_rule_db.upload_classid
-        else:
-            unique_seed = f"{interface}-{ip}-{direction}-{protocol}-{source_port}-{destination_port}-{potential_parent_handle}-{os.urandom(4).hex()}"
-            ip_unique_minor_id = (abs(hash(unique_seed)) % 64900) + 100 # Range 100-65000
-            parent_major_id_str = potential_parent_handle.split(':')[0]
-            intended_ip_classid_to_store = f"{parent_major_id_str}:{ip_unique_minor_id}"
-        intended_parent_handle_to_store = potential_parent_handle
-    else: # download
-        if existing_rule_db and overwrite and existing_rule_db.upload_classid and existing_rule_db.upload_classid.startswith(':'):
-            intended_ip_classid_to_store = existing_rule_db.upload_classid # Reuse :handle
-        else:
-            filter_handle_seed = f"dl-{interface}-{ip}-{direction}-{protocol}-{source_port}-{destination_port}-{os.urandom(4).hex()}"
-            intended_filter_handle_num = abs(hash(filter_handle_seed)) % 65500 + 1 # Range 1-65500
-            intended_ip_classid_to_store = f":{intended_filter_handle_num}"
-        intended_parent_handle_to_store = "ffff:"
-
-
-    # Create new Rule object for DB (even if only TC identifiers changed for an existing logical rule)
-    # If 'existing_rule_db' was deleted, we are adding a new one.
-    # If 'existing_rule_db' was not found, we are adding a new one.
-    # If 'existing_rule_db' was found and NOT overwritten, we returned False.
+    rule_being_processed.is_scheduled = is_scheduled
+    if is_scheduled:
+        rule_being_processed.start_time = start_time
+        rule_being_processed.end_time = end_time
+        rule_being_processed.weekdays = weekdays if (weekdays and weekdays.strip()) else None
+        rule_being_processed.start_date = start_date if (start_date and start_date.strip()) else None
+        rule_being_processed.end_date = end_date if (end_date and end_date.strip()) else None
+    else: # ล้างค่า Schedule ถ้าไม่ได้ตั้งเวลา
+        rule_being_processed.start_time, rule_being_processed.end_time = None, None
+        rule_being_processed.weekdays, rule_being_processed.start_date, rule_being_processed.end_date = None, None, None
     
-    # If overwrite happened, existing_rule_db was marked for deletion.
-    # We must create a new rule instance because primary key cannot be updated.
-    
-    new_rule = Rule(
-        interface=interface, ip=ip, rate_str=rate_str_for_db, direction=direction, group_name=group,
-        protocol=protocol, source_port=source_port, destination_port=destination_port,
-        description=description, is_enabled=is_enabled, # NEW
-        burst_str=burst_str_for_db if direction == "upload" else None, # NEW
-        cburst_str=cburst_str_for_db if direction == "upload" else None, # NEW
-        is_scheduled=is_scheduled, start_time=start_time, end_time=end_time,
-        weekdays=weekdays, start_date=start_date, end_date=end_date,
-        is_active_scheduled=False, # Scheduler will set this to True if rule is active. If not scheduled & enabled, apply_single will handle.
-        upload_classid=intended_ip_classid_to_store,
-        upload_parent_handle=intended_parent_handle_to_store
-    )
+    rule_being_processed.is_active_scheduled = False # Scheduler จะเป็นผู้ตั้งค่านี้
 
-    tc_apply_success = True
-    if is_enabled and not is_scheduled: # Apply immediately if enabled and not scheduled
-        app.logger.info(f"Rule (ID tentative, IP {ip}) is enabled and not scheduled. Applying TC immediately.")
-        if not apply_single_tc_rule(new_rule): # Pass the new_rule object
-            flash(f"Failed to apply TC rule for {ip} ({direction}) immediately. Rule saved to DB but not active.", "danger")
-            tc_apply_success = False
-            new_rule.is_active_scheduled = False # Ensure it's not marked active
-            # new_rule.is_enabled = False # Optionally disable it if TC fails? Or let admin fix.
-    elif not is_enabled:
-        app.logger.info(f"Rule (ID tentative, IP {ip}) is disabled. Not applying TC.")
-        new_rule.is_active_scheduled = False # Disabled rules are not active by scheduler
-    # If scheduled and enabled, scheduler will handle it. is_active_scheduled is False initially.
+    # --- สั่ง Apply TC Rule (ถ้า Rule ถูกเปิดใช้งาน และไม่ได้ตั้งเวลา) ---
+    tc_applied_successfully_now = True # ตั้งสมมติฐานว่าสำเร็จ เว้นแต่จะล้มเหลว
+    if is_enabled and not is_scheduled:
+        app.logger.info(f"Rule (IP {ip}, DB ID {rule_being_processed.id or 'New'}) ถูกเปิดใช้งานและไม่ได้ตั้งเวลา กำลังสั่ง Apply TC เดี๋ยวนี้")
+        if not apply_single_tc_rule(rule_being_processed): # ส่ง Rule object ที่อัปเดตแล้วหรือสร้างใหม่ไป
+            flash_msg = f"ERROR: ไม่สามารถ Apply TC สำหรับ Rule ของ IP {ip} ({direction}) ได้ Rule ถูกบันทึกลง DB แต่อาจจะยังไม่ทำงาน"
+            flash(flash_msg, "danger")
+            app.logger.error(flash_msg)
+            tc_applied_successfully_now = False
+            # ทางเลือก: ตั้งค่า rule_being_processed.is_enabled = False ถ้า TC ล้มเหลว หรือปล่อยให้ผู้ใช้แก้ไขเอง
+    elif not is_enabled: # ถ้า Rule ถูกตั้งค่าเป็น Disabled
+        app.logger.info(f"Rule (IP {ip}, DB ID {rule_being_processed.id or 'New'}) ถูกบันทึกเป็น Disabled กำลังล้าง TC config เก่า (ถ้ามี)")
+        clear_single_tc_rule(rule_being_processed) # พยายามล้าง TC config สำหรับ Rule นี้
+        rule_being_processed.is_active_scheduled = False # Rule ที่ Disabled จะไม่ Active โดย Scheduler
+    # ถ้า is_enabled และ is_scheduled, Scheduler จะเป็นผู้จัดการ TC application. is_active_scheduled ยังคงเป็น False ในตอนนี้
 
+    # --- บันทึกลง Database ---
     try:
-        db.session.add(new_rule)
+        if not rule_being_processed.id: # ถ้าเป็น Rule object ที่สร้างขึ้นใหม่ (ยังไม่มี ID)
+            db.session.add(rule_being_processed)
+        # ถ้าเป็น rule_being_processed ที่ get มาจาก DB (กรณี update) มันจะอยู่ใน session แล้ว การเปลี่ยนแปลง field จะถูก tracked
         db.session.commit()
-        app.logger.info(f"Rule for IP {ip} saved to DB with ID {new_rule.id}. Enabled: {is_enabled}, Scheduled: {is_scheduled}, TC Applied Now: {tc_apply_success if is_enabled and not is_scheduled else 'Deferred/Skipped'}")
+        app.logger.info(f"Rule สำหรับ IP {ip} (DB ID: {rule_being_processed.id}) ถูกบันทึกลง Database เรียบร้อย สถานะ: {'Enabled' if is_enabled else 'Disabled'}, ตั้งเวลา: {is_scheduled}")
+        
+        # Flash message ตามผลลัพธ์
         if is_enabled:
             if is_scheduled:
-                flash(f"Scheduled rule for {ip} ({rate_str_for_db} {direction}) saved. Scheduler will manage activation.", "success")
-            elif tc_apply_success:
-                flash(f"Rule for {ip} ({rate_str_for_db} {direction}) applied and saved.", "success")
-            # else: error already flashed by apply_single_tc_rule or immediate TC block
-        else: # Rule is disabled
-             flash(f"Rule for {ip} ({rate_str_for_db} {direction}) saved as DISABLED.", "info")
+                flash(f"Rule แบบตั้งเวลาสำหรับ IP {ip} ({rate_str_for_db_main} {direction}) ถูกบันทึกเรียบร้อย Scheduler จะจัดการการเปิด/ปิด", "success")
+            elif tc_applied_successfully_now:
+                flash(f"Rule สำหรับ IP {ip} ({rate_str_for_db_main} {direction}) ถูก Apply และบันทึกเรียบร้อย", "success")
+            # else: ข้อความ TC failure ถูก flash ไปแล้ว
+        else: # Rule ถูกบันทึกเป็น Disabled
+             flash(f"Rule สำหรับ IP {ip} ({rate_str_for_db_main} {direction}) ถูกบันทึกเป็น DISABLED", "info")
         return True
-    except Exception as e:
+    except Exception as e_db_final:
         db.session.rollback()
-        # Check for unique constraint violation
-        if "UNIQUE constraint failed" in str(e):
-             flash(f"Error: A rule with the same Interface, IP, Direction, and Filter Criteria already exists. DB Error: {str(e)}", "danger")
-        else:
-             flash(f"Database error saving rule for {ip}: {str(e)}", "danger")
-        app.logger.error(f"Database error for IP {ip}: {e}")
+        error_msg_db = f"เกิดข้อผิดพลาด Database ขณะบันทึก Rule สำหรับ IP {ip}: {str(e_db_final)}"
+        if "UNIQUE constraint failed" in str(e_db_final): # ตรวจสอบ Unique Constraint Error
+             error_msg_db = f"DB Error: Rule ที่มีเงื่อนไข (Interface, IP, Direction, Filter) ซ้ำกันนี้ อาจจะยังคงมีอยู่ในระบบหลังจากการพยายาม Overwrite หรือเกิดจากการทำงานพร้อมกัน รายละเอียด: {str(e_db_final)}"
+        flash(error_msg_db, "danger")
+        app.logger.error(f"Database error สุดท้ายสำหรับ Rule ของ IP {ip}: {e_db_final}", exc_info=True)
         return False
-# --- (Copy and complete set_group_limit and clear_group_limit similarly) ---
-def set_group_limit(interface, group_name, rate_value_form, rate_unit_form, direction,
-                    burst_value_form=None, burst_unit_form=None, # NEW
-                    cburst_value_form=None, cburst_unit_form=None): # NEW
 
-    tc_rate_str_cmd, rate_in_bps, rate_str_for_db = parse_rate_input(rate_value_form, rate_unit_form)
-    if tc_rate_str_cmd is None:
-        flash(f"Invalid group rate: {rate_value_form}{rate_unit_form}.", "danger"); return False
+# --- set_group_limit (ฉบับปรับปรุง) ---
+def set_group_limit(interface, group_name_form,
+                    rate_value_form, rate_unit_form,
+                    direction,
+                    burst_value_form=None, burst_unit_form=None, # สำหรับ HTB class burst
+                    cburst_value_form=None, cburst_unit_form=None): # สำหรับ HTB class ceil
+    """
+    สร้างหรืออัปเดต Group Limit
+    ทิศทาง Upload จะมีการสร้าง TC class, ทิศทาง Download ปัจจุบันจะเก็บข้อมูลใน DB เท่านั้น
+    """
+    app.logger.info(f"set_group_limit: Group='{group_name_form}', Iface='{interface}', Rate='{rate_value_form}{rate_unit_form}', Dir='{direction}'")
 
-    burst_str_for_db, cburst_str_for_db = None, None
-    burst_cmd_part = "" # For TC command
+    # --- 1. ตรวจสอบ Input ---
+    if not validate_interface_name(interface):
+        flash(f"ชื่อ Interface ไม่ถูกต้อง: '{interface}'", "danger"); return False
+    
+    clean_group_name = str(group_name_form).strip() if group_name_form else None
+    if not validate_group_name(clean_group_name) or not clean_group_name: # Group name จำเป็นสำหรับฟังก์ชันนี้
+        flash(f"ชื่อ Group ไม่ถูกต้องหรือไม่ได้ระบุ: '{group_name_form}'", "danger"); return False
+
+    if not validate_rate_value(rate_value_form) or \
+       not validate_rate_unit(rate_unit_form, ['bps', 'kbps', 'mbps', 'gbps', 'bit', 'kbit', 'mbit', 'gbit']):
+        flash(f"ค่า Rate หรือ Unit สำหรับ Group '{clean_group_name}' ไม่ถูกต้อง: '{rate_value_form}{rate_unit_form}'", "danger"); return False
+
+    if direction not in ['upload', 'download']:
+        flash(f"Direction '{direction}' สำหรับ Group '{clean_group_name}' ไม่ถูกต้อง", "danger"); return False
+
+    # --- Parse Rate หลักสำหรับ TC และ DB ---
+    tc_rate_grp_cmd, _, rate_grp_for_db = parse_rate_to_tc_format(str(rate_value_form), rate_unit_form)
+    if not tc_rate_grp_cmd:
+        flash(f"Error ร้ายแรงในการแปลง Rate ของ Group '{clean_group_name}'", "danger"); return False
+
+    # --- Parse Burst และ Ceil/Cburst สำหรับ Upload Group (HTB class) ---
+    tc_burst_grp_cmd_str = None
+    burst_grp_for_db_str = None
+    if direction == "upload" and burst_value_form and burst_unit_form:
+        if not validate_rate_value(burst_value_form) or \
+           not validate_rate_unit(burst_unit_form, ['k', 'm', 'g', 'b', 'kb', 'mb', 'gb', 'kbit', 'mbit', 'gbit']):
+            flash(f"ค่า Burst หรือ Unit ของ Group '{clean_group_name}' ไม่ถูกต้อง", "danger"); return False
+        tc_burst_grp_cmd_str, _, burst_grp_for_db_str = parse_rate_to_tc_format(str(burst_value_form), burst_unit_form)
+        if not tc_burst_grp_cmd_str:
+             flash(f"ไม่สามารถแปลง Group Burst '{burst_value_form}{burst_unit_form}' สำหรับ TC ได้", "danger"); return False
+
+    tc_ceil_grp_cmd_str = tc_rate_grp_cmd # Default ceil = rate สำหรับ HTB group class
+    cburst_grp_for_db_str = rate_grp_for_db # ถ้า Ceil = Rate, DB cburst อาจจะเก็บค่าเดียวกับ rate หรือเป็น None
+    if direction == "upload" and cburst_value_form and cburst_unit_form: # ถ้าผู้ใช้ระบุ Ceil มา
+        if not validate_rate_value(cburst_value_form) or \
+           not validate_rate_unit(cburst_unit_form, ['bps', 'kbps', 'mbps', 'gbps', 'bit', 'kbit', 'mbit', 'gbit']):
+            flash(f"ค่า Ceil หรือ Unit ของ Group '{clean_group_name}' ไม่ถูกต้อง", "danger"); return False
+        
+        tc_ceil_grp_cmd_str, _, cburst_grp_for_db_str = parse_rate_to_tc_format(str(cburst_value_form), cburst_unit_form)
+        if not tc_ceil_grp_cmd_str:
+            flash(f"ไม่สามารถแปลง Group Ceil '{cburst_value_form}{cburst_unit_form}' สำหรับ TC ได้", "danger"); return False
+
+    # --- DB และ TC Logic ---
+    existing_group_db = GroupLimit.query.filter_by(interface=interface, group_name=clean_group_name, direction=direction).first()
+    
+    group_tc_classid_to_store = None # จะเป็น TC Class ID เช่น "1:20" ถ้า direction="upload"
+
     if direction == "upload":
-        if burst_value_form and burst_unit_form:
-            parsed_burst_val_str, parsed_burst_tc_unit, burst_str_for_db = parse_rate_input(burst_value_form, burst_unit_form)
-            if not burst_str_for_db: flash(f"Invalid group burst rate/unit.", "danger"); return False
-            if parsed_burst_val_str: burst_cmd_part += f" burst {parsed_burst_val_str}{parsed_burst_tc_unit}"
-        if cburst_value_form and cburst_unit_form:
-            parsed_cburst_val_str, parsed_cburst_tc_unit, cburst_str_for_db = parse_rate_input(cburst_value_form, cburst_unit_form)
-            if not cburst_str_for_db: flash(f"Invalid group ceil burst rate/unit.", "danger"); return False
-            if parsed_cburst_val_str: burst_cmd_part += f" cburst {parsed_cburst_val_str}{parsed_cburst_tc_unit}"
+        # กำหนดหรือสร้าง TC Class ID สำหรับ Group
+        if existing_group_db and existing_group_db.upload_classid and validate_tc_classid(existing_group_db.upload_classid):
+            group_tc_classid_to_store = existing_group_db.upload_classid
+        else: # Group ใหม่ หรือ Group เดิมที่เพิ่งจะตั้งค่าสำหรับ Upload TC
+            # สร้าง Class ID ใหม่ที่ Unique สำหรับ Upload Group นี้ (Parent คือ "1:")
+            # การสร้าง ID ที่ Unique จริงๆ ใน Production ควรมีการตรวจสอบการชนกันที่ดีกว่านี้
+            unique_seed_group = f"group-{interface}-{clean_group_name}-{direction}-{os.urandom(4).hex()}"
+            group_unique_minor_id = (abs(hash(unique_seed_group)) % 80) + 20 # เช่น ช่วง 20-99
+            potential_new_classid = f"1:{group_unique_minor_id}"
+            # TODO: เพิ่ม Logic ตรวจสอบการชนกันของ Class ID ที่สร้างขึ้นกับที่มีอยู่แล้ว
+            group_tc_classid_to_store = potential_new_classid
 
+        if not validate_tc_classid(group_tc_classid_to_store):
+            flash(f"Internal error: TC ClassID ที่สร้างขึ้น ('{group_tc_classid_to_store}') สำหรับ Group ไม่ถูกต้อง", "danger"); return False
 
-    existing_group_limit_db = GroupLimit.query.filter_by(interface=interface, group_name=group_name, direction=direction).first()
-    intended_group_classid = None
+        # ตรวจสอบ Root HTB qdisc
+        if not tc_ensure_root_qdisc(interface, default_classid_minor=str(app.config.get('HTB_DEFAULT_CLASS_MINOR_ID', "10")), qdisc_type="htb"):
+            flash(f"ไม่สามารถสร้าง/ตรวจสอบ Root HTB qdisc สำหรับ Group '{clean_group_name}' ได้ การตั้งค่า TC ถูกยกเลิก", "danger"); return False
 
-    if direction == "upload":
-        if existing_group_limit_db and existing_group_limit_db.upload_classid:
-            intended_group_classid = existing_group_limit_db.upload_classid
-        else:
-            unique_seed = f"group-{interface}-{group_name}-{direction}-{os.urandom(4).hex()}"
-            group_unique_minor_id = (abs(hash(unique_seed)) % 80) + 20 # Range 20-99
-            intended_group_classid = f"1:{group_unique_minor_id}"
+        # Add หรือ Change TC Class สำหรับ Group
+        tc_action_grp = "add"
+        # current_tc_classes_on_iface = parse_tc_class_show(interface) # ควรจะทำเพื่อดูว่า Class มีอยู่แล้วหรือไม่
+        # if group_tc_classid_to_store in current_tc_classes_on_iface:
+        #    tc_action_grp = "change"
+        
+        # ลอง Add ก่อน ถ้าล้มเหลว (เช่น "File exists") ค่อยลอง Change
+        if not tc_add_class(interface=interface,
+                            classid=group_tc_classid_to_store,
+                            parent_classid="1:", # Group Class เป็นลูกของ Root "1:" เสมอ
+                            rate_str_for_tc=tc_rate_grp_cmd,
+                            ceil_str_for_tc=tc_ceil_grp_cmd_str,
+                            burst_str_for_tc=tc_burst_grp_cmd_str,
+                            # prio สำหรับ group class มักจะไม่ตั้งค่า หรือใช้ default
+                            action="add"):
+            if not tc_add_class(interface=interface,
+                                classid=group_tc_classid_to_store,
+                                parent_classid="1:",
+                                rate_str_for_tc=tc_rate_grp_cmd,
+                                ceil_str_for_tc=tc_ceil_grp_cmd_str,
+                                burst_str_for_tc=tc_burst_grp_cmd_str,
+                                action="change"):
+                flash(f"ไม่สามารถ Apply TC Class สำหรับ Group '{clean_group_name}' (ID: {group_tc_classid_to_store}) ได้", "danger")
+                return False
+    # สำหรับ "download", Group Limit เป็นเพียงแนวคิดใน DB สำหรับการเชื่อมโยง Rule, ไม่มีการสร้าง TC Class โดยตรงสำหรับ Group
 
-        commands_to_execute = [f"tc qdisc add dev {interface} root handle 1: htb default 10 2>/dev/null || true"]
-        current_classes = parse_tc_class_show(interface)
-        existing_tc_class = current_classes.get(intended_group_classid)
-
-        if existing_tc_class:
-            if existing_tc_class['parent'] == "1:":
-                commands_to_execute.append(f"tc class change dev {interface} parent 1: classid {intended_group_classid} htb rate {tc_rate_str_cmd} ceil {tc_rate_str_cmd}{burst_cmd_part} 2>/dev/null || true")
-            else: # Conflict
-                flash(f"Error: TC class {intended_group_classid} exists with wrong parent {existing_tc_class['parent']}. Manual TC cleanup needed.", "danger"); return False
-        else:
-            commands_to_execute.append(f"tc class add dev {interface} parent 1: classid {intended_group_classid} htb rate {tc_rate_str_cmd} ceil {tc_rate_str_cmd}{burst_cmd_part} 2>/dev/null || true")
-
-        tc_success = True
-        for cmd in commands_to_execute:
-            if run_command(cmd) is None and "|| true" not in cmd: tc_success = False; break
-        if not tc_success: flash(f"Failed to apply TC for group {group_name}.", "danger"); return False
-    else: # Download group - DB only
-        intended_group_classid = None # No TC class for download group
-        app.logger.info(f"Download group limit '{group_name}' is DB only.")
-
+    # --- อัปเดตหรือสร้าง DB Entry ---
     try:
-        if existing_group_limit_db:
-            existing_group_limit_db.rate_str = rate_str_for_db
-            existing_group_limit_db.upload_classid = intended_group_classid
-            existing_group_limit_db.burst_str = burst_str_for_db if direction == "upload" else None
-            existing_group_limit_db.cburst_str = cburst_str_for_db if direction == "upload" else None
+        if existing_group_db:
+            app.logger.info(f"กำลังอัปเดต GroupLimit ที่มีอยู่สำหรับ '{clean_group_name}'/{direction} บน {interface}")
+            existing_group_db.rate_str = rate_grp_for_db
+            if direction == "upload":
+                existing_group_db.upload_classid = group_tc_classid_to_store
+                existing_group_db.burst_str = burst_grp_for_db_str
+                existing_group_db.cburst_str = cburst_grp_for_db_str # เก็บค่า Ceil ที่แปลงแล้วสำหรับ DB
+            else: # ถ้าเปลี่ยน Group เป็น Download หรืออัปเดต Download Group, ล้างค่า TC ที่ไม่เกี่ยวข้อง
+                existing_group_db.upload_classid = None
+                existing_group_db.burst_str = None
+                existing_group_db.cburst_str = None
         else:
-            new_group = GroupLimit(interface=interface, group_name=group_name, rate_str=rate_str_for_db, direction=direction,
-                                   upload_classid=intended_group_classid,
-                                   burst_str=burst_str_for_db if direction == "upload" else None,
-                                   cburst_str=cburst_str_for_db if direction == "upload" else None)
+            app.logger.info(f"กำลังสร้าง GroupLimit ใหม่สำหรับ '{clean_group_name}'/{direction} บน {interface}")
+            new_group = GroupLimit(
+                interface=interface,
+                group_name=clean_group_name,
+                rate_str=rate_grp_for_db,
+                direction=direction,
+                upload_classid=group_tc_classid_to_store if direction == "upload" else None,
+                burst_str=burst_grp_for_db_str if direction == "upload" else None,
+                cburst_str=cburst_grp_for_db_str if direction == "upload" else None
+            )
             db.session.add(new_group)
+        
         db.session.commit()
-        flash(f"Group limit for {group_name} ({direction}) saved.", "success")
+        flash(f"Group Limit สำหรับ '{clean_group_name}' ({direction}) ถูกบันทึกเรียบร้อย", "success")
         return True
-    except Exception as e:
+    except Exception as e_db_group_save:
         db.session.rollback()
-        flash(f"Database error for group {group_name}: {str(e)}", "danger"); return False
+        flash(f"เกิดข้อผิดพลาด Database ขณะบันทึก Group Limit สำหรับ '{clean_group_name}': {str(e_db_group_save)}", "danger")
+        app.logger.error(f"Database error สำหรับ Group '{clean_group_name}': {e_db_group_save}", exc_info=True)
+        return False
+
+
 @app.route("/set_ip", methods=["POST"])
 def set_ip_route():
     if not session.get('logged_in') or session.get('role') != 'admin':
@@ -1080,30 +2105,87 @@ def update_ip_rule_route(rule_id):
     )
     return redirect(url_for('dashboard'))
 # Function to clear a bandwidth limit for a group
-def clear_group_limit(interface, group_name, direction):
-    app.logger.info(f"Clearing group limit: {group_name}/{direction} on {interface}")
-    group_limit_db = GroupLimit.query.filter_by(interface=interface, group_name=group_name, direction=direction).first()
+# ใน app.py
+# ... (import statements, app setup, models, run_command, validation helpers, tc_del_class, etc. ควรถูก define ไว้ด้านบนแล้ว) ...
+
+def clear_group_limit(interface, group_name_form, direction):
+    """
+    Clears/Deletes a group limit.
+    For 'upload' direction, it attempts to delete the corresponding TC class.
+    Then deletes the entry from the GroupLimit database table.
+    Args:
+        interface (str): The network interface name.
+        group_name_form (str): The name of the group to clear.
+        direction (str): The direction ('upload' or 'download') of the group limit.
+    Returns:
+        bool: True if the group limit was successfully cleared (or didn't exist), False on error.
+    """
+    app.logger.info(f"clear_group_limit: Attempting to clear group '{group_name_form}' ({direction}) on interface '{interface}'.")
+
+    # --- 1. Validate Inputs ---
+    if not validate_interface_name(interface):
+        flash(f"Invalid interface name provided for clearing group limit: '{interface}'.", "danger")
+        return False
+    
+    clean_group_name = str(group_name_form).strip() if group_name_form else None
+    if not validate_group_name(clean_group_name) or not clean_group_name: # Group name is mandatory
+        flash(f"Invalid or missing group name for clearing: '{group_name_form}'.", "danger")
+        return False
+
+    if direction not in ['upload', 'download']:
+        flash(f"Invalid direction '{direction}' for clearing group limit.", "danger")
+        return False
+
+    # --- 2. Find the GroupLimit in Database ---
+    group_limit_db = GroupLimit.query.filter_by(
+        interface=interface,
+        group_name=clean_group_name,
+        direction=direction
+    ).first()
+
     if not group_limit_db:
-        flash(f"Group limit {group_name}/{direction} not found.", "warning"); return True
+        flash(f"Group limit '{clean_group_name}' ({direction}) on interface '{interface}' not found in database. Nothing to clear.", "info")
+        app.logger.info(f"Group limit '{clean_group_name}' ({direction}) on '{interface}' not found in DB. No action taken.")
+        return True # Considered success as there's nothing to clear
 
+    # --- 3. Clear TC Configuration (if applicable, for 'upload' direction) ---
+    tc_cleared_successfully = True # Assume success unless TC deletion fails
     if direction == "upload" and group_limit_db.upload_classid:
-        cmd = f"tc class del dev {interface} classid {group_limit_db.upload_classid} 2>/dev/null || true"
-        if run_command(cmd) is None and "|| true" not in cmd: # If it matters that it failed
-             # This indicates run_command had an actual error, not just tc returning non-zero for "already deleted"
-             app.logger.warning(f"TC class del command ({cmd}) for group {group_name} might have failed (returned None from run_command).")
-             flash(f"Warning: TC cleanup for group {group_name} might have failed. Check logs.", "warning")
+        if validate_tc_classid(group_limit_db.upload_classid): # Ensure classid from DB is valid before trying to delete
+            app.logger.info(f"Group '{clean_group_name}' ({direction}) has TC class ID '{group_limit_db.upload_classid}'. Attempting to delete TC class.")
+            if not tc_del_class(interface, group_limit_db.upload_classid):
+                # tc_del_class logs its own errors.
+                # We might still want to remove the DB entry even if TC delete fails,
+                # or make this a hard failure. For now, log warning and proceed to DB delete.
+                flash_msg = f"Warning: Failed to delete TC class '{group_limit_db.upload_classid}' for group '{clean_group_name}'. The database entry will still be removed."
+                flash(flash_msg, "warning")
+                app.logger.warning(flash_msg)
+                tc_cleared_successfully = False # Mark that TC part might have failed
+            else:
+                app.logger.info(f"Successfully deleted TC class '{group_limit_db.upload_classid}' for group '{clean_group_name}'.")
+        else:
+            app.logger.warning(f"Group '{clean_group_name}' ({direction}) has an invalid TC class ID format stored: '{group_limit_db.upload_classid}'. Skipping TC class deletion.")
+            # tc_cleared_successfully remains True as there's no valid TC class to attempt deleting.
     elif direction == "download":
-        app.logger.info(f"Download group '{group_name}' cleared from DB (no direct TC entity).")
+        app.logger.info(f"Group '{clean_group_name}' ({direction}) is a download group. No specific TC class entity to delete (rules under it are handled individually).")
 
+    # --- 4. Delete from Database ---
     try:
         db.session.delete(group_limit_db)
         db.session.commit()
-        flash(f"Group limit {group_name}/{direction} cleared.", "success")
+        flash_msg_db = f"Group limit '{clean_group_name}' ({direction}) on interface '{interface}' successfully deleted from database."
+        if direction == "upload" and group_limit_db.upload_classid and not tc_cleared_successfully:
+            flash(flash_msg_db + " However, TC class deletion may have encountered issues.", "warning")
+        else:
+            flash(flash_msg_db, "success")
+        app.logger.info(flash_msg_db)
         return True
-    except Exception as e:
+    except Exception as e_db_del_group:
         db.session.rollback()
-        flash(f"DB error clearing group {group_name}: {str(e)}", "danger"); return False
-
+        flash_msg_err = f"Database error while deleting group limit '{clean_group_name}': {str(e_db_del_group)}"
+        flash(flash_msg_err, "danger")
+        app.logger.error(f"Database error deleting group '{clean_group_name}': {e_db_del_group}", exc_info=True)
+        return False
 # --- APScheduler Task ---
 @scheduler.task('interval', id='apply_scheduled_rules_job', minutes=app.config.get('SCHEDULER_INTERVAL_MINUTES', 1), misfire_grace_time=90)
 def apply_scheduled_rules_task(): # Renamed from apply_scheduled_rules
@@ -1772,19 +2854,45 @@ def limit_group():
                     burst_value, burst_unit, cburst_value, cburst_unit)
     return redirect(url_for('dashboard'))
 
-@app.route("/clear_group_limit", methods=["POST"])
+
+
+@app.route("/clear_group_limit", methods=["POST"]) # ควรจะเป็น POST เพราะเป็นการกระทำที่เปลี่ยนแปลงข้อมูล
 def clear_group_limit_route():
     if not session.get('logged_in') or session.get('role') != 'admin':
-        flash("Unauthorized.", "danger"); return redirect(url_for('dashboard'))
-    interface = session.get('active_interface')
-    if not interface:
-        flash("No active interface.", "danger"); return redirect(url_for('dashboard'))
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for('dashboard')) # หรือ 'login' ถ้าต้องการ
 
-    group_name = request.form.get('group_name_clear')
-    direction = request.form.get('group_dir_clear')
-    if not group_name or not direction:
-        flash("Group name and direction required.", "danger"); return redirect(url_for('dashboard'))
-    clear_group_limit(interface, group_name, direction)
+    interface_from_session = session.get('active_interface')
+    if not interface_from_session: # ควรจะมาจาก session เพื่อความปลอดภัย
+        flash("No active interface selected.", "danger")
+        return redirect(url_for('dashboard'))
+
+    group_name_to_clear = request.form.get('group_name_clear')
+    direction_to_clear = request.form.get('group_dir_clear')
+
+    # --- Validate inputs from form ---
+    if not validate_interface_name(interface_from_session): # Validate interface from session
+        flash(f"Internal error: Invalid active interface stored in session: '{interface_from_session}'.", "danger")
+        return redirect(url_for('dashboard'))
+
+    clean_group_name = str(group_name_to_clear).strip() if group_name_to_clear else None
+    if not validate_group_name(clean_group_name) or not clean_group_name:
+        flash("Group name is required and must be valid for clearing.", "danger")
+        return redirect(url_for('dashboard'))
+    
+    if direction_to_clear not in ['upload', 'download']:
+        flash("Invalid direction specified for clearing group limit.", "danger")
+        return redirect(url_for('dashboard'))
+    
+    # --- Call the refactored clear_group_limit ---
+    if clear_group_limit(interface_from_session, clean_group_name, direction_to_clear):
+        # Flash messages are handled inside clear_group_limit
+        pass
+    else:
+        # Flash messages for critical failure (e.g., DB error) are handled inside clear_group_limit
+        # No additional flash needed here unless specific to the route context
+        pass
+        
     return redirect(url_for('dashboard'))
 
 
