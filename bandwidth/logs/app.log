@@ -3733,3 +3733,105 @@ operable program or batch file.
 2025-05-12 12:32:11,019 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
 2025-05-12 12:33:11,020 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
 2025-05-12 12:33:11,022 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:34:11,012 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:34:11,013 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:35:11,020 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:35:11,022 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:36:11,020 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:36:11,022 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:37:11,009 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:37:11,011 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:38:11,022 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:38:11,024 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:39:11,012 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:39:11,013 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:40:11,015 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:40:11,017 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:41:11,016 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:41:11,017 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:42:11,008 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:42:11,009 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:43:11,012 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:43:11,015 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:44:11,011 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:44:11,013 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:45:11,011 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:45:11,013 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:46:11,009 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:46:11,011 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:47:11,023 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:47:11,024 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:47:59,591 - app - INFO - app:3028 - Application attempting to shut down.
+2025-05-12 12:47:59,591 - app - INFO - app:3032 - APScheduler shut down successfully.
+2025-05-12 12:47:59,592 - app - INFO - app:3035 - Application shutdown process complete.
+2025-05-12 12:48:02,650 - app - INFO - app:107 - Logging configured successfully.
+2025-05-12 12:48:02,660 - app - INFO - app:2997 - Application starting (monolithic app.py) with DEBUG_MODE=False
+2025-05-12 12:48:02,662 - app - INFO - app:3001 - Database tables created/checked successfully.
+2025-05-12 12:48:02,664 - app - INFO - app:3009 - APScheduler started successfully.
+2025-05-12 12:48:02,664 - app - INFO - app:3015 - Running Flask app on host=0.0.0.0 port=5000
+2025-05-12 12:48:07,987 - app - WARNING - app:2289 - User not logged in, redirecting to login
+2025-05-12 12:48:08,001 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:08,002 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:10,073 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:10,079 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:10,079 - app - INFO - app:2335 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-12 12:48:10,086 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:10,088 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:10,145 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,187 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,187 - app - INFO - app:2335 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-12 12:48:24,189 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,190 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,231 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,754 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,755 - app - INFO - app:2335 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-12 12:48:24,756 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,758 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,801 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,955 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,955 - app - INFO - app:2335 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-12 12:48:24,957 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,958 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:24,993 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:33,260 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:33,261 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:34,418 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:34,420 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,322 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,322 - app - INFO - app:2335 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-12 12:48:38,324 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,325 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,366 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,475 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,476 - app - INFO - app:2335 - Dashboard: No active interface set, clearing in-memory caches.
+2025-05-12 12:48:38,477 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,478 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:48:38,514 - app - ERROR - app:239 - Command not found: ip. Ensure it is installed and in the system's PATH.
+2025-05-12 12:49:02,671 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:49:02,677 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:50:02,667 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:50:02,668 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:51:02,666 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:51:02,668 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:52:02,662 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:52:02,664 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:53:02,669 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:53:02,671 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:54:02,667 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:54:02,669 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:55:02,658 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:55:02,659 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:56:02,657 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:56:02,659 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:57:02,666 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:57:02,668 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:58:02,659 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:58:02,661 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 12:59:02,661 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 12:59:02,663 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 13:00:02,666 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 13:00:02,668 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 13:01:02,664 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 13:01:02,666 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.
+2025-05-12 13:02:02,667 - app - INFO - app:2193 - SCHEDULER: Running apply_scheduled_rules_task...
+2025-05-12 13:02:02,669 - app - INFO - app:2242 - SCHEDULER: apply_scheduled_rules_task finished.

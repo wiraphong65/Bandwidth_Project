@@ -1,30 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Bandwidth Control{% endblock %}
+{% block title %}Dashboard - Bandwidth Control V2{% endblock %} {# อาจจะเปลี่ยน Title เล็กน้อย #}
 
 {% block head_extra %}
-    {% endblock %}
+    {# สามารถเพิ่ม CSS เฉพาะสำหรับหน้านี้ได้ถ้าต้องการ #}
+    {# หรือถ้า bandwidth-control.css มีอยู่แล้วและถูก include ใน base.html ก็ไม่จำเป็นต้องเพิ่มที่นี่ #}
+{% endblock %}
 
+{# ส่วนนี้จะถูกจัดการโดย JavaScript ผ่าน API ดังนั้น Jinja loop อาจจะไม่จำเป็นแล้ว #}
+{# อย่างไรก็ตาม การมีไว้เป็น Fallback หรือ Placeholder ตอนโหลดครั้งแรกก็ยัง OK #}
 {% block interface_selector_block %}
     <div class="interface-selector-container">
         <label for="interface" class="interface-label">เลือก Network Interface:</label>
         <select id="interface" class="interface-select-element" name="interface_dropdown" title="เลือก Interface เพื่อดูและจัดการ Rules">
-            {% if interfaces %}
+            {# JavaScript (bandwidth-control.js) จะโหลด options ที่นี่ผ่าน API /api/interfaces #}
+            <option value="">กำลังโหลด Interfaces...</option> 
+            {# แสดงข้อความนี้ระหว่างรอ JS โหลด #}
+            {# {% if interfaces %} #  ส่วน Jinja เดิม สามารถ comment ออกหรือลบได้ ถ้ามั่นใจว่า JS ทำงานเสมอ
                 {% for iface in interfaces %}
                     <option value="{{ iface }}" {% if iface == active_if %}selected{% endif %}>{{ iface }}</option>
                 {% endfor %}
             {% else %}
-                <option value="">กำลังโหลด Interfaces...</option>
-            {% endif %}
+                <option value="">ไม่พบ Network Interface</option>
+            {% endif %} #}
         </select>
     </div>
 {% endblock %}
 
 {% block content %}
 <div class="content-wrapper">
+    {# เพิ่ม Element สำหรับแสดง User Messages จาก JavaScript #}
+    <div id="user-messages" class="app-message" style="display:none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);" role="alert" aria-live="assertive">
+        {#{ message content will be injected by JS }#}
+    </div>
+
     <header class="page-header">
-        <h2 id="current-view-title">การจัดการ Simple Queues</h2> <div class="action-bar" role="toolbar" aria-label="แถบเครื่องมือจัดการ Rules">
-            <button id="add-rule-btn" class="button button-primary" title="เพิ่ม Rule ใหม่ (คีย์ลัด: A)">
+        <h2 id="current-view-title">การจัดการ Bandwidth Rules</h2> {# เปลี่ยนชื่อ Title ให้สอดคล้อง #}
+        <div class="action-bar" role="toolbar" aria-label="แถบเครื่องมือจัดการ Rules">
+            <button id="add-rule-btn" class="button button-primary" title="เพิ่ม Rule ใหม่ (คีย์ลัด: A)" disabled> {# Disable ไว้ก่อน รอ JS เปิดใช้งานเมื่อมี Interface #}
                 <span class="button-icon" aria-hidden="true">➕</span>
                 เพิ่ม Rule
             </button>
@@ -52,30 +65,32 @@
                         <th scope="col">ชื่อ Rule/คำอธิบาย</th>
                         <th scope="col">Target IP</th>
                         <th scope="col">ทิศทาง</th>
-                        <th scope="col">Rate</th>
-                        <th scope="col">Max Limit</th>
-                        <th scope="col">กลุ่ม</th>
+                        <th scope="col">Rate (อัตราหลัก)</th>
+                        <th scope="col">Ceil/Max Limit (สำหรับ HTB Upload)</th> {# ปรับชื่อคอลัมน์ให้ชัดเจน #}
+                        <th scope="col">Burst (สำหรับ HTB Upload)</th> {# เพิ่มคอลัมน์ Burst #}
+                        <th scope="col">กลุ่ม (Parent)</th>
                         <th scope="col">สถานะ</th>
                         <th scope="col">กำหนดเวลา</th>
                         <th scope="col" class="actions-column">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="rules-body">
-                    </tbody>
+                    {# JavaScript (bandwidth-control.js) จะ render แถวของตารางที่นี่ #}
+                </tbody>
             </table>
         </div>
         <div id="loading-rules-message" class="loading-state" style="display:none;" aria-live="polite">
             <p>กำลังโหลดข้อมูล Rules, กรุณารอสักครู่...</p>
         </div>
-        <div id="no-rules-message" class="empty-state" style="display:none;">
-            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/empty-box-placeholder.png?placeholder=true" alt="ไอคอนกล่องว่าง" class="empty-state-icon">
-            <p class="empty-state-text">ยังไม่มี Rules สำหรับ Interface นี้ หรือไม่พบข้อมูลที่ตรงกับการค้นหาของคุณ</p>
-            <button id="add-first-rule-btn" class="button button-primary">เริ่มสร้าง Rule แรก!</button>
+        <div id="no-rules-message" class="empty-state" style="display:block;"> {# เริ่มต้นให้แสดงไว้ก่อน JS จะซ่อนถ้ามีข้อมูล #}
+            <img src="{{ url_for('static', filename='images/empty-box.png') }}" alt="ไม่พบข้อมูล" class="empty-state-icon"> {# ควรมีรูปภาพนี้ใน static/images #}
+            <p class="empty-state-text">กรุณาเลือก Network Interface เพื่อแสดงข้อมูล Rules</p>
+            <button id="add-first-rule-btn" class="button button-primary" style="display:none;" disabled>เริ่มสร้าง Rule แรก!</button> {# JS จะจัดการการแสดงผล #}
         </div>
     </div>
 
     <section class="monitoring-section" aria-labelledby="monitoring-heading">
-        <h3 id="monitoring-heading" class="section-title">ภาพรวมการใช้งาน Bandwidth</h3>
+        <h3 id="monitoring-heading" class="section-title">ภาพรวมการใช้งาน Bandwidth (Interface ปัจจุบัน)</h3>
         <div class="monitoring-layout">
             <div class="monitoring-panel download-panel" role="region" aria-labelledby="download-title">
                 <h4 id="download-title" class="monitoring-title">Download</h4>
@@ -90,21 +105,25 @@
         </div>
     </section>
 
+    {# ส่วน Group Limits อาจจะยังไม่ได้ทำ UI เต็มรูปแบบใน JS นี้ #}
     <section class="group-limits-section" aria-labelledby="group-limits-heading">
-        <h3 id="group-limits-heading" class="section-title">การจัดการ Group Limits</h3>
+        <h3 id="group-limits-heading" class="section-title">การจัดการ Group Limits (ภาพรวม)</h3>
         <div id="group-limits-container">
-            <p class="empty-state-message">ส่วนการจัดการ Group Limits จะแสดงที่นี่ (ยังไม่เปิดใช้งาน)</p>
+            <p class="empty-state-message">
+                (ส่วนแสดงผลและจัดการ Group Limits ยังไม่ได้ถูกพัฒนาใน UI ส่วนนี้อย่างเต็มรูปแบบ)
+            </p>
         </div>
     </section>
 
+    {# Modal สำหรับ Add/Edit Rule #}
     <div id="rule-modal" class="modal" style="display:none;" role="dialog" aria-labelledby="modal-title-text" aria-modal="true">
         <div class="modal-content">
             <header class="modal-header">
-                <h3 id="modal-title-text" class="modal-title-text">เพิ่ม Rule ใหม่</h3>
-                <button id="close-modal-btn" class="modal-close-button" title="ปิดหน้าต่างนี้" aria-label="ปิดหน้าต่าง">&times;</button>
+                <h3 id="modal-title-text" class="modal-title-text">เพิ่ม Rule ใหม่</h3> {# JS จะเปลี่ยนเป็น 'Edit Rule' #}
+                <button type="button" id="close-modal-btn" class="modal-close-button" title="ปิดหน้าต่างนี้" aria-label="ปิดหน้าต่าง">&times;</button>
             </header>
             <form id="rule-form" class="modal-form" novalidate>
-                <input type="hidden" id="rule-id-input" name="rule_id">
+                <input type="hidden" id="rule-id-input" name="rule_id_to_update"> {# เปลี่ยน name ให้สื่อถึงการ update #}
 
                 <div class="form-section">
                     <h4 class="form-section-title">ข้อมูลพื้นฐานของ Rule</h4>
@@ -118,85 +137,93 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="rule-ip">Target IP Address <span class="required-asterisk" aria-hidden="true">*</span></label>
-                            <input type="text" id="rule-ip" name="ip" required pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" title="กรุณากรอก IPv4 Address ที่ถูกต้อง (เช่น 192.168.1.10)" placeholder="เช่น 192.168.1.10">
+                            <input type="text" id="rule-ip" name="ip" required title="กรุณากรอก IPv4 หรือ IPv6 Address ที่ถูกต้อง" placeholder="เช่น 192.168.1.10 หรือ 2001:db8::1">
                         </div>
                         <div class="form-group">
                             <label for="rule-direction">ทิศทาง (Direction) <span class="required-asterisk" aria-hidden="true">*</span></label>
                             <select id="rule-direction" name="direction" required aria-label="เลือกทิศทางการจำกัดแบนด์วิดท์">
-                                <option value="download" selected>Download (ข้อมูลเข้า)</option>
-                                <option value="upload">Upload (ข้อมูลออก)</option>
+                                <option value="upload">Upload (ข้อมูลออก)</option> {# เปลี่ยน default หรือให้ JS เลือกตามความเหมาะสม #}
+                                <option value="download">Download (ข้อมูลเข้า)</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="rule-rate-value">Rate จำกัด <span class="required-asterisk" aria-hidden="true">*</span></label>
-                            <input type="number" id="rule-rate-value" name="rate_value" min="1" required placeholder="เช่น 5" aria-describedby="rate-help">
+                            <label for="rule-rate-value">Rate จำกัด (หลัก) <span class="required-asterisk" aria-hidden="true">*</span></label>
+                            <input type="text" id="rule-rate-value" name="rate_value_form" required placeholder="เช่น 5" aria-describedby="rate-help"> {# เปลี่ยนเป็น text เพื่อรับ float #}
                         </div>
                         <div class="form-group">
                             <label for="rule-rate-unit">หน่วย Rate <span class="required-asterisk" aria-hidden="true">*</span></label>
-                            <select id="rule-rate-unit" name="rate_unit" aria-label="เลือกหน่วยของ Rate">
+                            <select id="rule-rate-unit" name="rate_unit_form" aria-label="เลือกหน่วยของ Rate">
                                 <option value="kbps">Kbps</option>
                                 <option value="mbps" selected>Mbps</option>
                                 <option value="gbps">Gbps</option>
+                                <option value="kbit">Kbit (สำหรับ TC)</option>
+                                <option value="mbit">Mbit (สำหรับ TC)</option>
                             </select>
                         </div>
                     </div>
-                     <small id="rate-help" class="form-text-help">กำหนดความเร็วสูงสุดที่อนุญาตสำหรับ IP นี้</small>
+                     <small id="rate-help" class="form-text-help">กำหนดความเร็วสูงสุดพื้นฐานที่อนุญาตสำหรับ IP นี้</small>
                 </div>
 
                 <fieldset class="form-fieldset">
-                    <legend class="form-section-title">ตัวเลือกขั้นสูง (Advanced Options)</legend>
+                    <legend class="form-section-title">ตัวเลือกขั้นสูง (HTB Parameters สำหรับ Upload)</legend>
+                    <p class="form-text-help">ค่าเหล่านี้ส่วนใหญ่มีผลกับ Direction "Upload" ที่ใช้ HTB</p>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="rule-burst-value">Max Limit / Burst</label>
-                            <input type="number" id="rule-burst-value" name="burst_value" min="0" placeholder="เช่น 10 (ถ้ามี)" aria-describedby="burst-help">
+                            <label for="rule-burst-value">Burst (สำหรับ HTB)</label>
+                            <input type="text" id="rule-burst-value" name="burst_value_form" placeholder="เช่น 15" aria-describedby="burst-help">
                         </div>
                         <div class="form-group">
-                            <label for="rule-burst-unit">หน่วย Burst</label>
-                            <select id="rule-burst-unit" name="burst_unit" aria-label="เลือกหน่วยของ Burst">
+                            <label for="rule-burst-unit">หน่วย Burst (TC)</label>
+                            <select id="rule-burst-unit" name="burst_unit_form" aria-label="เลือกหน่วยของ Burst">
                                 <option value="">-</option>
-                                <option value="kbit">kbit</option>
-                                <option value="mbit">Mbit</option>
-                                <option value="gbit">Gbit</option>
-                                <option value="kbps">KB/s (bytes)</option>
-                                <option value="mbps">MB/s (bytes)</option>
+                                <option value="k">k (kilobytes)</option>
+                                <option value="m">m (megabytes)</option>
+                                <option value="g">g (gigabytes)</option>
+                                <option value="b">b (bytes)</option>
+                                <option value="kbit">kbit</option> {# เพิ่มหน่วย bits ด้วย #}
+                                <option value="mbit">mbit</option>
                             </select>
                         </div>
                     </div>
-                     <small id="burst-help" class="form-text-help">กำหนดปริมาณข้อมูลที่อนุญาตให้เกิน Rate ได้ชั่วขณะ (ถ้าไม่ระบุ จะเท่ากับ Rate)</small>
+                     <small id="burst-help" class="form-text-help">TC burst: ปริมาณข้อมูลที่อนุญาตให้ส่งเกิน Rate ได้ชั่วขณะ (เช่น 15k, 2m)</small>
 
-                    <div class="form-row">
-                         <div class="form-group">
-                            <label for="rule-cburst-value">Ceiling Burst (CBurst)</label>
-                            <input type="number" id="rule-cburst-value" name="cburst_value" min="0" placeholder="ถ้ามี (สำหรับ HTB)">
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="rule-cburst-value">Ceil / Max Limit (สำหรับ HTB)</label>
+                            <input type="text" id="rule-cburst-value" name="cburst_value_form" placeholder="เช่น 10 (ถ้าไม่ระบุ = Rate)">
                         </div>
                         <div class="form-group">
-                            <label for="rule-cburst-unit">หน่วย CBurst</label>
-                            <select id="rule-cburst-unit" name="cburst_unit" aria-label="เลือกหน่วยของ Ceiling Burst">
-                                <option value="">-</option>
-                                <option value="kbit">kbit</option>
+                            <label for="rule-cburst-unit">หน่วย Ceil (HTB)</label>
+                            <select id="rule-cburst-unit" name="cburst_unit_form" aria-label="เลือกหน่วยของ Ceiling">
+                                <option value="">-</option> {# ถ้าไม่เลือก จะใช้หน่วยเดียวกับ Rate #}
+                                <option value="kbps">Kbps</option>
+                                <option value="mbps">Mbps</option>
+                                <option value="gbps">Gbps</option>
+                                <option value="kbit">Kbit</option>
                                 <option value="mbit">Mbit</option>
-                                <option value="gbit">Gbit</option>
                             </select>
+                             <small class="form-text-help">ขีดจำกัดความเร็วสูงสุดที่แท้จริง (ถ้าไม่ระบุจะเท่ากับ Rate หลัก)</small>
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="rule-group-name">ชื่อกลุ่ม (Group Name)</label>
+                            <label for="rule-group-name">ชื่อกลุ่ม (Parent Class)</label>
                             <input type="text" id="rule-group-name" name="group_name" placeholder="ถ้าต้องการจัด Rule นี้เข้ากลุ่ม">
+                            <small class="form-text-help">ถ้าไม่ระบุ จะอยู่ใต้ Root Qdisc โดยตรง</small>
                         </div>
                         <div class="form-group">
-                            <label for="rule-priority">Priority (สำหรับ HTB)</label>
-                            <input type="number" id="rule-priority" name="priority" min="0" max="7" placeholder="1-7 (น้อย=สำคัญ)">
+                            <label for="rule-priority">Priority (สำหรับ HTB Class: 0-7)</label>
+                            <input type="number" id="rule-priority" name="priority_form_str" min="0" max="7" placeholder="0-7 (น้อย=สำคัญสูง)">
                         </div>
                     </div>
                      <div class="form-row">
                         <div class="form-group">
                             <label for="rule-protocol">Protocol</label>
                             <select id="rule-protocol" name="protocol" aria-label="เลือก Protocol">
-                                <option value="">Any</option>
+                                <option value="">Any</option> {# ส่งเป็น null/empty string ไป Backend #}
+                                <option value="ip">IP (Any L4)</option>
                                 <option value="tcp">TCP</option>
                                 <option value="udp">UDP</option>
                                 <option value="icmp">ICMP</option>
@@ -215,11 +242,11 @@
 
                 <div class="form-group">
                     <input type="checkbox" id="rule-is-enabled" name="is_enabled" checked>
-                    <label for="rule-is-enabled">เปิดใช้งาน Rule นี้ทันทีเมื่อบันทึก</label>
+                    <label for="rule-is-enabled">เปิดใช้งาน Rule นี้ทันทีเมื่อบันทึก (ถ้าไม่ตั้งเวลา)</label>
                 </div>
 
                 <div class="form-group scheduling-toggle">
-                    <input type="checkbox" id="enable-scheduling" name="enable_scheduling" aria-controls="scheduling-options">
+                    <input type="checkbox" id="enable-scheduling" name="is_scheduled" aria-controls="scheduling-options"> {# เปลี่ยน name เป็น is_scheduled ให้ตรงกับ DB model #}
                     <label for="enable-scheduling">ตั้งเวลาการทำงานสำหรับ Rule นี้</label>
                 </div>
 
@@ -238,7 +265,7 @@
                      <small id="schedule-time-help" class="form-text-help">จำเป็นต้องระบุถ้าเปิดใช้งานการตั้งเวลา</small>
 
                     <div class="form-group">
-                        <label>วันในสัปดาห์ที่ใช้งาน (เลือกอย่างน้อย 1 วันถ้าตั้งเวลา):</label>
+                        <label>วันในสัปดาห์ที่ใช้งาน (ถ้าไม่เลือก=ทุกวันที่มีผลตามเวลา):</label> {# ปรับคำอธิบาย #}
                         <div class="weekdays-selector" role="group" aria-label="เลือกวันในสัปดาห์">
                             <input type="checkbox" id="wd-mon" name="weekdays" value="Mon"><label for="wd-mon">จ.</label>
                             <input type="checkbox" id="wd-tue" name="weekdays" value="Tue"><label for="wd-tue">อ.</label>
@@ -251,11 +278,11 @@
                     </div>
                      <div class="form-row">
                         <div class="form-group">
-                            <label for="rule-start-date">วันที่เริ่ม (ถ้าต้องการระบุช่วงวันที่)</label>
+                            <label for="rule-start-date">วันที่เริ่มบังคับใช้ (ถ้าต้องการระบุช่วงวันที่)</label>
                             <input type="date" id="rule-start-date" name="start_date">
                         </div>
                         <div class="form-group">
-                            <label for="rule-end-date">วันที่สิ้นสุด (ถ้าต้องการระบุช่วงวันที่)</label>
+                            <label for="rule-end-date">วันที่สิ้นสุดการบังคับใช้ (ถ้าต้องการระบุช่วงวันที่)</label>
                             <input type="date" id="rule-end-date" name="end_date">
                         </div>
                     </div>
@@ -276,5 +303,7 @@
 {% endblock %}
 
 {% block scripts %}
+    {# ตรวจสอบว่า bandwidth-control.js ถูก include ใน base.html หรือที่นี่ #}
+    {# ถ้า base.html มี block scripts ที่ include ไฟล์ JS นี้อยู่แล้ว ก็ไม่จำเป็นต้องใส่ซ้ำ #}
     <script src="{{ url_for('static', filename='js/bandwidth-control.js') }}"></script>
 {% endblock %}
